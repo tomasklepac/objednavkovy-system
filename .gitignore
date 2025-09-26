@@ -1,0 +1,18 @@
+# IDE
+.idea/
+*.iml
+
+# Systémové
+.DS_Store
+Thumbs.db
+
+# Vendor / externí knihovny (kdybys přidával Composer/NPM)
+vendor/
+node_modules/
+
+# Uploads
+/public/uploads/
+
+# Logy a cache
+*.log
+/cache/
