@@ -22,13 +22,6 @@ Semestrální práce do předmětu KIV/WEB.
 - Upload obrázků k produktům.
 - Dokumentace (PDF, podle zadání).
 
-## 💻 Jak spustit projekt
-1. Nainstaluj [XAMPP](https://www.apachefriends.org/).
-2. Zkopíruj projekt do složky `htdocs/objednavkovy-system/`.
-3. Spusť Apache a MySQL v XAMPP Control Panelu.
-4. V phpMyAdmin vytvoř databázi `objednavkovy_system` a naimportuj `db_schema.sql`.
-5. Otevři v prohlížeči [http://localhost/objednavkovy-system/public](http://localhost/objednavkovy-system/public).
-
 ## 👤 Autor
 Tomáš Klepač  
 FAV ZČU, 2025
