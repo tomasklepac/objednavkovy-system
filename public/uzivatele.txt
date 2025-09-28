@@ -1,0 +1,5 @@
+admin@local.test, Admin123!
+supplier@local.test, Supplier123!
+customerr@local.test, Customer123!
+
+tomasklepac@post.cz, Test123! 
