@@ -37,6 +37,7 @@ class UserController {
         // 4. přihlášení proběhlo úspěšně → uložíme do session
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_name'] = $user['name'];
         $_SESSION['roles'] = $this->fetchRoles($user['id']);
 
         return 'ok';
@@ -47,7 +48,7 @@ class UserController {
     // -------------------------------------------------
     // Vytvoří nového uživatele a přiřadí mu roli
     // Vrací: 'registered_active' | 'registered_inactive' nebo text chyby
-    public function register($email, $password, $passwordConfirm, $role) {
+    public function register($email, $password, $passwordConfirm, $role, $name) {
         // 1. kontrola hesel
         if ($password !== $passwordConfirm) {
             return "Hesla se neshodují!";
@@ -65,28 +66,27 @@ class UserController {
             return "Uživatel s tímto emailem už existuje!";
         }
 
-        // 4. hashování hesla
+        // 4. hash hesla
         $hash = password_hash($password, PASSWORD_BCRYPT);
 
-        // 5. nastavení aktivace účtu
+        // 5. aktivní účet podle role
         $isActive = ($role === 'customer') ? 1 : 0;
 
-        // 6. vložíme uživatele do DB
+        // 6. vložíme uživatele
         $stmt = $this->pdo->prepare("
-            INSERT INTO users (email, password_hash, name, is_active)
-            VALUES (?, ?, '', ?)
-        ");
-        $stmt->execute([$email, $hash, $isActive]);
+        INSERT INTO users (email, password_hash, name, is_active)
+        VALUES (?, ?, ?, ?)
+    ");
+        $stmt->execute([$email, $hash, $name, $isActive]);
         $userId = $this->pdo->lastInsertId();
 
-        // 7. přiřadíme roli
+        // 7. role
         $roleStmt = $this->pdo->prepare("
-            INSERT INTO user_role (user_id, role_id)
-            SELECT ?, id FROM roles WHERE code = ?
-        ");
+        INSERT INTO user_role (user_id, role_id)
+        SELECT ?, id FROM roles WHERE code = ?
+    ");
         $roleStmt->execute([$userId, $role]);
 
-        // 8. vrátíme výsledek
         return $isActive === 1 ? 'registered_active' : 'registered_inactive';
     }
 

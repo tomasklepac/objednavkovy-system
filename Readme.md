@@ -3,33 +3,31 @@
 Semestrální práce do předmětu **KIV/WEB**.
 
 ## ✅ Aktuálně hotovo
-- Nastaven XAMPP (Apache + MySQL).
-- Vytvořena databáze `objednavkovy_system` se 6 tabulkami:
-    - `users`, `roles`, `user_role`, `products`, `orders`, `order_item`.
-- Základní struktura projektu podle MVC (`app/`, `config/`, `public/`).
-- Propojení s databází pomocí PDO (`config/db.php`).
-- Login / Logout systém:
+- ✅ Nastaven XAMPP (Apache + MySQL).
+- ✅ Vytvořena databáze `objednavkovy_system` se 6 tabulkami (`users`, `roles`, `user_role`, `products`, `orders`, `order_item`).
+- ✅ Přidána základní struktura projektu podle MVC (`app/`, `config/`, `public/`).
+- ✅ Propojení s databází pomocí PDO (`config/db.php`).
+- ✅ Login / Logout systém:
     - ověřování emailu a hesla,
-    - hashování hesel pomocí `password_hash` a `password_verify`,
+    - hashování hesel (`password_hash`, `password_verify`),
     - session pro uchování přihlášeného uživatele.
-- Registrace nových uživatelů:
-    - **customer** = účet aktivní hned,
-    - **supplier** = čeká na schválení administrátorem.
-- Role uživatelů (`customer`, `supplier`, `admin`) – ukládají se do session.
-- Admin sekce: přehled uživatelů, možnost schválit nebo blokovat účet.
+- ✅ Registrace s výběrem role (`customer` = aktivní ihned, `supplier` = čeká na schválení adminem).
+- ✅ Role uživatelů (customer, supplier, admin).
+- ✅ Admin panel – přehled uživatelů, schvalování a blokace účtů.
+- ✅ Produkty (CRUD):
+    - přidání produktu,
+    - výpis všech produktů,
+    - editace produktu,
+    - mazání produktu (jen vlastník nebo admin).
 
 ## 🔜 Co ještě zbývá
-- CRUD pro produkty:
-    - dodavatel může přidávat, upravovat a mazat své produkty,
-    - zákazník produkty pouze prohlíží.
 - Objednávky:
-    - zákazník může vytvořit objednávku,
-    - dodavatel vidí objednávky svých produktů,
-    - admin má přehled o všech objednávkách.
+    - zákazník může vytvářet objednávky,
+    - dodavatel / admin vidí přehled objednávek.
 - Upload obrázků k produktům.
 - Responzivní design (Bootstrap nebo Tailwind).
-- Dokumentace (PDF podle zadání).
+- Dokumentace (PDF, podle zadání).
 
 ## 👤 Autor
-**Tomáš Klepač**  
+Tomáš Klepač  
 FAV ZČU, 2025
