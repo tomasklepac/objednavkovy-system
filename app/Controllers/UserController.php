@@ -1,19 +1,25 @@
 <?php
+// Natáhneme model User (teď ho moc nepoužíváme, ale máme připravený)
 require_once __DIR__ . '/../Models/User.php';
 
 class UserController {
-    private $pdo;
+    private $pdo; // připojení k databázi (PDO objekt)
 
-    // === Konstruktor ===
+    // -------------------------------------------------
+    // KONSTRUKTOR
+    // -------------------------------------------------
+    // Vytvoří instanci UserControlleru a uloží připojení k DB
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
 
     // -------------------------------------------------
-    // LOGIN
+    // LOGIN (přihlášení uživatele)
     // -------------------------------------------------
-    // Pokusí se přihlásit uživatele podle emailu a hesla
-    // Vrací: 'ok' | 'inactive' | 'invalid'
+    // Vrací:
+    //   'ok'        = přihlášení proběhlo
+    //   'inactive'  = účet ještě není schválen (dodavatel)
+    //   'invalid'   = špatný email nebo heslo
     public function login($email, $password) {
         // 1. najdeme uživatele podle emailu
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
@@ -21,20 +27,20 @@ class UserController {
         $user = $stmt->fetch();
 
         if (!$user) {
-            return 'invalid'; // email v DB není
+            return 'invalid'; // email není v DB
         }
 
-        // 2. kontrola, jestli je účet aktivní
+        // 2. kontrola aktivace účtu
         if ((int)$user['is_active'] !== 1) {
-            return 'inactive'; // dodavatel ještě neschválený adminem
+            return 'inactive';
         }
 
-        // 3. ověření hesla
+        // 3. kontrola hesla – ověříme proti hashovanému heslu v DB
         if (!password_verify($password, $user['password_hash'])) {
-            return 'invalid'; // heslo nesedí
+            return 'invalid';
         }
 
-        // 4. přihlášení proběhlo úspěšně → uložíme do session
+        // 4. uložíme údaje do session (uživatel je přihlášen)
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name'] = $user['name'];
@@ -44,17 +50,19 @@ class UserController {
     }
 
     // -------------------------------------------------
-    // REGISTRACE
+    // REGISTRACE (vytvoření účtu)
     // -------------------------------------------------
-    // Vytvoří nového uživatele a přiřadí mu roli
-    // Vrací: 'registered_active' | 'registered_inactive' nebo text chyby
+    // Vrací:
+    //   'registered_active'   = zákazník → hned aktivní
+    //   'registered_inactive' = dodavatel → čeká na schválení
+    //   text                  = chybová hláška
     public function register($email, $password, $passwordConfirm, $role, $name) {
-        // 1. kontrola hesel
+        // 1. hesla se musí shodovat
         if ($password !== $passwordConfirm) {
             return "Hesla se neshodují!";
         }
 
-        // 2. povolené role
+        // 2. povolíme jen role customer / supplier
         if (!in_array($role, ['customer', 'supplier'], true)) {
             return "Neplatná role.";
         }
@@ -66,32 +74,32 @@ class UserController {
             return "Uživatel s tímto emailem už existuje!";
         }
 
-        // 4. hash hesla
+        // 4. zahashujeme heslo (bezpečné uložení)
         $hash = password_hash($password, PASSWORD_BCRYPT);
 
-        // 5. aktivní účet podle role
+        // 5. nastavení aktivace
         $isActive = ($role === 'customer') ? 1 : 0;
 
-        // 6. vložíme uživatele
+        // 6. vložíme uživatele do DB
         $stmt = $this->pdo->prepare("
-        INSERT INTO users (email, password_hash, name, is_active)
-        VALUES (?, ?, ?, ?)
-    ");
+            INSERT INTO users (email, password_hash, name, is_active)
+            VALUES (?, ?, ?, ?)
+        ");
         $stmt->execute([$email, $hash, $name, $isActive]);
         $userId = $this->pdo->lastInsertId();
 
-        // 7. role
+        // 7. přiřazení role
         $roleStmt = $this->pdo->prepare("
-        INSERT INTO user_role (user_id, role_id)
-        SELECT ?, id FROM roles WHERE code = ?
-    ");
+            INSERT INTO user_role (user_id, role_id)
+            SELECT ?, id FROM roles WHERE code = ?
+        ");
         $roleStmt->execute([$userId, $role]);
 
         return $isActive === 1 ? 'registered_active' : 'registered_inactive';
     }
 
     // -------------------------------------------------
-    // Vrátí všechny uživatele + jejich role
+    // ADMIN: seznam všech uživatelů
     // -------------------------------------------------
     public function getAllUsers() {
         $stmt = $this->pdo->query("
@@ -105,7 +113,7 @@ class UserController {
     }
 
     // -------------------------------------------------
-    // Schválí uživatele (aktivuje)
+    // ADMIN: schválí uživatele (aktivuje účet)
     // -------------------------------------------------
     public function approveUser($userId) {
         $stmt = $this->pdo->prepare("UPDATE users SET is_active = 1 WHERE id = ?");
@@ -113,7 +121,7 @@ class UserController {
     }
 
     // -------------------------------------------------
-    // Zablokuje uživatele
+    // ADMIN: zablokuje uživatele (deaktivuje účet)
     // -------------------------------------------------
     public function blockUser($userId) {
         $stmt = $this->pdo->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
@@ -121,7 +129,7 @@ class UserController {
     }
 
     // -------------------------------------------------
-    // PRIVATE: načtení rolí uživatele
+    // PRIVATE: načte role jednoho uživatele
     // -------------------------------------------------
     private function fetchRoles($userId) {
         $roleStmt = $this->pdo->prepare("

@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <title>Správa uživatelů</title>
     <style>
+        /* Styl tabulky */
         table {
-            border-collapse: collapse;
+            border-collapse: collapse; /* odstraní dvojité čáry mezi buňkami */
             width: 100%;
         }
         th, td {
@@ -16,6 +17,8 @@
         th {
             background-color: #f0f0f0;
         }
+
+        /* Barvy pro stav uživatele */
         .active {
             color: green;
             font-weight: bold;
@@ -29,6 +32,7 @@
 <body>
 <h1>Správa uživatelů</h1>
 
+<!-- Pokud existují uživatelé -->
 <?php if (!empty($users)): ?>
     <table>
         <tr>
@@ -38,18 +42,31 @@
             <th>Stav</th>
             <th>Akce</th>
         </tr>
+
+        <!-- Smyčka přes všechny uživatele -->
         <?php foreach ($users as $user): ?>
             <tr>
+                <!-- ID -->
                 <td><?= htmlspecialchars($user['id']) ?></td>
+
+                <!-- Email -->
                 <td><?= htmlspecialchars($user['email']) ?></td>
+
+                <!-- Role (řetězec z GROUP_CONCAT) -->
                 <td><?= htmlspecialchars($user['roles']) ?></td>
+
+                <!-- Stav účtu -->
                 <td class="<?= $user['is_active'] ? 'active' : 'inactive' ?>">
                     <?= $user['is_active'] ? 'Aktivní' : 'Blokován / Čeká' ?>
                 </td>
+
+                <!-- Akce -->
                 <td>
                     <?php if ($user['is_active']): ?>
+                        <!-- Aktivní → můžeme blokovat -->
                         <a href="index.php?action=block_user&id=<?= $user['id'] ?>">Blokovat</a>
                     <?php else: ?>
+                        <!-- Neaktivní → můžeme schválit -->
                         <a href="index.php?action=approve_user&id=<?= $user['id'] ?>">Schválit</a>
                     <?php endif; ?>
                 </td>
@@ -57,6 +74,7 @@
         <?php endforeach; ?>
     </table>
 <?php else: ?>
+    <!-- Pokud nejsou žádní uživatelé -->
     <p>Žádní uživatelé k zobrazení.</p>
 <?php endif; ?>
 
