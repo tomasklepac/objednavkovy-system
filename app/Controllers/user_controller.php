@@ -1,14 +1,14 @@
 <?php
-// Natáhneme model User (teď ho moc nepoužíváme, ale máme připravený)
-require_once __DIR__ . '/../Models/User.php';
+// Natáhneme model usermodel (teď ho moc nepoužíváme, ale máme připravený)
+require_once __DIR__ . '/../Models/user_model.php';
 
-class UserController {
+class user_controller {
     private $pdo; // připojení k databázi (PDO objekt)
 
     // -------------------------------------------------
     // KONSTRUKTOR
     // -------------------------------------------------
-    // Vytvoří instanci UserControlleru a uloží připojení k DB
+    // Vytvoří instanci user_controlleru a uloží připojení k DB
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
@@ -49,6 +49,15 @@ class UserController {
         return 'ok';
     }
 
+    public function logout(): void {
+        // Vymažeme session proměnné
+        $_SESSION = [];
+
+        // Ukončíme session úplně
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
+    }
     // -------------------------------------------------
     // REGISTRACE (vytvoření účtu)
     // -------------------------------------------------

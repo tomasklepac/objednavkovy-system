@@ -1,15 +1,15 @@
 <?php
-// Natáhneme model Product, který se stará o komunikaci s tabulkou `products`
-require_once __DIR__ . '/../Models/Product.php';
+// Natáhneme model productmodel, který se stará o komunikaci s tabulkou `products`
+require_once __DIR__ . '/../Models/product_model.php';
 
-class ProductController {
+class product_controller {
     private $pdo;           // PDO objekt – připojení k databázi
-    private $productModel;  // Instance modelu Product
+    private $productModel;  // Instance modelu productmodel
 
     // Konstruktor – spustí se při vytvoření třídy
     public function __construct($pdo) {
         $this->pdo = $pdo;
-        $this->productModel = new Product($pdo);
+        $this->productModel = new product_model($pdo);
     }
 
     // ------------------------------------------------

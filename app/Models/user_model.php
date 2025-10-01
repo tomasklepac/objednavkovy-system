@@ -2,7 +2,7 @@
 // Natáhneme soubor s databázovým připojením
 require_once __DIR__ . '/../../config/db.php';
 
-class User {
+class user_model {
     // -------------------------------------------------
     // Najde uživatele podle emailu
     // -------------------------------------------------

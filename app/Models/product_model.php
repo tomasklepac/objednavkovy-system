@@ -1,6 +1,6 @@
 <?php
 
-class Product {
+class product_model {
     private $pdo; // připojení k databázi
 
     // -------------------------------------------------
