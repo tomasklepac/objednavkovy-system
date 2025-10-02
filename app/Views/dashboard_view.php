@@ -1,3 +1,33 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+        h1, h2 {
+            font-family: Arial, sans-serif;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #0077cc;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        hr {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
 <h1>Vítej, <?= htmlspecialchars($_SESSION['user_name']) ?>!</h1>
 <p>Email: <?= htmlspecialchars($_SESSION['user_email']) ?></p>
 <p>Role: <?= implode(', ', $_SESSION['roles']) ?></p>
@@ -16,7 +46,7 @@
     <h2>Dodavatel</h2>
     <ul>
         <li><a href="index.php?action=my_products">Moje produkty</a></li>
-        <!-- Později přidáme i např. objednávky jejich produktů -->
+        <!-- Později lze doplnit: objednávky jejich produktů -->
     </ul>
 <?php endif; ?>
 
@@ -30,3 +60,6 @@
 <?php endif; ?>
 
 <p><a href="index.php?action=logout">Odhlásit se</a></p>
+
+</body>
+</html>

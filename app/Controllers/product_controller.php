@@ -1,78 +1,127 @@
 <?php
-// Natáhneme model productmodel, který se stará o komunikaci s tabulkou `products`
+
+// Controller pro produkty – zajišťuje CRUD operace a napojení na model.
 require_once __DIR__ . '/../Models/product_model.php';
 
 class product_controller {
-    private $pdo;           // PDO objekt – připojení k databázi
-    private $productModel;  // Instance modelu productmodel
+    /** @var PDO */
+    private $pdo;
 
-    // Konstruktor – spustí se při vytvoření třídy
+    /** @var product_model */
+    private $productModel;
+
+    /**
+     * Konstruktor – při vytvoření controlleru uloží PDO a připraví model.
+     */
     public function __construct($pdo) {
         $this->pdo = $pdo;
         $this->productModel = new product_model($pdo);
     }
 
-    // ------------------------------------------------
-    // READ: načtení všech produktů
-    // ------------------------------------------------
-    public function index() {
-        // Vrátí pole všech produktů z databáze
+    // ================================================================
+    // READ
+    // ================================================================
+
+    /**
+     * Vrátí všechny aktivní produkty (používá model).
+     */
+    public function index(): array {
         return $this->productModel->getAllProducts();
     }
 
-    // ------------------------------------------------
-    // CREATE: vložení nového produktu
-    // ------------------------------------------------
-    public function createProduct($name, $description, $price, $supplierId, $imagePath = null) {
-        // SQL příkaz s placeholders (otazníky) pro bezpečné vkládání dat
+    /**
+     * Vrátí produkt podle ID.
+     */
+    public function getById(int $id): ?array {
+        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = ?");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    /**
+     * Vrátí všechny produkty, které patří konkrétnímu dodavateli.
+     */
+    public function getBySupplierId(int $supplierId): array {
         $stmt = $this->pdo->prepare("
-            INSERT INTO products (name, description, price_cents, supplier_id, image_path, created_at, is_active)
-            VALUES (?, ?, ?, ?, ?, NOW(), 1)
+            SELECT * 
+            FROM products 
+            WHERE is_active = 1 AND supplier_id = ?
+        ");
+        $stmt->execute([$supplierId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ================================================================
+    // CREATE
+    // ================================================================
+
+    /**
+     * Vytvoří nový produkt.
+     */
+    public function createProduct(
+        string $name,
+        string $description,
+        float $price,
+        int $stock,
+        int $supplierId,
+        ?string $imagePath = null
+    ): void {
+        $stmt = $this->pdo->prepare("
+            INSERT INTO products (name, description, price_cents, stock, supplier_id, image_path, created_at, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, NOW(), 1)
         ");
 
-        // Provedeme SQL dotaz s daty od uživatele
         $stmt->execute([
             $name,
             $description,
-            (int)round($price * 100), // cenu uložíme v centech (např. 199.90 Kč → 19990)
+            (int)round($price * 100), // cena ukládána v centech
+            $stock,
             $supplierId,
             $imagePath
         ]);
     }
 
-    // ------------------------------------------------
-    // READ: načtení jednoho produktu podle ID
-    // ------------------------------------------------
-    public function getById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC); // vrátí 1 řádek jako asociativní pole
-    }
+    // ================================================================
+    // UPDATE
+    // ================================================================
 
-    // ------------------------------------------------
-    // DELETE: smazání produktu podle ID
-    // ------------------------------------------------
-    public function deleteProduct($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM products WHERE id = ?");
-        $stmt->execute([$id]);
-    }
-
-    // ------------------------------------------------
-    // UPDATE: úprava existujícího produktu
-    // ------------------------------------------------
-    public function updateProduct($id, $name, $description, $price, $imagePath = null) {
+    /**
+     * Aktualizuje produkt podle ID.
+     */
+    public function updateProduct(
+        int $id,
+        string $name,
+        string $description,
+        float $price,
+        int $stock,
+        ?string $imagePath = null
+    ): void {
         $stmt = $this->pdo->prepare("
             UPDATE products
-            SET name = ?, description = ?, price_cents = ?, image_path = ?
+            SET name = ?, description = ?, price_cents = ?, stock = ?, image_path = ?
             WHERE id = ?
         ");
 
         $stmt->execute([
             $name,
             $description,
-            (int)round($price * 100), // zase ukládáme v centech
+            (int)round($price * 100),
+            $stock,
             $imagePath,
             $id
         ]);
+    }
+
+    // ================================================================
+    // DELETE
+    // ================================================================
+
+    /**
+     * Smaže produkt podle ID.
+     */
+    public function deleteProduct(int $id): void {
+        $stmt = $this->pdo->prepare("DELETE FROM products WHERE id = ?");
+        $stmt->execute([$id]);
     }
 }

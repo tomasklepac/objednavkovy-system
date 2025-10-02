@@ -3,36 +3,36 @@
  * Třída Database
  * ------------------
  * Zajišťuje připojení k databázi pomocí PDO.
- * Používá návrhový vzor "Singleton" – připojení se vytvoří jen jednou
- * a pak se stále používá stejné.
+ * Implementuje návrhový vzor "Singleton" – připojení se vytvoří jen jednou
+ * a všude v aplikaci se používá stejná instance.
  */
 class Database {
-    // Uloží jednu jedinou instanci (singleton)
+    // Jediná instance této třídy (singleton)
     private static $instance = null;
 
     // PDO objekt (samotné připojení k databázi)
     private $pdo;
 
     /**
-     * Konstruktor je private → nelze vytvořit instanci pomocí new zvenku
+     * Konstruktor je private → nelze vytvořit instanci pomocí new zvenku.
+     * Připojí se k databázi a uloží PDO objekt.
      */
     private function __construct() {
         // Přihlašovací údaje k databázi
-        $host = "127.0.0.1";          // databázový server
-        $db   = "objednavkovy_system"; // název databáze
-        $user = "root";               // výchozí uživatel v XAMPP
-        $pass = "";                   // heslo (ve výchozím stavu prázdné)
-        $charset = "utf8mb4";         // správné kódování češtiny a emoji
+        $host    = "127.0.0.1";           // databázový server
+        $db      = "objednavkovy_system"; // název databáze
+        $user    = "root";                // výchozí uživatel v XAMPP
+        $pass    = "";                    // heslo (ve výchozím stavu prázdné)
+        $charset = "utf8mb4";             // správné kódování češtiny a emoji
 
-        // DSN = Data Source Name → string, který PDO použije k připojení
+        // DSN = Data Source Name (řetězec pro PDO)
         $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 
         // Volby pro PDO
         $options = [
             // Chyby se budou házet jako výjimky (lepší pro debug)
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-
-            // Každý fetch vrátí asociativní pole (["id" => 1, "name" => "Tomáš"])
+            // Výsledky se budou vracet jako asociativní pole
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ];
 
@@ -42,13 +42,13 @@ class Database {
 
     /**
      * Statická metoda na získání jediné instance PDO
+     *
+     * @return PDO
      */
     public static function getInstance() {
-        // Pokud ještě instance neexistuje → vytvoříme ji
         if (self::$instance === null) {
             self::$instance = new Database();
         }
-        // Vracíme samotný PDO objekt
         return self::$instance->pdo;
     }
 }

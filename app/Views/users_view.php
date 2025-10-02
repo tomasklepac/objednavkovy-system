@@ -4,21 +4,19 @@
     <meta charset="UTF-8">
     <title>Správa uživatelů</title>
     <style>
-        /* Styl tabulky */
         table {
-            border-collapse: collapse; /* odstraní dvojité čáry mezi buňkami */
-            width: 100%;
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 15px;
         }
         th, td {
-            border: 1px solid black;
-            padding: 6px;
-            text-align: left;
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
         }
         th {
             background-color: #f0f0f0;
         }
-
-        /* Barvy pro stav uživatele */
         .active {
             color: green;
             font-weight: bold;
@@ -27,12 +25,23 @@
             color: red;
             font-weight: bold;
         }
+        a {
+            text-decoration: none;
+            color: #0077cc;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            margin-top: 15px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
+
 <h1>Správa uživatelů</h1>
 
-<!-- Pokud existují uživatelé -->
 <?php if (!empty($users)): ?>
     <table>
         <tr>
@@ -43,41 +52,29 @@
             <th>Akce</th>
         </tr>
 
-        <!-- Smyčka přes všechny uživatele -->
         <?php foreach ($users as $user): ?>
             <tr>
-                <!-- ID -->
                 <td><?= htmlspecialchars($user['id']) ?></td>
-
-                <!-- Email -->
                 <td><?= htmlspecialchars($user['email']) ?></td>
-
-                <!-- Role (řetězec z GROUP_CONCAT) -->
                 <td><?= htmlspecialchars($user['roles']) ?></td>
-
-                <!-- Stav účtu -->
                 <td class="<?= $user['is_active'] ? 'active' : 'inactive' ?>">
                     <?= $user['is_active'] ? 'Aktivní' : 'Blokován / Čeká' ?>
                 </td>
-
-                <!-- Akce -->
                 <td>
                     <?php if ($user['is_active']): ?>
-                        <!-- Aktivní → můžeme blokovat -->
-                        <a href="index.php?action=block_user&id=<?= $user['id'] ?>">Blokovat</a>
+                        <a href="index.php?action=block_user&id=<?= (int)$user['id'] ?>">🚫 Blokovat</a>
                     <?php else: ?>
-                        <!-- Neaktivní → můžeme schválit -->
-                        <a href="index.php?action=approve_user&id=<?= $user['id'] ?>">Schválit</a>
+                        <a href="index.php?action=approve_user&id=<?= (int)$user['id'] ?>">✅ Schválit</a>
                     <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
     </table>
 <?php else: ?>
-    <!-- Pokud nejsou žádní uživatelé -->
     <p>Žádní uživatelé k zobrazení.</p>
 <?php endif; ?>
 
-<p><a href="index.php">Zpět na hlavní stránku</a></p>
+<p class="back-link"><a href="index.php">← Zpět na hlavní stránku</a></p>
+
 </body>
 </html>

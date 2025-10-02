@@ -1,23 +1,35 @@
 <?php
-// Natáhneme soubor s databázovým připojením
+
+// Načteme soubor s databázovým připojením
 require_once __DIR__ . '/../../config/db.php';
 
+/**
+ * Model pro uživatele.
+ * Obsahuje metody pro komunikaci s tabulkou `users`.
+ */
 class user_model {
-    // -------------------------------------------------
-    // Najde uživatele podle emailu
-    // -------------------------------------------------
-    public static function findByEmail($email) {
-        // získáme PDO připojení k databázi
+
+    // ================================================================
+    // READ
+    // ================================================================
+
+    /**
+     * Najde uživatele podle emailu.
+     *
+     * @param string $email Email uživatele
+     * @return array|false Asociativní pole uživatele nebo false, pokud neexistuje
+     */
+    public static function findByEmail(string $email) {
         $pdo = Database::getInstance();
 
-        // připravíme SQL dotaz s placeholderem
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM users
+            WHERE email = ?
+        ");
 
-        // spustíme dotaz a dosadíme hodnotu
         $stmt->execute([$email]);
 
-        // vrátíme nalezeného uživatele jako asociativní pole
-        // nebo false, pokud nebyl nalezen
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

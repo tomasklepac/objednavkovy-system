@@ -76,11 +76,9 @@
         </tr>
     </table>
 
-    <!-- tlačítko pokračovat k objednávce -->
     <p>
         <a href="index.php?action=confirm_order">✅ Pokračovat k potvrzení objednávky</a>
     </p>
-
 <?php else: ?>
     <p>Tvůj košík je prázdný.</p>
 <?php endif; ?>

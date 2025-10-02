@@ -37,6 +37,8 @@
         .cancel {
             background-color: #f44336;
             color: white;
+            text-decoration: none;
+            display: inline-block;
         }
     </style>
 </head>
@@ -45,16 +47,20 @@
 <h1>Potvrzení objednávky</h1>
 
 <form method="post">
-    <label>Adresa doručení:</label>
-    <textarea name="address" rows="3" required></textarea>
+    <label for="street">Ulice a č.p.:</label>
+    <input type="text" id="street" name="street" required>
 
-    <label>Poznámka (nepovinné):</label>
-    <textarea name="note" rows="2"></textarea>
+    <label for="city">Město:</label>
+    <input type="text" id="city" name="city" required>
+
+    <label for="zip">PSČ:</label>
+    <input type="text" id="zip" name="zip" pattern="\d{5}" title="Zadej 5 číslic" required>
+
+    <label for="note">Poznámka (nepovinné):</label>
+    <textarea id="note" name="note" rows="2"></textarea>
 
     <button type="submit" class="confirm">✅ Potvrdit objednávku</button>
-    <a href="index.php?action=view_cart">
-        <button type="button" class="cancel">❌ Zpět do košíku</button>
-    </a>
+    <a href="index.php?action=view_cart" class="cancel">❌ Zpět do košíku</a>
 </form>
 
 </body>

@@ -1,24 +1,40 @@
 <?php
 
+/**
+ * Model pro produkty.
+ * Obsahuje metody pro komunikaci s tabulkou `products` v databázi.
+ */
 class product_model {
-    private $pdo; // připojení k databázi
+    /** @var PDO */
+    private $pdo; // Připojení k databázi
 
-    // -------------------------------------------------
+    // ================================================================
     // KONSTRUKTOR
-    // -------------------------------------------------
-    // Dostane PDO objekt a uloží ho do proměnné třídy
-    public function __construct($pdo) {
+    // ================================================================
+
+    /**
+     * Vytvoří instanci modelu a uloží PDO připojení.
+     */
+    public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
     }
 
-    // -------------------------------------------------
-    // READ: načte všechny aktivní produkty
-    // -------------------------------------------------
-    public function getAllProducts() {
-        // pošleme dotaz do databáze
-        $stmt = $this->pdo->query("SELECT * FROM products WHERE is_active = 1");
+    // ================================================================
+    // READ
+    // ================================================================
 
-        // vrátíme všechny výsledky jako pole asociativních polí
+    /**
+     * Vrátí všechny aktivní produkty (is_active = 1).
+     *
+     * @return array[] Seznam produktů jako asociativní pole
+     */
+    public function getAllProducts(): array {
+        $stmt = $this->pdo->query("
+            SELECT *
+            FROM products
+            WHERE is_active = 1
+        ");
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

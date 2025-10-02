@@ -1,95 +1,115 @@
 <?php
-// Natáhneme model usermodel (teď ho moc nepoužíváme, ale máme připravený)
+
+// Controller pro uživatele – zajišťuje registraci, login/logout, správu uživatelů a role.
 require_once __DIR__ . '/../Models/user_model.php';
 
 class user_controller {
-    private $pdo; // připojení k databázi (PDO objekt)
+    /** @var PDO */
+    private $pdo; // Připojení k databázi
 
-    // -------------------------------------------------
+    // ================================================================
     // KONSTRUKTOR
-    // -------------------------------------------------
-    // Vytvoří instanci user_controlleru a uloží připojení k DB
+    // ================================================================
+
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
 
-    // -------------------------------------------------
-    // LOGIN (přihlášení uživatele)
-    // -------------------------------------------------
-    // Vrací:
-    //   'ok'        = přihlášení proběhlo
-    //   'inactive'  = účet ještě není schválen (dodavatel)
-    //   'invalid'   = špatný email nebo heslo
-    public function login($email, $password) {
-        // 1. najdeme uživatele podle emailu
+    // ================================================================
+    // LOGIN / LOGOUT
+    // ================================================================
+
+    /**
+     * Přihlásí uživatele podle emailu a hesla.
+     *
+     * Návratové hodnoty:
+     * - 'ok'        = přihlášení proběhlo
+     * - 'inactive'  = účet není aktivní (dodavatel čekající na schválení)
+     * - 'invalid'   = špatný email nebo heslo
+     */
+    public function login(string $email, string $password): string {
+        // Najdeme uživatele podle emailu
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
-        $user = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$user) {
             return 'invalid'; // email není v DB
         }
 
-        // 2. kontrola aktivace účtu
+        // Účet musí být aktivní
         if ((int)$user['is_active'] !== 1) {
             return 'inactive';
         }
 
-        // 3. kontrola hesla – ověříme proti hashovanému heslu v DB
+        // Ověření hesla proti hashovanému heslu v DB
         if (!password_verify($password, $user['password_hash'])) {
             return 'invalid';
         }
 
-        // 4. uložíme údaje do session (uživatel je přihlášen)
-        $_SESSION['user_id'] = $user['id'];
+        // Uložení údajů do session
+        $_SESSION['user_id']    = $user['id'];
         $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['roles'] = $this->fetchRoles($user['id']);
+        $_SESSION['user_name']  = $user['name'];
+        $_SESSION['roles']      = $this->fetchRoles($user['id']);
 
         return 'ok';
     }
 
+    /**
+     * Odhlášení uživatele – smaže session a ukončí relaci.
+     */
     public function logout(): void {
-        // Vymažeme session proměnné
         $_SESSION = [];
 
-        // Ukončíme session úplně
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
     }
-    // -------------------------------------------------
-    // REGISTRACE (vytvoření účtu)
-    // -------------------------------------------------
-    // Vrací:
-    //   'registered_active'   = zákazník → hned aktivní
-    //   'registered_inactive' = dodavatel → čeká na schválení
-    //   text                  = chybová hláška
-    public function register($email, $password, $passwordConfirm, $role, $name) {
-        // 1. hesla se musí shodovat
+
+    // ================================================================
+    // REGISTRACE
+    // ================================================================
+
+    /**
+     * Registrace nového uživatele.
+     *
+     * Návratové hodnoty:
+     * - 'registered_active'   = zákazník → ihned aktivní
+     * - 'registered_inactive' = dodavatel → čeká na schválení
+     * - string                = chybová hláška
+     */
+    public function register(
+        string $email,
+        string $password,
+        string $passwordConfirm,
+        string $role,
+        string $name
+    ): string {
+        // Hesla se musí shodovat
         if ($password !== $passwordConfirm) {
             return "Hesla se neshodují!";
         }
 
-        // 2. povolíme jen role customer / supplier
+        // Povoleny jen role customer / supplier
         if (!in_array($role, ['customer', 'supplier'], true)) {
             return "Neplatná role.";
         }
 
-        // 3. kontrola duplicity emailu
+        // Kontrola duplicity emailu
         $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->execute([$email]);
         if ($stmt->fetchColumn() > 0) {
             return "Uživatel s tímto emailem už existuje!";
         }
 
-        // 4. zahashujeme heslo (bezpečné uložení)
+        // Hash hesla
         $hash = password_hash($password, PASSWORD_BCRYPT);
 
-        // 5. nastavení aktivace
+        // Aktivní = customer, neaktivní = supplier
         $isActive = ($role === 'customer') ? 1 : 0;
 
-        // 6. vložíme uživatele do DB
+        // Vložení uživatele
         $stmt = $this->pdo->prepare("
             INSERT INTO users (email, password_hash, name, is_active)
             VALUES (?, ?, ?, ?)
@@ -97,7 +117,7 @@ class user_controller {
         $stmt->execute([$email, $hash, $name, $isActive]);
         $userId = $this->pdo->lastInsertId();
 
-        // 7. přiřazení role
+        // Přiřazení role
         $roleStmt = $this->pdo->prepare("
             INSERT INTO user_role (user_id, role_id)
             SELECT ?, id FROM roles WHERE code = ?
@@ -107,10 +127,14 @@ class user_controller {
         return $isActive === 1 ? 'registered_active' : 'registered_inactive';
     }
 
-    // -------------------------------------------------
-    // ADMIN: seznam všech uživatelů
-    // -------------------------------------------------
-    public function getAllUsers() {
+    // ================================================================
+    // ADMIN: SPRÁVA UŽIVATELŮ
+    // ================================================================
+
+    /**
+     * Vrátí seznam všech uživatelů včetně jejich rolí.
+     */
+    public function getAllUsers(): array {
         $stmt = $this->pdo->query("
             SELECT u.id, u.email, u.is_active, GROUP_CONCAT(r.code) as roles
             FROM users u
@@ -121,26 +145,30 @@ class user_controller {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // -------------------------------------------------
-    // ADMIN: schválí uživatele (aktivuje účet)
-    // -------------------------------------------------
-    public function approveUser($userId) {
+    /**
+     * Aktivuje uživatele (schválení účtu adminem).
+     */
+    public function approveUser(int $userId): void {
         $stmt = $this->pdo->prepare("UPDATE users SET is_active = 1 WHERE id = ?");
         $stmt->execute([$userId]);
     }
 
-    // -------------------------------------------------
-    // ADMIN: zablokuje uživatele (deaktivuje účet)
-    // -------------------------------------------------
-    public function blockUser($userId) {
+    /**
+     * Deaktivuje uživatele (zablokování účtu adminem).
+     */
+    public function blockUser(int $userId): void {
         $stmt = $this->pdo->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
         $stmt->execute([$userId]);
     }
 
-    // -------------------------------------------------
-    // PRIVATE: načte role jednoho uživatele
-    // -------------------------------------------------
-    private function fetchRoles($userId) {
+    // ================================================================
+    // PRIVATE
+    // ================================================================
+
+    /**
+     * Vrátí pole rolí (např. ['customer', 'supplier']) pro konkrétního uživatele.
+     */
+    private function fetchRoles(int $userId): array {
         $roleStmt = $this->pdo->prepare("
             SELECT r.code
             FROM roles r

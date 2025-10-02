@@ -4,9 +4,38 @@
     <meta charset="UTF-8">
     <title>Správa objednávek</title>
     <style>
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid black; padding: 6px; }
-        th { background-color: #f0f0f0; }
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .status-finished {
+            color: green;
+            font-weight: bold;
+        }
+        .status-canceled {
+            color: red;
+            font-weight: bold;
+        }
+        .back-link {
+            margin-top: 15px;
+            display: inline-block;
+        }
+        a {
+            text-decoration: none;
+            color: #0077cc;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -17,11 +46,12 @@
     <table>
         <tr>
             <th>ID</th>
-            <th>Zákazník</th>
             <th>Stav</th>
             <th>Celkem</th>
             <th>Datum</th>
+            <th>Detail</th>
             <?php if (in_array('admin', $_SESSION['roles'], true)): ?>
+                <th>Zákazník</th>
                 <th>Akce</th>
             <?php endif; ?>
         </tr>
@@ -29,15 +59,28 @@
         <?php foreach ($orders as $order): ?>
             <tr>
                 <td><?= htmlspecialchars($order['id']) ?></td>
-                <td><?= htmlspecialchars($order['customer_name'] ?? $_SESSION['user_name']) ?></td>
                 <td><?= htmlspecialchars($order['status']) ?></td>
                 <td><?= number_format($order['total_cents'] / 100, 2, ',', ' ') ?> Kč</td>
                 <td><?= htmlspecialchars($order['created_at']) ?></td>
+                <td>
+                    <a href="index.php?action=order_detail&id=<?= (int)$order['id'] ?>">🔍 Detail</a>
+                </td>
 
                 <?php if (in_array('admin', $_SESSION['roles'], true)): ?>
+                    <td><?= htmlspecialchars($order['customer_name']) ?></td>
                     <td>
-                        <a href="index.php?action=update_order&id=<?= $order['id'] ?>&status=confirmed">✅ Potvrdit</a> |
-                        <a href="index.php?action=update_order&id=<?= $order['id'] ?>&status=canceled">❌ Zrušit</a>
+                        <?php if ($order['status'] === 'pending'): ?>
+                            <a href="index.php?action=confirm_admin_order&id=<?= (int)$order['id'] ?>">✅ Potvrdit</a> |
+                            <a href="index.php?action=update_order&id=<?= (int)$order['id'] ?>&status=canceled">❌ Zrušit</a>
+                        <?php elseif ($order['status'] === 'confirmed'): ?>
+                            <a href="index.php?action=update_order&id=<?= (int)$order['id'] ?>&status=shipped">📦 Odeslat</a>
+                        <?php elseif ($order['status'] === 'shipped'): ?>
+                            <a href="index.php?action=update_order&id=<?= (int)$order['id'] ?>&status=delivered">📬 Doručeno</a>
+                        <?php elseif ($order['status'] === 'delivered'): ?>
+                            <span class="status-finished">✔ Ukončeno</span>
+                        <?php elseif ($order['status'] === 'canceled'): ?>
+                            <span class="status-canceled">❌ Zrušeno</span>
+                        <?php endif; ?>
                     </td>
                 <?php endif; ?>
             </tr>
@@ -47,6 +90,7 @@
     <p>Žádné objednávky k zobrazení.</p>
 <?php endif; ?>
 
-<p><a href="index.php">← Zpět na hlavní stránku</a></p>
+<p class="back-link"><a href="index.php">← Zpět na hlavní stránku</a></p>
+
 </body>
 </html>

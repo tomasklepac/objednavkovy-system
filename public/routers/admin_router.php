@@ -1,44 +1,46 @@
 <?php
-// Tento router zpracovává akce správy uživatelů pro admina
+// -------------------------------------------------
+// Router: správa uživatelů (admin)
+// -------------------------------------------------
 
 require_once __DIR__ . '/../../app/Controllers/user_controller.php';
 
 $pdo = Database::getInstance();
-$userController = new User_Controller($pdo);
+$userController = new user_controller($pdo);
 
-// Získání požadované akce
+// Získání akce z parametru
 $action = $_GET['action'] ?? null;
 
-// Zajištění, že uživatel je přihlášen a je admin
-if (!isset($_SESSION['user_id']) || !in_array('admin', $_SESSION['roles'])) {
+// Kontrola oprávnění: jen přihlášený admin
+if (!isset($_SESSION['user_id']) || !in_array('admin', $_SESSION['roles'], true)) {
     echo "Přístup zamítnut.";
     exit;
 }
 
 switch ($action) {
     case 'users':
-        // Zobrazit všechny uživatele
+        // Výpis všech uživatelů
         $users = $userController->getAllUsers();
         require __DIR__ . '/../../app/Views/users_view.php';
         break;
 
     case 'approve_user':
-        // Schválení dodavatele (např. approve_user?id=5)
-        if (isset($_GET['id'])) {
-            $userController->approveUser($_GET['id']);
+        // Schválení uživatele (aktivace účtu)
+        if (!empty($_GET['id'])) {
+            $userController->approveUser((int)$_GET['id']);
         }
         header("Location: index.php?action=users");
         exit;
 
     case 'block_user':
-        // Zablokování uživatele (např. block_user?id=3)
-        if (isset($_GET['id'])) {
-            $userController->blockUser($_GET['id']);
+        // Blokování uživatele (deaktivace účtu)
+        if (!empty($_GET['id'])) {
+            $userController->blockUser((int)$_GET['id']);
         }
         header("Location: index.php?action=users");
         exit;
 
     default:
-        echo "Neznámá akce admina.";
+        echo "Neznámá akce správy uživatelů.";
         break;
 }

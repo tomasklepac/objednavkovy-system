@@ -1,33 +1,58 @@
 <?php
-$action = $_GET['action'] ?? null;
+// public/routers/product_router.php
+// ----------------------------------------------
+// Router pro správu produktů
+// Dodavatel + Admin: CRUD operace
+// Zákazník: jen prohlížení
+// ----------------------------------------------
 
 require_once __DIR__ . '/../../app/Controllers/product_controller.php';
+require_once __DIR__ . '/../../config/db.php';
 
-$productController = new productcontroller(Database::getInstance());
+$productController = new product_controller(Database::getInstance());
+
+// Akce z URL
+$action = $_GET['action'] ?? null;
 
 switch ($action) {
+
+    // ------------------------------------------------
+    // 1. Přidání produktu (supplier / admin)
+    // ------------------------------------------------
     case 'add_product':
-        if (!in_array('supplier', $_SESSION['roles']) && !in_array('admin', $_SESSION['roles'])) {
+        if (!in_array('supplier', $_SESSION['roles'] ?? [])
+            && !in_array('admin', $_SESSION['roles'] ?? [])) {
             echo "<p style='color:red'>Nemáš oprávnění přidávat produkty.</p>";
             break;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = trim($_POST['name'] ?? '');
+            $name        = trim($_POST['name'] ?? '');
             $description = trim($_POST['description'] ?? '');
-            $price = (float)($_POST['price'] ?? 0);
+            $price       = (float)($_POST['price'] ?? 0);
+            $stock       = (int)($_POST['stock'] ?? 0);
 
-            $productController->createProduct($name, $description, $price, $_SESSION['user_id'], null);
+            $productController->createProduct(
+                $name,
+                $description,
+                $price,
+                $stock,
+                $_SESSION['user_id'], // supplier_id
+                null // image_path
+            );
 
-            echo "<p style='color:green'>Produkt byl přidán!</p>";
-            echo "<p><a href='index.php'>Zpět na produkty</a></p>";
+            echo "<p style='color:green'>✅ Produkt byl přidán!</p>";
+            echo "<p><a href='index.php?action=products'>← Zpět na produkty</a></p>";
         } else {
-            require __DIR__ . '/../app/Views/add_product_view.php';
+            require __DIR__ . '/../../app/Views/add_product_view.php';
         }
         break;
 
+    // ------------------------------------------------
+    // 2. Úprava produktu (jen owner nebo admin)
+    // ------------------------------------------------
     case 'edit_product':
-        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $id      = (int)($_GET['id'] ?? 0);
         $product = $productController->getById($id);
 
         if (!$product) {
@@ -37,7 +62,7 @@ switch ($action) {
         }
 
         $isOwner = ((int)$product['supplier_id'] === (int)$_SESSION['user_id']);
-        $isAdmin = in_array('admin', $_SESSION['roles'], true);
+        $isAdmin = in_array('admin', $_SESSION['roles'] ?? [], true);
 
         if (!$isOwner && !$isAdmin) {
             http_response_code(403);
@@ -46,21 +71,32 @@ switch ($action) {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = trim($_POST['name'] ?? '');
+            $name        = trim($_POST['name'] ?? '');
             $description = trim($_POST['description'] ?? '');
-            $price = (float)($_POST['price'] ?? 0);
+            $price       = (float)($_POST['price'] ?? 0);
+            $stock       = (int)($_POST['stock'] ?? 0);
 
-            $productController->updateProduct($id, $name, $description, $price, $product['image_path']);
+            $productController->updateProduct(
+                $id,
+                $name,
+                $description,
+                $price,
+                $stock,
+                $product['image_path']
+            );
 
-            echo "<p style='color:green'>Produkt byl upraven!</p>";
-            echo "<p><a href='index.php'>Zpět na produkty</a></p>";
+            echo "<p style='color:green'>✅ Produkt byl upraven!</p>";
+            echo "<p><a href='index.php?action=my_products'>← Zpět na moje produkty</a></p>";
         } else {
             require __DIR__ . '/../../app/Views/edit_product_view.php';
         }
         break;
 
+    // ------------------------------------------------
+    // 3. Smazání produktu (jen owner nebo admin)
+    // ------------------------------------------------
     case 'delete_product':
-        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $id      = (int)($_GET['id'] ?? 0);
         $product = $productController->getById($id);
 
         if (!$product) {
@@ -70,7 +106,7 @@ switch ($action) {
         }
 
         $isOwner = ((int)$product['supplier_id'] === (int)$_SESSION['user_id']);
-        $isAdmin = in_array('admin', $_SESSION['roles'], true);
+        $isAdmin = in_array('admin', $_SESSION['roles'] ?? [], true);
 
         if (!$isOwner && !$isAdmin) {
             http_response_code(403);
@@ -79,16 +115,21 @@ switch ($action) {
         }
 
         $productController->deleteProduct($id);
-        header("Location: index.php");
+        header("Location: index.php?action=my_products");
         exit;
 
+    // ------------------------------------------------
+    // 4. Produkty aktuálního dodavatele
+    // ------------------------------------------------
     case 'my_products':
         $products = $productController->getBySupplierId($_SESSION['user_id']);
-        require __DIR__ . '/../../app/Views/my_products.php';
+        require __DIR__ . '/../../app/Views/my_products_view.php';
         break;
 
+    // ------------------------------------------------
+    // 5. Výpis všech produktů
+    // ------------------------------------------------
     default:
-        // Výpis všech produktů
         $products = $productController->index();
         require __DIR__ . '/../../app/Views/products_view.php';
         break;
