@@ -32,13 +32,23 @@ switch ($action) {
             $price       = (float)($_POST['price'] ?? 0);
             $stock       = (int)($_POST['stock'] ?? 0);
 
+            // Upload obrázku
+            $imagePath = null;
+            if (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+                try {
+                    $imagePath = $productController->handleImageUpload($_FILES['image']);
+                } catch (RuntimeException $e) {
+                    echo "<p style='color:red'>" . htmlspecialchars($e->getMessage()) . "</p>";
+                }
+            }
+
             $productController->createProduct(
                 $name,
                 $description,
                 $price,
                 $stock,
                 $_SESSION['user_id'], // supplier_id
-                null // image_path
+                $imagePath
             );
 
             echo "<p style='color:green'>✅ Produkt byl přidán!</p>";
@@ -52,7 +62,7 @@ switch ($action) {
     // 2. Úprava produktu (jen owner nebo admin)
     // ------------------------------------------------
     case 'edit_product':
-        $id      = (int)($_GET['id'] ?? 0);
+        $id = (int)($_GET['id'] ?? 0);
         $product = $productController->getById($id);
 
         if (!$product) {
@@ -71,10 +81,22 @@ switch ($action) {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name        = trim($_POST['name'] ?? '');
+            $name = trim($_POST['name'] ?? '');
             $description = trim($_POST['description'] ?? '');
-            $price       = (float)($_POST['price'] ?? 0);
-            $stock       = (int)($_POST['stock'] ?? 0);
+            $price = (float)($_POST['price'] ?? 0);
+            $stock = (int)($_POST['stock'] ?? 0);
+
+            // Ponecháme původní obrázek
+            $imagePath = $product['image_path'] ?? null;
+
+            // Pokud byl nahrán nový soubor → přepíšeme
+            if (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+                try {
+                    $imagePath = $productController->handleImageUpload($_FILES['image']);
+                } catch (RuntimeException $e) {
+                    echo "<p style='color:red'>" . htmlspecialchars($e->getMessage()) . "</p>";
+                }
+            }
 
             $productController->updateProduct(
                 $id,
@@ -82,11 +104,13 @@ switch ($action) {
                 $description,
                 $price,
                 $stock,
-                $product['image_path']
+                $imagePath
             );
 
             echo "<p style='color:green'>✅ Produkt byl upraven!</p>";
+            echo "<p><a href='index.php'>← Zpět na dashboard</a></p>";
             echo "<p><a href='index.php?action=my_products'>← Zpět na moje produkty</a></p>";
+
         } else {
             require __DIR__ . '/../../app/Views/edit_product_view.php';
         }

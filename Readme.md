@@ -1,106 +1,56 @@
-# Objednávkový systém (KIV/WEB – semestrální projekt)
-
-## Popis
-Webová aplikace pro správu objednávek a produktů s podporou více rolí uživatelů (**admin, dodavatel, zákazník**).  
-Projekt je napsán v čistém **PHP 8.2+**, bez frameworku, s využitím principů **MVC architektury** a **OOP přístupu**.  
-Data jsou ukládána do databáze **MySQL/MariaDB** pomocí PDO.
+**MVC v kostce**
+- **Controllers**: zpracují request, sáhnou do modelu a vyberou správné view
+- **Models**: komunikace s databází přes PDO (CRUD operace pro uživatele, produkty, objednávky)
+- **Views**: HTML šablony s Bootstrap 5 + vlastní CSS (`app.css`), oddělené do `partials/header.php` a `partials/footer.php`
 
 ---
 
-## Funkcionalita
+## Funkce
 
-### Autentizace a role
-- **Registrace a přihlášení uživatelů**
-    - hesla jsou ukládána hashovaně pomocí `password_hash` (bcrypt),
-    - zákazník se aktivuje okamžitě, dodavatel čeká na schválení adminem.
-- **Role uživatelů**:
-    - **Admin** – spravuje uživatele, vidí všechny produkty a objednávky, může měnit stavy objednávek.
-    - **Dodavatel** – spravuje své produkty, vidí objednávky obsahující jeho položky.
-    - **Zákazník** – prohlíží produkty, spravuje košík a vytváří objednávky.
-- **Logout** – kompletně ukončí session.
-
-### Produkty
-- Dodavatel i admin mohou **přidávat, mazat a upravovat** produkty.
-- Každý produkt obsahuje:
-    - název,
-    - popis,
-    - cenu (v centech, zobrazovanou v Kč),
-    - počet kusů skladem,
-    - vlastníka (dodavatele).
-- **Validace skladu**:
-    - zákazník nemůže přidat do košíku vyprodaný produkt,
-    - nelze přidat více kusů, než je dostupné,
-    - dodavatel může kdykoliv upravit počet kusů skladem.
-- Zobrazení produktů:
-    - všichni přihlášení vidí seznam produktů,
-    - admin/dodavatel vidí tlačítka pro úpravu/smazání,
-    - zákazník tlačítko „Přidat do košíku“.
-
-### Košík
-- Přístupný pouze přihlášeným uživatelům.
-- Funkce:
-    - přidání produktu do košíku,
-    - změna množství (zvýšení/snížení),
-    - odebrání celého produktu z košíku,
-    - výpočet celkové ceny.
-- Po potvrzení → přesměrování na formulář s adresou a vytvoření objednávky.
-
-### Objednávky
-- **Zákazník**:
-    - vytváří objednávky z košíku,
-    - vidí seznam svých objednávek a jejich stav,
-    - detail objednávky se seznamem položek.
-- **Admin**:
-    - vidí všechny objednávky,
-    - potvrzuje objednávky (odečtení kusů ze skladu),
-    - mění stav (`pending → confirmed → shipped → delivered`),
-    - může objednávku zrušit.
-- **Dodavatel**:
-    - vidí jen objednávky obsahující jeho produkty,
-    - v detailu objednávky vidí pouze své položky + zákazníka.
+- **Autentizace**: registrace (s rolí zákazník / dodavatel), přihlášení, odhlášení
+- **Role**:
+    - **Admin** – správa uživatelů (nelze blokovat adminy), správa produktů, přehled a správa všech objednávek
+    - **Dodavatel** – vlastní produkty (CRUD), přehled objednávek obsahujících jeho položky
+    - **Zákazník** – prohlížení produktů, přidávání do košíku, potvrzení objednávky a sledování stavu objednávek
+- **Produkty**: přidání, úprava, smazání, možnost nahrát obrázek produktu (volitelné)
+- **Košík**: přidání/odebrání položek, změna množství, zobrazení celkové ceny
+- **Objednávky**: vytvoření z košíku, změna stavů (pending → confirmed → shipped → delivered / canceled), admin potvrzuje objednávky zákazníků
+- **Bezpečnost**: PDO (ochrana proti SQL injection), `htmlspecialchars` (ochrana proti XSS), hesla ukládána přes `password_hash()` (bcrypt)
+- **Responzivní UI**: Bootstrap 5 + minimalistické vlastní CSS (`public/css/app.css`)
 
 ---
 
-## Architektura projektu
+## Důležité URL / akce
 
-- **index.php** – hlavní router, který přesměrovává na dílčí routery podle `?action=...`.
-- **Routers** (adresář `public/routers/`):
-    - `auth_router.php` – login, logout, registrace,
-    - `admin_router.php` – správa uživatelů,
-    - `product_router.php` – CRUD operace s produkty,
-    - `cart_router.php` – logika košíku,
-    - `order_router.php` – tvorba a správa objednávek,
-    - `dashboard_router.php` – úvodní přehled a produkty.
-- **Controllers** – business logika (`user_controller`, `product_controller`, `order_controller`).
-- **Models** – komunikace s DB (`user_model`, `product_model`).
-- **Views** – šablony pro jednotlivé stránky (login, registrace, produkty, košík, objednávky, dashboard, správa uživatelů atd.).
-- **config/db.php** – připojení k databázi (Singleton, PDO).
+- `index.php?action=login` – přihlášení
+- `index.php?action=register` – registrace (zákazník/dodavatel)
+- `index.php?action=users` – správa uživatelů (admin)
+- `index.php?action=products` – seznam všech produktů
+- `index.php?action=my_products` – produkty aktuálního dodavatele
+- `index.php?action=add_product` / `edit_product&id=...` / `delete_product&id=...` – správa produktů
+- `index.php?action=view_cart` – košík
+- `index.php?action=confirm_order` – potvrzení objednávky
+- `index.php?action=orders` – seznam objednávek (role záleží na uživateli)
+- `index.php?action=supplier_orders` / `supplier_order_detail&id=...` – objednávky mých položek (dodavatel)
 
----
-
-## Požadavky
-- PHP **8.2+**
-- MySQL / MariaDB
-- Webserver (např. Apache přes XAMPP / LAMP)
-- Povolené sessions
+> **Poznámka**: Header a footer jsou řešené jako sdílené partialy. Na stránce má být vždy jen jedno view, jinak se footer zobrazí dvakrát.
 
 ---
 
-## Spuštění projektu
-1. Naklonuj repozitář:
-   ```bash
-   git clone <repo_url>
-   ```
-2. Vytvoř databázi `objednavkovy_system` a importuj schéma (soubor `schema.sql`).
-3. Nastav připojení v `config/db.php` podle svého prostředí (host, user, heslo).
-4. Spusť projekt přes webserver (např. `http://localhost/objednavkovy-system/public`).
-5. Registruj uživatele a přihlaš se.
+## Nahrávání obrázků
 
----
+- Obrázky jsou volitelné při přidávání / úpravě produktu
+- Formuláře `add_product` / `edit_product` používají `enctype="multipart/form-data"`
+- Obrázky se ukládají do složky `public/uploads/` (musí být zapisovatelná)
+- Do databáze se ukládá relativní cesta `uploads/<soubor>`
+- Povolené typy: `image/jpeg`, `image/png`, `image/webp`
+- Limit velikosti: **2 MB** (lze změnit v `product_controller::handleImageUpload()`)
 
-## Další kroky
-- Přidat **design/šablonu** (CSS, responzivita).
-- Vylepšit UX (bootstrap, validace formulářů, chybové hlášky).
-- Přidat upload obrázků k produktům.
-- Logování akcí (např. změny stavu objednávek).
-- Možnost exportu objednávek.
+```php
+// product_controller.php (výřez)
+private function handleImageUpload(array $file): ?string {
+    if ($file['error'] === UPLOAD_ERR_NO_FILE) return null;
+    if ($file['size'] > 2 * 1024 * 1024) throw new RuntimeException("Soubor je příliš velký (max 2 MB).");
+    // ...
+    return 'uploads/' . $filename;
+}

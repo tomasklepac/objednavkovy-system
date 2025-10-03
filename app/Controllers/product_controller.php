@@ -124,4 +124,49 @@ class product_controller {
         $stmt = $this->pdo->prepare("DELETE FROM products WHERE id = ?");
         $stmt->execute([$id]);
     }
+
+    // ================================================================
+    // IMAGE UPLOAD
+    // ================================================================
+    /**
+     * stara se o upload obrazku.
+     */
+    public function handleImageUpload(array $file): ?string {
+        if ($file['error'] === UPLOAD_ERR_NO_FILE) {
+            return null; // žádný soubor nebyl vybrán
+        }
+
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new RuntimeException("Chyba při nahrávání souboru.");
+        }
+
+        // Kontrola velikosti (max 2 MB)
+        if ($file['size'] > 2 * 1024 * 1024) {
+            throw new RuntimeException("Soubor je příliš velký (max 2 MB).");
+        }
+
+        // Povolené typy
+        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        $mime = mime_content_type($file['tmp_name']);
+        if (!isset($allowed[$mime])) {
+            throw new RuntimeException("Nepodporovaný typ souboru.");
+        }
+
+        // Cílová složka
+        $uploadDir = __DIR__ . '/../../public/uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        // Unikátní název
+        $filename = uniqid('prod_', true) . '.' . $allowed[$mime];
+        $targetPath = $uploadDir . $filename;
+
+        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+            throw new RuntimeException("Nepodařilo se uložit soubor.");
+        }
+
+        // Vrátí cestu, kterou uložíme do DB
+        return 'uploads/' . $filename;
+    }
 }

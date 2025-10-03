@@ -1,0 +1,70 @@
+/* =======================
+   Globální styly
+   ======================= */
+body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background-color: #f9fafb; /* jemný šedý podklad */
+    color: #333;
+}
+
+/* Nadpisy */
+h1, h2, h3 {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Odkazy */
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* =======================
+   Tlačítka
+   ======================= */
+.btn-primary {
+    background-color: #6f42c1; /* fialová */
+    border-color: #6f42c1;
+}
+.btn-primary:hover {
+    background-color: #5a379e;
+    border-color: #5a379e;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* =======================
+   Tabulky
+   ======================= */
+.table th {
+    background-color: #e9ecef;
+    font-weight: 600;
+}
+.table td, .table th {
+    vertical-align: middle;
+}
+
+/* =======================
+   Layout a Footer
+   ======================= */
+main {
+    padding-bottom: 40px; /* aby se footer nelepil */
+}
+
+footer {
+    margin-top: 40px;
+    padding: 10px;
+    text-align: center;
+    color: #777;
+    border-top: 1px solid #ddd;
+    font-size: 0.9rem;
+}

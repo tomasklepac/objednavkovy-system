@@ -1,40 +1,53 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <title>Upravit produkt</title>
-</head>
-<body>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
-<h1>Upravit produkt</h1>
+<h1 class="h3 mb-3">Upravit produkt</h1>
 
-<form method="post">
+<form method="post" action="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" enctype="multipart/form-data" class="card p-3">
     <!-- Název produktu -->
-    <label for="name">Název:</label><br>
-    <input type="text" id="name" name="name"
-           value="<?= htmlspecialchars($product['name']) ?>"
-           required><br><br>
+    <div class="mb-3">
+        <label for="name" class="form-label">Název:</label>
+        <input type="text" id="name" name="name"
+               value="<?= htmlspecialchars($product['name']) ?>"
+               class="form-control" required>
+    </div>
 
     <!-- Popis produktu -->
-    <label for="description">Popis:</label><br>
-    <textarea id="description" name="description" rows="4" cols="40"><?= htmlspecialchars($product['description']) ?></textarea><br><br>
+    <div class="mb-3">
+        <label for="description" class="form-label">Popis:</label>
+        <textarea id="description" name="description" rows="4" class="form-control"><?= htmlspecialchars($product['description']) ?></textarea>
+    </div>
 
     <!-- Cena produktu v Kč -->
-    <label for="price">Cena (Kč):</label><br>
-    <input type="number" id="price" name="price" step="0.01"
-           value="<?= number_format($product['price_cents'] / 100, 2, '.', '') ?>"
-           required><br><br>
+    <div class="mb-3">
+        <label for="price" class="form-label">Cena (Kč):</label>
+        <input type="number" id="price" name="price" step="0.01"
+               value="<?= number_format($product['price_cents'] / 100, 2, '.', '') ?>"
+               class="form-control" required>
+    </div>
 
     <!-- Počet kusů skladem -->
-    <label for="stock">Skladem (ks):</label><br>
-    <input type="number" id="stock" name="stock" min="0"
-           value="<?= (int)$product['stock'] ?>"
-           required><br><br>
+    <div class="mb-3">
+        <label for="stock" class="form-label">Skladem (ks):</label>
+        <input type="number" id="stock" name="stock" min="0"
+               value="<?= (int)$product['stock'] ?>"
+               class="form-control" required>
+    </div>
 
-    <button type="submit">💾 Uložit změny</button>
+    <!-- Obrázek produktu -->
+    <div class="mb-3">
+        <label for="image" class="form-label">Obrázek produktu:</label>
+        <input type="file" id="image" name="image" class="form-control" accept="image/*">
+
+        <?php if (!empty($product['image_path'])): ?>
+            <div class="mt-2">
+                <p>Aktuální obrázek:</p>
+                <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="Produkt" style="max-width:150px; height:auto;">
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Uložit změny</button>
+    <a href="index.php?action=products" class="btn btn-secondary">← Zpět na produkty</a>
 </form>
 
-<p><a href="index.php?action=products">← Zpět na produkty</a></p>
-
-</body>
-</html>
+<?php require __DIR__ . '/partials/footer.php'; ?>

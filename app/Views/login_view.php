@@ -1,66 +1,29 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <title>Přihlášení</title>
-    <style>
-        form {
-            width: 300px;
-            margin: 20px auto;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background: #f9f9f9;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        input {
-            width: 100%;
-            padding: 6px;
-            margin-top: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            margin-top: 15px;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            background-color: #0077cc;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #005fa3;
-        }
-        p {
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
-<h1 style="text-align: center;">Přihlášení</h1>
+<h1 class="h3 text-center mb-3">Přihlášení</h1>
 
 <?php if (!empty($error)) : ?>
-    <p style="color: red; text-align: center;">
+    <div class="alert alert-danger text-center">
         <?= htmlspecialchars($error) ?>
-    </p>
+    </div>
 <?php endif; ?>
 
-<form method="post" action="index.php?action=login">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+<form method="post" action="index.php?action=login" class="card p-4 mx-auto" style="max-width: 400px;">
+    <div class="mb-3">
+        <label for="email" class="form-label">Email:</label>
+        <input type="email" id="email" name="email" class="form-control" required>
+    </div>
 
-    <label for="password">Heslo:</label>
-    <input type="password" id="password" name="password" required>
+    <div class="mb-3">
+        <label for="password" class="form-label">Heslo:</label>
+        <input type="password" id="password" name="password" class="form-control" required>
+    </div>
 
-    <button type="submit">Přihlásit se</button>
+    <button type="submit" class="btn btn-primary w-100">Přihlásit se</button>
 </form>
 
-<p>Nemáš účet? <a href="index.php?action=register">Zaregistruj se</a></p>
+<p class="text-center mt-3">
+    Nemáš účet? <a href="index.php?action=register">Zaregistruj se</a>
+</p>
 
-</body>
-</html>
+<?php require __DIR__ . '/partials/footer.php'; ?>
