@@ -40,11 +40,13 @@
                             <span class="text-danger fw-bold">Vyprodáno</span>
                         <?php endif; ?>
                     </td>
-                    <td>
+                    <td class="d-flex gap-1">
                         <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">✏ Upravit</a>
-                        <a href="index.php?action=delete_product&id=<?= (int)$product['id'] ?>"
-                           onclick="return confirm('Opravdu smazat tento produkt?');"
-                           class="btn btn-sm btn-outline-danger">🗑 Smazat</a>
+
+                        <form method="post" action="index.php?action=delete_product&id=<?= (int)$product['id'] ?>" onsubmit="return confirm('Opravdu smazat tento produkt?');">
+                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">🗑 Smazat</button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>

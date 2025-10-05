@@ -1,56 +1,120 @@
-**MVC v kostce**
-- **Controllers**: zpracují request, sáhnou do modelu a vyberou správné view
-- **Models**: komunikace s databází přes PDO (CRUD operace pro uživatele, produkty, objednávky)
-- **Views**: HTML šablony s Bootstrap 5 + vlastní CSS (`app.css`), oddělené do `partials/header.php` a `partials/footer.php`
+# Objednávkový systém (KIV/WEB – semestrální projekt)
+
+## Popis
+Webová aplikace pro správu objednávek a produktů s podporou více rolí uživatelů.  
+Projekt je vyvinut v **PHP** bez použití frameworku, s využitím **MVC architektury** a **OOP přístupu**.  
+Databáze je řešena pomocí **MySQL/MariaDB** a připojení přes **PDO**.  
+Design aplikace využívá **Bootstrap**.
 
 ---
 
-## Funkce
+## Funkcionalita
 
-- **Autentizace**: registrace (s rolí zákazník / dodavatel), přihlášení, odhlášení
-- **Role**:
-    - **Admin** – správa uživatelů (nelze blokovat adminy), správa produktů, přehled a správa všech objednávek
-    - **Dodavatel** – vlastní produkty (CRUD), přehled objednávek obsahujících jeho položky
-    - **Zákazník** – prohlížení produktů, přidávání do košíku, potvrzení objednávky a sledování stavu objednávek
-- **Produkty**: přidání, úprava, smazání, možnost nahrát obrázek produktu (volitelné)
-- **Košík**: přidání/odebrání položek, změna množství, zobrazení celkové ceny
-- **Objednávky**: vytvoření z košíku, změna stavů (pending → confirmed → shipped → delivered / canceled), admin potvrzuje objednávky zákazníků
-- **Bezpečnost**: PDO (ochrana proti SQL injection), `htmlspecialchars` (ochrana proti XSS), hesla ukládána přes `password_hash()` (bcrypt)
-- **Responzivní UI**: Bootstrap 5 + minimalistické vlastní CSS (`public/css/app.css`)
+- **Autentizace uživatelů**
+    - Registrace, přihlášení, odhlášení
+    - Hesla ukládána bezpečně (bcrypt hash)
 
----
+- **Role**
+    - **Admin** – správa uživatelů (nelze blokovat adminy), přehled všech objednávek a produktů
+    - **Dodavatel** – správa vlastních produktů a objednávek
+    - **Zákazník** – vytváření objednávek, správa košíku
 
-## Důležité URL / akce
+- **Správa produktů**
+    - Přidávání, editace a mazání produktů
+    - Náhled produktů včetně detailu
 
-- `index.php?action=login` – přihlášení
-- `index.php?action=register` – registrace (zákazník/dodavatel)
-- `index.php?action=users` – správa uživatelů (admin)
-- `index.php?action=products` – seznam všech produktů
-- `index.php?action=my_products` – produkty aktuálního dodavatele
-- `index.php?action=add_product` / `edit_product&id=...` / `delete_product&id=...` – správa produktů
-- `index.php?action=view_cart` – košík
-- `index.php?action=confirm_order` – potvrzení objednávky
-- `index.php?action=orders` – seznam objednávek (role záleží na uživateli)
-- `index.php?action=supplier_orders` / `supplier_order_detail&id=...` – objednávky mých položek (dodavatel)
+- **Objednávky**
+    - Vytváření objednávek z košíku
+    - Přehled objednávek podle role
 
-> **Poznámka**: Header a footer jsou řešené jako sdílené partialy. Na stránce má být vždy jen jedno view, jinak se footer zobrazí dvakrát.
+- **Bezpečnostní opatření**
+    - Prepared statements (PDO) proti SQL Injection
+    - Ošetření výstupů (htmlspecialchars) proti XSS
+    - Session pro správu přihlášení
 
 ---
 
-## Nahrávání obrázků
+## Struktura projektu
+```
+objednavkovy-system/
+├── app
+│   ├── Controllers
+│   │   ├── order_controller.php
+│   │   ├── product_controller.php
+│   │   └── user_controller.php
+│   ├── Models
+│   │   ├── product_model.php
+│   │   └── user_model.php
+│   └── Views
+│       ├── partials
+│       │   ├── footer.php
+│       │   └── header.php
+│       ├── add_product_view.php
+│       ├── cart_view.php
+│       ├── confirm_order_view.php
+│       ├── dashboard_view.php
+│       ├── edit_product_view.php
+│       ├── login_view.php
+│       ├── my_products_view.php
+│       ├── order_detail_view.php
+│       ├── orders_view.php
+│       ├── products_view.php
+│       ├── register_view.php
+│       ├── supplier_order_detail_view.php
+│       ├── supplier_orders_view.php
+│       └── users_view.php
+├── config
+│   └── db.php
+├── public
+│   ├── css
+│   │   └── app.css
+│   ├── routers
+│   │   ├── admin_router.php
+│   │   ├── auth_router.php
+│   │   ├── cart_router.php
+│   │   ├── dashboard_router.php
+│   │   ├── order_router.php
+│   │   └── product_router.php
+│   ├── uploads
+│   │   ├── prod_68e00fcb62d193.29855128.jpg
+│   │   ├── prod_68e011c80f0430.53612348.jpg
+│   │   ├── prod_68e01155a59415.52305916.jpg
+│   │   ├── prod_68e0114125b083.52865953.jpg
+│   │   └── prod_68e0303668b371.91767251.jpg
+│   ├── index.php
+│   └── uzivatele.txt
+├── sql
+│   └── objednavkovy_system.sql
+├── dokumentace.pdf
+└── Readme.md
+```
 
-- Obrázky jsou volitelné při přidávání / úpravě produktu
-- Formuláře `add_product` / `edit_product` používají `enctype="multipart/form-data"`
-- Obrázky se ukládají do složky `public/uploads/` (musí být zapisovatelná)
-- Do databáze se ukládá relativní cesta `uploads/<soubor>`
-- Povolené typy: `image/jpeg`, `image/png`, `image/webp`
-- Limit velikosti: **2 MB** (lze změnit v `product_controller::handleImageUpload()`)
+---
 
-```php
-// product_controller.php (výřez)
-private function handleImageUpload(array $file): ?string {
-    if ($file['error'] === UPLOAD_ERR_NO_FILE) return null;
-    if ($file['size'] > 2 * 1024 * 1024) throw new RuntimeException("Soubor je příliš velký (max 2 MB).");
-    // ...
-    return 'uploads/' . $filename;
-}
+## Instalace a spuštění
+
+1. Nakopírujte projekt do root složky serveru (např. `htdocs/` pro XAMPP).
+2. Naimportujte databázi z `sql/objednavkov_system.sql`.
+3. Upravte přístupové údaje k databázi v `config/db.php`.
+4. Spusťte projekt přes `http://localhost/objednavkovy-system/public/index.php`.
+
+---
+
+## Testovací účty
+
+- **Admin**
+    - Email: `admin@local.test`
+    - Heslo: `Admin123!`
+
+- **Dodavatel**
+    - Email: `supplier@local.test`
+    - Heslo: `Supplier123!`
+
+- **Zákazník**
+    - Email: `customer@local.test`
+    - Heslo: `Customer123!`
+
+---
+
+## Autor
+Tomáš Klepač, FAV ZČU – KIV/WEB

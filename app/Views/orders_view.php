@@ -1,66 +1,125 @@
 <?php require __DIR__ . '/partials/header.php'; ?>
 
-<h1 class="h3 mb-3">Objednávky</h1>
+<div class="container mt-4">
+    <h2>Objednávky</h2>
 
-<?php if (!empty($orders)): ?>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-            <thead class="table-light">
-            <tr>
-                <th>ID</th>
-                <th>Stav</th>
-                <th>Celkem</th>
-                <th>Datum</th>
-                <th>Detail</th>
-                <?php if (in_array('admin', $_SESSION['roles'], true)): ?>
-                    <th>Zákazník</th>
-                    <th>Akce</th>
-                <?php endif; ?>
-            </tr>
-            </thead>
-            <tbody>
+    <?php
+    // převést role na malá písmena pro spolehlivé porovnání
+    $roles = array_map('strtolower', $_SESSION['roles'] ?? []);
+    $isCustomer = in_array('customer', $roles)
+    ?>
+
+    <table class="table table-striped align-middle mt-3">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Stav</th>
+            <th>Celkem</th>
+            <th>Datum</th>
+            <th>Detail</th>
+            <?php if (!$isCustomer): ?>
+                <th>Zákazník</th>
+                <th>Akce</th>
+            <?php endif; ?>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if (!empty($orders)): ?>
             <?php foreach ($orders as $order): ?>
                 <tr>
                     <td><?= htmlspecialchars($order['id']) ?></td>
+
                     <td>
-                        <?php if ($order['status'] === 'delivered'): ?>
-                            <span class="text-success fw-bold">✔ Ukončeno</span>
-                        <?php elseif ($order['status'] === 'canceled'): ?>
-                            <span class="text-danger fw-bold">❌ Zrušeno</span>
-                        <?php else: ?>
-                            <?= htmlspecialchars($order['status']) ?>
-                        <?php endif; ?>
-                    </td>
-                    <td><?= number_format($order['total_cents'] / 100, 2, ',', ' ') ?> Kč</td>
-                    <td><?= htmlspecialchars($order['created_at']) ?></td>
-                    <td>
-                        <a href="index.php?action=order_detail&id=<?= (int)$order['id'] ?>" class="btn btn-sm btn-outline-secondary">🔍 Detail</a>
+                        <?php
+                        switch ($order['status']) {
+                            case 'pending':
+                                echo '<span class="badge bg-secondary">Čeká na potvrzení</span>';
+                                break;
+                            case 'confirmed':
+                                echo '<span class="badge bg-warning text-dark">Potvrzeno</span>';
+                                break;
+                            case 'shipped':
+                                echo '<span class="badge bg-info text-dark">Odesláno</span>';
+                                break;
+                            case 'canceled':
+                            case 'cancelled':
+                                echo '<span class="badge bg-danger">✗ Zrušeno</span>';
+                                break;
+                            case 'delivered':
+                            case 'completed':
+                            case 'finished':
+                                echo '<span class="badge bg-success">✓ Ukončeno</span>';
+                                break;
+                            default:
+                                echo htmlspecialchars($order['status']);
+                                break;
+                        }
+                        ?>
                     </td>
 
-                    <?php if (in_array('admin', $_SESSION['roles'], true)): ?>
-                        <td><?= htmlspecialchars($order['customer_name']) ?></td>
+                    <td>
+                        <?php
+                        $totalCents = isset($order['total_cents']) ? (int)$order['total_cents'] : 0;
+                        echo number_format($totalCents / 100, 2, ',', ' ') . ' Kč';
+                        ?>
+                    </td>
+
+                    <td><?= htmlspecialchars($order['created_at']) ?></td>
+
+                    <td>
+                        <a href="index.php?action=order_detail&id=<?= urlencode($order['id']) ?>"
+                           class="btn btn-outline-secondary btn-sm">
+                            🔍 Detail
+                        </a>
+                    </td>
+
+                    <?php if (!$isCustomer): ?>
                         <td>
-                            <?php if ($order['status'] === 'pending'): ?>
-                                <a href="index.php?action=confirm_admin_order&id=<?= (int)$order['id'] ?>" class="btn btn-sm btn-success">✅ Potvrdit</a>
-                                <a href="index.php?action=update_order&id=<?= (int)$order['id'] ?>&status=canceled" class="btn btn-sm btn-danger">❌ Zrušit</a>
-                            <?php elseif ($order['status'] === 'confirmed'): ?>
-                                <a href="index.php?action=update_order&id=<?= (int)$order['id'] ?>&status=shipped" class="btn btn-sm btn-primary">📦 Odeslat</a>
-                            <?php elseif ($order['status'] === 'shipped'): ?>
-                                <a href="index.php?action=update_order&id=<?= (int)$order['id'] ?>&status=delivered" class="btn btn-sm btn-info">📬 Doručeno</a>
-                            <?php endif; ?>
+                            <?php
+                            if (!empty($order['customer_name'])) {
+                                echo htmlspecialchars($order['customer_name']);
+                            } else {
+                                echo '–';
+                            }
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            // pouze admin nebo dodavatel mají tlačítka
+                            if (in_array('admin', $roles) || in_array('supplier', $roles)) {
+                                if ($order['status'] === 'confirmed') {
+                                    echo '<a href="index.php?action=mark_shipped&id=' . urlencode($order['id']) . '" 
+                                           class="btn btn-sm btn-primary" 
+                                           style="background-color:#7e57c2;border:none;">
+                                           📦 Odeslat</a>';
+                                } elseif ($order['status'] === 'shipped') {
+                                    echo '<a href="index.php?action=mark_completed&id=' . urlencode($order['id']) . '" 
+                                           class="btn btn-sm btn-info text-white" 
+                                           style="background-color:#26c6da;border:none;">
+                                           📬 Doručeno</a>';
+                                } else {
+                                    echo '<span class="text-muted">–</span>';
+                                }
+                            } else {
+                                echo '<span class="text-muted">–</span>';
+                            }
+                            ?>
                         </td>
                     <?php endif; ?>
                 </tr>
             <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-<?php else: ?>
-    <p>Žádné objednávky k zobrazení.</p>
-<?php endif; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="<?= $isCustomer ? 5 : 7 ?>" class="text-center text-muted">
+                    Žádné objednávky k zobrazení.
+                </td>
+            </tr>
+        <?php endif; ?>
+        </tbody>
+    </table>
 
-<p class="mt-3">
-    <a href="index.php" class="btn btn-secondary">← Zpět na hlavní stránku</a>
-</p>
+    <a href="index.php" class="btn btn-secondary mt-3">← Zpět na hlavní stránku</a>
+</div>
 
 <?php require __DIR__ . '/partials/footer.php'; ?>

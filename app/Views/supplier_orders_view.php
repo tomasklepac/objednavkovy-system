@@ -19,7 +19,32 @@
                 <tr>
                     <td><?= (int)$order['id'] ?></td>
                     <td><?= htmlspecialchars($order['customer_name']) ?></td>
-                    <td><?= htmlspecialchars($order['status']) ?></td>
+
+                    <td>
+                        <?php
+                        switch ($order['status']) {
+                            case 'pending':
+                                echo '<span class="badge bg-secondary">Čeká na potvrzení</span>';
+                                break;
+                            case 'confirmed':
+                                echo '<span class="badge bg-warning text-dark">Potvrzeno</span>';
+                                break;
+                            case 'shipped':
+                                echo '<span class="badge bg-info text-dark">Odesláno</span>';
+                                break;
+                            case 'canceled':
+                                echo '<span class="badge bg-danger">✗ Zrušeno</span>';
+                                break;
+                            case 'delivered':
+                                echo '<span class="badge bg-success">✓ Ukončeno</span>';
+                                break;
+                            default:
+                                echo htmlspecialchars($order['status']);
+                                break;
+                        }
+                        ?>
+                    </td>
+
                     <td><?= htmlspecialchars($order['created_at']) ?></td>
                     <td>
                         <a href="index.php?action=supplier_order_detail&id=<?= (int)$order['id'] ?>"

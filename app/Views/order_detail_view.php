@@ -2,8 +2,36 @@
 
 <h1 class="h3 mb-3">Detail objednávky #<?= htmlspecialchars($_GET['id'] ?? '') ?></h1>
 
+<?php if (!empty($order)): ?>
+    <p>
+        <strong>Stav objednávky:</strong>
+        <?php
+        switch ($order['status']) {
+            case 'pending':
+                echo '<span class="badge bg-secondary">Čeká na potvrzení</span>';
+                break;
+            case 'confirmed':
+                echo '<span class="badge bg-warning text-dark">Potvrzeno</span>';
+                break;
+            case 'shipped':
+                echo '<span class="badge bg-info text-dark">Odesláno</span>';
+                break;
+            case 'canceled':
+                echo '<span class="badge bg-danger">✗ Zrušeno</span>';
+                break;
+            case 'delivered':
+                echo '<span class="badge bg-success">✓ Ukončeno</span>';
+                break;
+            default:
+                echo htmlspecialchars($order['status']);
+                break;
+        }
+        ?>
+    </p>
+<?php endif; ?>
+
 <?php if (!empty($items)): ?>
-    <div class="table-responsive">
+    <div class="table-responsive mt-3">
         <table class="table table-striped table-hover align-middle">
             <thead class="table-light">
             <tr>

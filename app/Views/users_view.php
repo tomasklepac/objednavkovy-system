@@ -32,11 +32,16 @@
                             <span class="text-muted">Nelze blokovat admina</span>
                         <?php else: ?>
                             <?php if ($user['is_active']): ?>
-                                <a href="index.php?action=block_user&id=<?= (int)$user['id'] ?>"
-                                   class="btn btn-sm btn-outline-danger">🚫 Blokovat</a>
+                                <!-- ✅ POST formulář místo GET -->
+                                <form method="post" action="index.php?action=block_user&id=<?= (int)$user['id'] ?>" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">🚫 Blokovat</button>
+                                </form>
                             <?php else: ?>
-                                <a href="index.php?action=approve_user&id=<?= (int)$user['id'] ?>"
-                                   class="btn btn-sm btn-success">✅ Schválit</a>
+                                <form method="post" action="index.php?action=approve_user&id=<?= (int)$user['id'] ?>" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-success">✅ Schválit</button>
+                                </form>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>

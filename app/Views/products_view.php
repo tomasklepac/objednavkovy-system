@@ -53,14 +53,22 @@
                     <td>
                         <?php if ($isOwner || $isAdmin): ?>
                             <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">✏ Upravit</a>
-                            <a href="index.php?action=delete_product&id=<?= (int)$product['id'] ?>"
-                               onclick="return confirm('Opravdu smazat tento produkt?');"
-                               class="btn btn-sm btn-outline-danger">🗑 Smazat</a>
+
+                            <form method="post" action="index.php?action=delete_product" style="display:inline;">
+                                <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Opravdu smazat tento produkt?');">🗑 Smazat</button>
+                            </form>
                         <?php endif; ?>
 
                         <?php if ($isCustomer): ?>
                             <?php if ((int)$product['stock'] > 0): ?>
-                                <a href="index.php?action=add_to_cart&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-success">🛒 Přidat do košíku</a>
+                                <form method="post" action="index.php?action=add_to_cart" style="display:inline;">
+                                    <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-success">🛒 Přidat do košíku</button>
+                                </form>
                             <?php else: ?>
                                 <span class="text-muted">Nelze přidat</span>
                             <?php endif; ?>

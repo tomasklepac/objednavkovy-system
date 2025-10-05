@@ -3,6 +3,8 @@
 <h1 class="h3 mb-3">Upravit produkt</h1>
 
 <form method="post" action="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" enctype="multipart/form-data" class="card p-3">
+    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
     <!-- Název produktu -->
     <div class="mb-3">
         <label for="name" class="form-label">Název:</label>

@@ -10,9 +10,6 @@ class product_controller {
     /** @var product_model */
     private $productModel;
 
-    /**
-     * Konstruktor – při vytvoření controlleru uloží PDO a připraví model.
-     */
     public function __construct($pdo) {
         $this->pdo = $pdo;
         $this->productModel = new product_model($pdo);
@@ -22,16 +19,10 @@ class product_controller {
     // READ
     // ================================================================
 
-    /**
-     * Vrátí všechny aktivní produkty (používá model).
-     */
     public function index(): array {
         return $this->productModel->getAllProducts();
     }
 
-    /**
-     * Vrátí produkt podle ID.
-     */
     public function getById(int $id): ?array {
         $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = ?");
         $stmt->execute([$id]);
@@ -39,9 +30,6 @@ class product_controller {
         return $row ?: null;
     }
 
-    /**
-     * Vrátí všechny produkty, které patří konkrétnímu dodavateli.
-     */
     public function getBySupplierId(int $supplierId): array {
         $stmt = $this->pdo->prepare("
             SELECT * 
@@ -56,9 +44,6 @@ class product_controller {
     // CREATE
     // ================================================================
 
-    /**
-     * Vytvoří nový produkt.
-     */
     public function createProduct(
         string $name,
         string $description,
@@ -67,6 +52,16 @@ class product_controller {
         int $supplierId,
         ?string $imagePath = null
     ): void {
+        // CSRF ochrana
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (
+                !isset($_POST['csrf_token']) ||
+                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
+            ) {
+                die('Neplatný CSRF token.');
+            }
+        }
+
         $stmt = $this->pdo->prepare("
             INSERT INTO products (name, description, price_cents, stock, supplier_id, image_path, created_at, is_active)
             VALUES (?, ?, ?, ?, ?, ?, NOW(), 1)
@@ -75,7 +70,7 @@ class product_controller {
         $stmt->execute([
             $name,
             $description,
-            (int)round($price * 100), // cena ukládána v centech
+            (int)round($price * 100),
             $stock,
             $supplierId,
             $imagePath
@@ -86,9 +81,6 @@ class product_controller {
     // UPDATE
     // ================================================================
 
-    /**
-     * Aktualizuje produkt podle ID.
-     */
     public function updateProduct(
         int $id,
         string $name,
@@ -97,6 +89,16 @@ class product_controller {
         int $stock,
         ?string $imagePath = null
     ): void {
+        // CSRF ochrana
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (
+                !isset($_POST['csrf_token']) ||
+                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
+            ) {
+                die('Neplatný CSRF token.');
+            }
+        }
+
         $stmt = $this->pdo->prepare("
             UPDATE products
             SET name = ?, description = ?, price_cents = ?, stock = ?, image_path = ?
@@ -117,10 +119,17 @@ class product_controller {
     // DELETE
     // ================================================================
 
-    /**
-     * Smaže produkt podle ID.
-     */
     public function deleteProduct(int $id): void {
+        // CSRF ochrana pro mazání
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (
+                !isset($_POST['csrf_token']) ||
+                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
+            ) {
+                die('Neplatný CSRF token.');
+            }
+        }
+
         $stmt = $this->pdo->prepare("DELETE FROM products WHERE id = ?");
         $stmt->execute([$id]);
     }
@@ -128,37 +137,30 @@ class product_controller {
     // ================================================================
     // IMAGE UPLOAD
     // ================================================================
-    /**
-     * stara se o upload obrazku.
-     */
     public function handleImageUpload(array $file): ?string {
         if ($file['error'] === UPLOAD_ERR_NO_FILE) {
-            return null; // žádný soubor nebyl vybrán
+            return null;
         }
 
         if ($file['error'] !== UPLOAD_ERR_OK) {
             throw new RuntimeException("Chyba při nahrávání souboru.");
         }
 
-        // Kontrola velikosti (max 2 MB)
         if ($file['size'] > 2 * 1024 * 1024) {
             throw new RuntimeException("Soubor je příliš velký (max 2 MB).");
         }
 
-        // Povolené typy
         $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $mime = mime_content_type($file['tmp_name']);
         if (!isset($allowed[$mime])) {
             throw new RuntimeException("Nepodporovaný typ souboru.");
         }
 
-        // Cílová složka
         $uploadDir = __DIR__ . '/../../public/uploads/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
-        // Unikátní název
         $filename = uniqid('prod_', true) . '.' . $allowed[$mime];
         $targetPath = $uploadDir . $filename;
 
@@ -166,7 +168,6 @@ class product_controller {
             throw new RuntimeException("Nepodařilo se uložit soubor.");
         }
 
-        // Vrátí cestu, kterou uložíme do DB
         return 'uploads/' . $filename;
     }
 }

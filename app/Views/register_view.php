@@ -9,6 +9,9 @@
 <?php endif; ?>
 
 <form method="post" action="index.php?action=register" class="card p-4 mx-auto" style="max-width: 450px;">
+    <!-- ✅ CSRF token -->
+    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
     <div class="mb-3">
         <label for="name" class="form-label">Jméno:</label>
         <input type="text" id="name" name="name" class="form-control" required>

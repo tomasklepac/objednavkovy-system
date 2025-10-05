@@ -26,16 +26,33 @@
                     <td><?= number_format($item['price_cents'] / 100, 2, ',', ' ') ?> Kč</td>
                     <td>
                         <div class="d-flex justify-content-center align-items-center gap-2">
-                            <a href="index.php?action=decrease_from_cart&id=<?= (int)$id ?>" class="btn btn-sm btn-outline-secondary">➖</a>
+
+                            <!-- Snížit množství -->
+                            <form method="post" action="index.php?action=decrease_from_cart&id=<?= (int)$id ?>" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">➖</button>
+                            </form>
+
                             <span><?= (int)$item['quantity'] ?></span>
-                            <a href="index.php?action=increase_from_cart&id=<?= (int)$id ?>" class="btn btn-sm btn-outline-secondary">➕</a>
+
+                            <!-- Zvýšit množství -->
+                            <form method="post" action="index.php?action=increase_from_cart&id=<?= (int)$id ?>" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">➕</button>
+                            </form>
+
                         </div>
                     </td>
                     <td><?= number_format($subtotal, 2, ',', ' ') ?> Kč</td>
                     <td>
-                        <a href="index.php?action=remove_from_cart&id=<?= (int)$id ?>"
-                           onclick="return confirm('Opravdu smazat tento produkt z košíku?');"
-                           class="btn btn-sm btn-outline-danger">🗑 Smazat</a>
+                        <!-- Odebrat produkt -->
+                        <form method="post" action="index.php?action=remove_from_cart&id=<?= (int)$id ?>" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Opravdu smazat tento produkt z košíku?');">
+                                🗑 Smazat
+                            </button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -47,9 +64,12 @@
         </table>
     </div>
 
-    <p>
-        <a href="index.php?action=confirm_order" class="btn btn-success">✅ Pokračovat k potvrzení objednávky</a>
-    </p>
+    <!-- Potvrzení objednávky -->
+    <form method="post" action="index.php?action=confirm_order">
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+        <button type="submit" class="btn btn-success">✅ Pokračovat k potvrzení objednávky</button>
+    </form>
+
 <?php else: ?>
     <p>Tvůj košík je prázdný.</p>
 <?php endif; ?>

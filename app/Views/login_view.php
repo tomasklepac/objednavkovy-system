@@ -9,6 +9,8 @@
 <?php endif; ?>
 
 <form method="post" action="index.php?action=login" class="card p-4 mx-auto" style="max-width: 400px;">
+    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
     <div class="mb-3">
         <label for="email" class="form-label">Email:</label>
         <input type="email" id="email" name="email" class="form-control" required>

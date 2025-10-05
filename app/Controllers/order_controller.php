@@ -17,9 +17,6 @@ class order_controller {
     // ADMIN
     // ================================================================
 
-    /**
-     * Vrátí všechny objednávky (viditelné pro admina).
-     */
     public function getAllOrders(): array {
         $stmt = $this->pdo->query("
             SELECT o.id, o.customer_id, u.name AS customer_name, 
@@ -35,9 +32,6 @@ class order_controller {
     // ZÁKAZNÍK
     // ================================================================
 
-    /**
-     * Vrátí objednávky konkrétního zákazníka.
-     */
     public function getOrdersByCustomer(int $customerId): array {
         $stmt = $this->pdo->prepare("
             SELECT id, status, total_cents, created_at
@@ -49,9 +43,6 @@ class order_controller {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Vrátí položky konkrétní objednávky.
-     */
     public function getOrderItems(int $orderId): array {
         $stmt = $this->pdo->prepare("
             SELECT oi.product_id, oi.quantity, oi.unit_price_cents, p.name
@@ -67,23 +58,28 @@ class order_controller {
     // ZMĚNY STAVU OBJEDNÁVEK
     // ================================================================
 
-    /**
-     * Nastaví objednávce nový stav.
-     */
+    /** Nastaví objednávce nový stav. */
     public function updateStatus(int $orderId, string $status): void {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+                die('Neplatný CSRF token.');
+            }
+        }
+
         $stmt = $this->pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
         $stmt->execute([$status, $orderId]);
     }
 
-    /**
-     * Potvrdí objednávku (odečte zboží ze skladu a změní stav na confirmed).
-     * Pokud není dostatek skladu, transakce se vrátí zpět.
-     */
+    /** Potvrdí objednávku (odečte zboží ze skladu a změní stav na confirmed). */
     public function confirmOrder(int $orderId): void {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+                die('Neplatný CSRF token.');
+            }
+        }
+
         try {
             $this->pdo->beginTransaction();
-
-            // Načtení položek objednávky
             $stmt = $this->pdo->prepare("
                 SELECT product_id, quantity 
                 FROM order_item 
@@ -93,7 +89,6 @@ class order_controller {
             $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($items as $item) {
-                // Pokus o odečtení skladu (jen pokud je dostatek kusů)
                 $stmt = $this->pdo->prepare("
                     UPDATE products
                     SET stock = stock - ?
@@ -110,7 +105,6 @@ class order_controller {
                 }
             }
 
-            // Změna stavu objednávky na confirmed
             $stmt = $this->pdo->prepare("
                 UPDATE orders 
                 SET status = 'confirmed' 
@@ -121,17 +115,29 @@ class order_controller {
             $this->pdo->commit();
         } catch (Exception $e) {
             $this->pdo->rollBack();
-            throw $e; // vyhodí výjimku → zachytí router a vypíše chybu
+            throw $e;
         }
     }
 
     /** Přechod objednávky na stav shipped. */
     public function markShipped(int $orderId): void {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+                die('Neplatný CSRF token.');
+            }
+        }
+
         $this->updateStatus($orderId, 'shipped');
     }
 
     /** Přechod objednávky na stav delivered. */
     public function markDelivered(int $orderId): void {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+                die('Neplatný CSRF token.');
+            }
+        }
+
         $this->updateStatus($orderId, 'delivered');
     }
 
@@ -139,9 +145,6 @@ class order_controller {
     // DODAVATEL
     // ================================================================
 
-    /**
-     * Vrátí objednávky, které obsahují produkty konkrétního dodavatele.
-     */
     public function getOrdersBySupplier(int $supplierId): array {
         $stmt = $this->pdo->prepare("
             SELECT DISTINCT o.id, o.customer_id, u.name AS customer_name,
@@ -157,9 +160,6 @@ class order_controller {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Vrátí položky z objednávky, které patří konkrétnímu dodavateli.
-     */
     public function getSupplierOrderItems(int $orderId, int $supplierId): array {
         $stmt = $this->pdo->prepare("
             SELECT oi.product_id, p.name, oi.quantity, oi.unit_price_cents
@@ -172,9 +172,6 @@ class order_controller {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Vrátí zákazníka k objednávce (pro zobrazení detailu).
-     */
     public function getOrderCustomer(int $orderId): ?array {
         $stmt = $this->pdo->prepare("
             SELECT u.id, u.name, u.email

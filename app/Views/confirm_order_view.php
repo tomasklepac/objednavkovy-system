@@ -3,6 +3,9 @@
 <h1 class="h3 mb-3">Potvrzení objednávky</h1>
 
 <form method="post" class="card p-4 mx-auto" style="max-width: 500px;">
+    <!-- CSRF ochrana -->
+    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
     <div class="mb-3">
         <label for="street" class="form-label">Ulice a č.p.:</label>
         <input type="text" id="street" name="street" class="form-control" required>

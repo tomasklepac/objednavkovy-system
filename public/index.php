@@ -8,6 +8,16 @@
 
 session_start();
 
+// CSRF token - pokud neexistuje, vygeneruj
+if (empty($_SESSION['csrf_token'])) {
+    try {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    } catch (Exception $e) {
+        // fallback pokud random_bytes není dostupné
+        $_SESSION['csrf_token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+
 // Debug nastavení – vypisování chyb
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
