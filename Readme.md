@@ -82,7 +82,6 @@ objednavkovy-system/
 │   │   ├── prod_68e0114125b083.52865953.jpg
 │   │   └── prod_68e0303668b371.91767251.jpg
 │   ├── index.php
-│   └── uzivatele.txt
 ├── sql
 │   └── objednavkovy_system.sql
 ├── dokumentace.pdf
