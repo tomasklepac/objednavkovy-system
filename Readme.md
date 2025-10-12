@@ -7,7 +7,6 @@ Databáze je řešena pomocí **MySQL/MariaDB** a připojení přes **PDO**.
 Design aplikace využívá **Bootstrap**.
 
 ---
----
 
 ## 🖼️ Ukázky aplikace
 
