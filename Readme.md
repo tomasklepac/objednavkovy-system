@@ -7,6 +7,21 @@ Databáze je řešena pomocí **MySQL/MariaDB** a připojení přes **PDO**.
 Design aplikace využívá **Bootstrap**.
 
 ---
+Login
+<img width="512" height="580" alt="Snímek obrazovky 2025-10-12 214047" src="https://github.com/user-attachments/assets/7eac6606-cf8b-4515-8e6c-8fdddf48b8c3" />
+
+Dashboard
+<img width="1903" height="1054" alt="Snímek obrazovky 2025-10-12 211901" src="https://github.com/user-attachments/assets/d740c801-fab1-4b93-9fa0-7124272e33dc" />
+
+Košík
+<img width="1447" height="544" alt="Snímek obrazovky 2025-10-12 213459" src="https://github.com/user-attachments/assets/722ab1fe-fc72-4d18-aa32-6f9d405731b5" />
+
+Objednávky
+<img width="1436" height="598" alt="Snímek obrazovky 2025-10-12 211910" src="https://github.com/user-attachments/assets/aa6e53e0-3c83-4c11-9d98-272be435bbfc" />
+
+Správa uživatelů
+<img width="1453" height="593" alt="Snímek obrazovky 2025-10-12 213546" src="https://github.com/user-attachments/assets/000ad41d-35f5-49ec-9e26-53310385caac" />
+
 
 ## Funkcionalita
 
@@ -24,7 +39,6 @@ Design aplikace využívá **Bootstrap**.
     - Náhled produktů včetně detailu
 
 - **Objednávky**
-    <img width="1903" height="1054" alt="Snímek obrazovky 2025-10-12 211901" src="https://github.com/user-attachments/assets/15dbf2f6-357e-4b77-8442-d745d0d318c6" />
 - Vytváření objednávek z košíku
     - Přehled objednávek podle role
 
