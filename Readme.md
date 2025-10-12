@@ -24,7 +24,8 @@ Design aplikace využívá **Bootstrap**.
     - Náhled produktů včetně detailu
 
 - **Objednávky**
-    - Vytváření objednávek z košíku
+    <img width="1903" height="1054" alt="Snímek obrazovky 2025-10-12 211901" src="https://github.com/user-attachments/assets/15dbf2f6-357e-4b77-8442-d745d0d318c6" />
+- Vytváření objednávek z košíku
     - Přehled objednávek podle role
 
 - **Bezpečnostní opatření**
