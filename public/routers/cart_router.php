@@ -19,47 +19,39 @@ switch ($action) {
         break;
 
     case 'add_to_cart':
-        if (isset($_GET['id'])) {
-            $id = (int)$_GET['id'];
-            $product = $productController->getById($id);
-
-            if (!$product) {
-                echo "<p style='color:red'>Produkt nenalezen.</p>";
-                exit;
-            }
-
-            // Kontrola skladu
-            $available = (int)($product['stock'] ?? 0);
-            if ($available <= 0) {
-                echo "<p style='color:red'>Tento produkt není skladem.</p>";
-                exit;
-            }
-
-            // Inicializace košíku
-            if (!isset($_SESSION['cart'])) {
-                $_SESSION['cart'] = [];
-            }
-
-            // Pokud produkt už v košíku je → zvýšíme množství
-            if (isset($_SESSION['cart'][$id])) {
-                if ($_SESSION['cart'][$id]['quantity'] < $available) {
-                    $_SESSION['cart'][$id]['quantity']++;
-                } else {
-                    echo "<p style='color:orange'>Překročeno množství skladem!</p>";
-                }
-            } else {
-                // Nový produkt do košíku
-                $_SESSION['cart'][$id] = [
-                    'name'        => $product['name'],
-                    'price_cents' => $product['price_cents'],
-                    'quantity'    => 1
-                ];
-            }
-
-            echo "<p style='color:green'>Produkt byl přidán do košíku!</p>";
-            echo "<p><a href='index.php'>Pokračovat v nákupu</a> | <a href='index.php?action=view_cart'>Zobrazit košík</a></p>";
+        // Preferuj POST + CSRF, fallback na GET kvůli starým linkům
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $tokenOk = hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '');
+            if (!$tokenOk) { http_response_code(400); exit('Neplatný CSRF token'); }
+            $id = (int)($_POST['product_id'] ?? 0);
+        } else {
+            $id = (int)($_GET['id'] ?? 0);
         }
-        break;
+
+        if ($id <= 0) { header('Location: index.php'); exit; }
+
+        $product = $productController->getById($id);
+        if (!$product) { header('Location: index.php'); exit; }
+
+        $available = (int)($product['stock'] ?? 0);
+        if ($available <= 0) { header('Location: index.php'); exit; }
+
+        $_SESSION['cart'] ??= [];
+        if (isset($_SESSION['cart'][$id])) {
+            if ($_SESSION['cart'][$id]['quantity'] < $available) {
+                $_SESSION['cart'][$id]['quantity']++;
+            } // else plno, můžeš přidat flash zprávu
+        } else {
+            $_SESSION['cart'][$id] = [
+                'name'        => $product['name'],
+                'price_cents' => $product['price_cents'],
+                'quantity'    => 1,
+            ];
+        }
+
+        // žádné echo – přesměruj na košík
+        header('Location: index.php?action=view_cart');
+        exit;
 
     case 'decrease_from_cart':
         if (isset($_GET['id'])) {
