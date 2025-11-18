@@ -285,24 +285,14 @@ a:active {
     font-size: 0.875rem;
 }
 
-.btn-lg {
-    padding: 0.875rem 2rem;
-    font-size: 1.125rem;
-}
-
 /* Full width button */
-.btn-block, .w-100 {
+.w-100 {
     width: 100%;
 }
 
 /* =======================
    6. FORMS & INPUT ELEMENTS
    ======================= */
-
-/* Form group spacing */
-.form-group {
-    margin-bottom: var(--spacing-lg);
-}
 
 /* Label styling */
 .form-label {
@@ -414,18 +404,6 @@ textarea.form-control {
     margin-bottom: var(--spacing-lg);
     border-radius: var(--border-radius-lg);
     border-left: 4px solid transparent;
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
 }
 
 /* Success alert styling */
@@ -628,10 +606,6 @@ footer p {
     gap: var(--spacing-md);
 }
 
-.gap-3 {
-    gap: var(--spacing-lg);
-}
-
 /* Text utilities */
 .text-center {
     text-align: center;
@@ -651,6 +625,10 @@ footer p {
 
 .text-danger {
     color: var(--danger-color);
+}
+
+.text-white {
+    color: white;
 }
 
 /* Font weight utilities */
@@ -773,7 +751,7 @@ footer p {
         flex-direction: column;
     }
     
-    .gap-1, .gap-2, .gap-3 {
+    .gap-1, .gap-2 {
         gap: var(--spacing-sm);
     }
 }
@@ -785,27 +763,6 @@ footer p {
 /* Display utilities */
 .d-none {
     display: none;
-}
-
-.d-inline {
-    display: inline;
-}
-
-.d-inline-block {
-    display: inline-block;
-}
-
-.d-block {
-    display: block;
-}
-
-/* Visibility utilities */
-.visible {
-    visibility: visible;
-}
-
-.invisible {
-    visibility: hidden;
 }
 
 /* Border utilities */
@@ -849,22 +806,3 @@ button, a, input, select, textarea {
     will-change: transform, box-shadow;
 }
 
-/* Loading animation */
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.spinner {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    border: 3px solid var(--border-gray);
-    border-top-color: var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
