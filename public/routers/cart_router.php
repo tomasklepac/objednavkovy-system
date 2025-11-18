@@ -1,28 +1,28 @@
 <?php
 // -------------------------------------------------
-// Router: správa košíku
+// Router: cart management
 // -------------------------------------------------
 
 $productController = new product_controller(Database::getInstance());
 $action = $_GET['action'] ?? null;
 
-// Jen přihlášení uživatelé mohou pracovat s košíkem
+// Only logged in users can work with cart
 if (empty($_SESSION['user_id'])) {
-    echo "<p style='color:red'>Musíš být přihlášený pro práci s košíkem.</p>";
+    echo "<p style='color:red'>You must be logged in to work with cart.</p>";
     exit;
 }
 
 switch ($action) {
     case 'view_cart':
-        // Zobrazení obsahu košíku
+        // Display cart contents
         require __DIR__ . '/../../app/Views/cart_view.php';
         break;
 
     case 'add_to_cart':
-        // Preferuj POST + CSRF, fallback na GET kvůli starým linkům
+        // Prefer POST + CSRF, fallback to GET for old links
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tokenOk = hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '');
-            if (!$tokenOk) { http_response_code(400); exit('Neplatný CSRF token'); }
+            if (!$tokenOk) { http_response_code(400); exit('Invalid CSRF token'); }
             $id = (int)($_POST['product_id'] ?? 0);
         } else {
             $id = (int)($_GET['id'] ?? 0);
@@ -40,7 +40,7 @@ switch ($action) {
         if (isset($_SESSION['cart'][$id])) {
             if ($_SESSION['cart'][$id]['quantity'] < $available) {
                 $_SESSION['cart'][$id]['quantity']++;
-            } // else plno, můžeš přidat flash zprávu
+            } // else full, you can add flash message
         } else {
             $_SESSION['cart'][$id] = [
                 'name'        => $product['name'],
@@ -49,7 +49,7 @@ switch ($action) {
             ];
         }
 
-        // žádné echo – přesměruj na košík
+        // no echo – redirect to cart
         header('Location: index.php?action=view_cart');
         exit;
 
@@ -77,7 +77,7 @@ switch ($action) {
                 if ($_SESSION['cart'][$id]['quantity'] < $available) {
                     $_SESSION['cart'][$id]['quantity']++;
                 } else {
-                    echo "<p style='color:orange'>Překročeno množství skladem!</p>";
+                    echo "<p style='color:orange'>Stock quantity exceeded!</p>";
                 }
             }
             header("Location: index.php?action=view_cart");
@@ -95,6 +95,6 @@ switch ($action) {
         break;
 
     default:
-        echo "<p style='color:red'>Neznámá akce s košíkem.</p>";
+        echo "<p style='color:red'>Unknown cart action.</p>";
         break;
 }

@@ -1,6 +1,6 @@
 <?php require __DIR__ . '/partials/header.php'; ?>
 
-<!-- Odkaz na přidání produktu (jen pro dodavatele nebo admina) -->
+<!-- Link to add product (only for suppliers or admins) -->
 <?php if (!empty($_SESSION['roles']) && (in_array('supplier', $_SESSION['roles']) || in_array('admin', $_SESSION['roles']))): ?>
     <p class="mb-3">
         <a href="index.php?action=add_product" class="btn btn-success">➕ Přidat produkt</a>
@@ -26,6 +26,7 @@
             <tbody>
             <?php foreach ($products as $product): ?>
                 <?php
+                // Check user role permissions
                 $isOwner = isset($_SESSION['user_id']) && ((int)$product['supplier_id'] === (int)$_SESSION['user_id']);
                 $isAdmin = !empty($_SESSION['roles']) && in_array('admin', $_SESSION['roles'], true);
                 $isCustomer = !empty($_SESSION['roles']) && in_array('customer', $_SESSION['roles'], true);

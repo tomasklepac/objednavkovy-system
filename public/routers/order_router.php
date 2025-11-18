@@ -1,10 +1,10 @@
 <?php
 // public/routers/order_router.php
 // ----------------------------------------------
-// Router pro správu objednávek
-// Zákazník: vytváří objednávky, vidí své
-// Admin: spravuje všechny, mění stavy
-// Dodavatel: vidí objednávky obsahující jeho produkty
+// Router for order management
+// Customer: creates orders, sees their own
+// Admin: manages all, changes statuses
+// Supplier: sees orders containing their products
 // ----------------------------------------------
 
 require_once __DIR__ . '/../../app/Controllers/order_controller.php';
@@ -13,22 +13,22 @@ require_once __DIR__ . '/../../config/db.php';
 $pdo = Database::getInstance();
 $orderController = new order_controller($pdo);
 
-// Získaná akce
+// Get action
 $action = $_GET['action'] ?? null;
 
 switch ($action) {
 
     // ------------------------------------------------
-    // 1. Vytvoření objednávky z košíku (jen zákazník)
+    // 1. Create order from cart (customer only)
     // ------------------------------------------------
     case 'confirm_order':
         if (empty($_SESSION['user_id']) || !in_array('customer', $_SESSION['roles'] ?? [], true)) {
-            echo "<p style='color:red'>Jen zákazníci mohou vytvořit objednávku.</p>";
+            echo "<p style='color:red'>Only customers can create an order.</p>";
             exit;
         }
 
         if (empty($_SESSION['cart'])) {
-            echo "<p style='color:red'>Košík je prázdný, nemůžeš vytvořit objednávku.</p>";
+            echo "<p style='color:red'>Cart is empty, you cannot create an order.</p>";
             exit;
         }
 
@@ -38,20 +38,20 @@ switch ($action) {
             $zip    = trim($_POST['zip'] ?? '');
             $note   = trim($_POST['note'] ?? '');
 
-            // validace adresy
+            // address validation
             if ($street === '' || $city === '' || $zip === '') {
-                echo "<p style='color:red'>Musíš vyplnit všechny údaje adresy!</p>";
+                echo "<p style='color:red'>You must fill in all address fields!</p>";
                 require __DIR__ . '/../../app/Views/confirm_order_view.php';
                 exit;
             }
 
-            // celková cena
+            // total price
             $totalCents = 0;
             foreach ($_SESSION['cart'] as $item) {
                 $totalCents += $item['price_cents'] * $item['quantity'];
             }
 
-            // vytvoření objednávky
+            // create order
             $stmt = $pdo->prepare("
                 INSERT INTO orders (customer_id, status, street, city, zip, note, total_cents, created_at)
                 VALUES (?, 'pending', ?, ?, ?, ?, ?, NOW())
@@ -67,7 +67,7 @@ switch ($action) {
 
             $orderId = $pdo->lastInsertId();
 
-            // vložení položek objednávky
+            // insert order items
             $itemStmt = $pdo->prepare("
                 INSERT INTO order_item (order_id, product_id, quantity, unit_price_cents)
                 VALUES (?, ?, ?, ?)
@@ -76,41 +76,41 @@ switch ($action) {
                 $itemStmt->execute([$orderId, $productId, $item['quantity'], $item['price_cents']]);
             }
 
-            // vyčištění košíku
+            // clear cart
             unset($_SESSION['cart']);
 
-            echo "<p style='color:green'>Objednávka byla úspěšně vytvořena!</p>";
-            echo "<p><a href='index.php'>🏠 Zpět na hlavní stránku</a></p>";
-            echo "<p><a href='index.php?action=orders'>📦 Zobrazit moje objednávky</a></p>";
+            echo "<p style='color:green'>Order was successfully created!</p>";
+            echo "<p><a href='index.php'>🏠 Back to main page</a></p>";
+            echo "<p><a href='index.php?action=orders'>📦 Show my orders</a></p>";
             exit;
         }
 
-        // GET → zobrazit formulář
+        // GET → show form
         require __DIR__ . '/../../app/Views/confirm_order_view.php';
         exit;
 
     // ------------------------------------------------
-    // 2. Výpis objednávek
+    // 2. List orders
     // ------------------------------------------------
     case 'orders':
         if (in_array('admin', $_SESSION['roles'] ?? [], true)) {
-            $orders = $orderController->getAllOrders(); // admin → všechny
+            $orders = $orderController->getAllOrders(); // admin → all
         } else {
-            $orders = $orderController->getOrdersByCustomer($_SESSION['user_id']); // zákazník → jen své
+            $orders = $orderController->getOrdersByCustomer($_SESSION['user_id']); // customer → only their own
         }
         require __DIR__ . '/../../app/Views/orders_view.php';
         exit;
 
     // ------------------------------------------------
-    // 3. Detail objednávky (všechny položky)
+    // 3. Order detail (all items)
     // ------------------------------------------------
     case 'order_detail':
         $orderId = (int)($_GET['id'] ?? 0);
         $items   = $orderController->getOrderItems($orderId);
 
         if (!$items) {
-            echo "<p style='color:red'>Objednávka #$orderId nemá žádné položky nebo neexistuje.</p>";
-            echo "<p><a href='index.php?action=orders'>Zpět na objednávky</a></p>";
+            echo "<p style='color:red'>Order #$orderId has no items or doesn't exist.</p>";
+            echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
             exit;
         }
 
@@ -118,30 +118,30 @@ switch ($action) {
         exit;
 
     // ------------------------------------------------
-    // 4. Admin potvrzuje objednávku (odečte sklad)
+    // 4. Admin confirms order (deducts stock)
     // ------------------------------------------------
     case 'confirm_admin_order':
         if (!in_array('admin', $_SESSION['roles'] ?? [], true)) {
-            echo "<p style='color:red'>Nemáš oprávnění potvrdit objednávku.</p>";
+            echo "<p style='color:red'>You don't have permission to confirm order.</p>";
             exit;
         }
 
         $orderId = (int)($_GET['id'] ?? 0);
         try {
             $orderController->confirmOrder($orderId);
-            echo "<p style='color:green'>Objednávka #$orderId byla potvrzena a sklad aktualizován.</p>";
+            echo "<p style='color:green'>Order #$orderId was confirmed and stock updated.</p>";
         } catch (Exception $e) {
-            echo "<p style='color:red'>Chyba: {$e->getMessage()}</p>";
+            echo "<p style='color:red'>Error: {$e->getMessage()}</p>";
         }
-        echo "<p><a href='index.php?action=orders'>Zpět na objednávky</a></p>";
+        echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
         exit;
 
     // ------------------------------------------------
-    // 5. Admin mění stav objednávky
+    // 5. Admin changes order status
     // ------------------------------------------------
     case 'update_order':
         if (!in_array('admin', $_SESSION['roles'] ?? [], true)) {
-            echo "<p style='color:red'>Nemáš oprávnění měnit stav objednávky.</p>";
+            echo "<p style='color:red'>You don't have permission to change order status.</p>";
             exit;
         }
 
@@ -152,11 +152,11 @@ switch ($action) {
         exit;
 
     // ------------------------------------------------
-    // 6. Dodavatel – seznam objednávek jeho produktů
+    // 6. Supplier – list of orders for their products
     // ------------------------------------------------
     case 'supplier_orders':
         if (!in_array('supplier', $_SESSION['roles'] ?? [], true)) {
-            echo "<p style='color:red'>Nemáš oprávnění zobrazit objednávky dodavatele.</p>";
+            echo "<p style='color:red'>You don't have permission to view supplier orders.</p>";
             exit;
         }
         $orders = $orderController->getOrdersBySupplier((int)$_SESSION['user_id']);
@@ -164,11 +164,11 @@ switch ($action) {
         exit;
 
     // ------------------------------------------------
-    // 7. Dodavatel – detail objednávky (jen jeho položky)
+    // 7. Supplier – order detail (only their items)
     // ------------------------------------------------
     case 'supplier_order_detail':
         if (!in_array('supplier', $_SESSION['roles'] ?? [], true)) {
-            echo "<p style='color:red'>Nemáš oprávnění zobrazit tento detail.</p>";
+            echo "<p style='color:red'>You don't have permission to view this detail.</p>";
             exit;
         }
 
@@ -177,8 +177,8 @@ switch ($action) {
         $customer = $orderController->getOrderCustomer($orderId);
 
         if (!$items) {
-            echo "<p>Tahle objednávka neobsahuje žádné tvoje produkty.</p>";
-            echo "<p><a href='index.php?action=supplier_orders'>Zpět na objednávky mých produktů</a></p>";
+            echo "<p>This order doesn't contain any of your products.</p>";
+            echo "<p><a href='index.php?action=supplier_orders'>Back to my product orders</a></p>";
             exit;
         }
 
@@ -186,9 +186,9 @@ switch ($action) {
         exit;
 
     // ------------------------------------------------
-    // Neznámá akce
+    // Unknown action
     // ------------------------------------------------
     default:
-        echo "<p>Neplatná akce.</p>";
+        echo "<p>Invalid action.</p>";
         exit;
 }

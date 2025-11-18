@@ -1,18 +1,17 @@
+<!-- HTML document structure with Bootstrap framework -->
 <!doctype html>
 <html lang="cs">
 <head>
+    <!-- Character encoding for proper text rendering -->
     <meta charset="utf-8">
+    <!-- Viewport settings for responsive design on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Page title that appears in browser tab -->
     <title><?= htmlspecialchars($title ?? 'Objednávkový systém') ?></title>
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-          crossorigin="anonymous">
-
-    <!-- Moje vlastní styly -->
+    <!-- Custom application styles -->
     <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+<!-- Main container for page content -->
 <main class="container py-4">

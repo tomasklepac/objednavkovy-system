@@ -1,11 +1,11 @@
 <?php
 
-// Controller pro uživatele – zajišťuje registraci, login/logout, správu uživatelů a role.
+// Controller for users – handles registration, login/logout, user management and roles.
 require_once __DIR__ . '/../Models/user_model.php';
 
 class user_controller {
     /** @var PDO */
-    private $pdo; // Připojení k databázi
+    private $pdo; // Database connection
 
     public function __construct($pdo) {
         $this->pdo = $pdo;
@@ -48,7 +48,7 @@ class user_controller {
     }
 
     // ================================================================
-    // REGISTRACE
+    // REGISTRATION
     // ================================================================
 
     public function register(
@@ -58,28 +58,28 @@ class user_controller {
         string $role,
         string $name
     ): string {
-        // 🛡 CSRF ochrana
+        // 🛡 CSRF protection
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
                 !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
             ) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
         if ($password !== $passwordConfirm) {
-            return "Hesla se neshodují!";
+            return "Passwords do not match!";
         }
 
         if (!in_array($role, ['customer', 'supplier'], true)) {
-            return "Neplatná role.";
+            return "Invalid role.";
         }
 
         $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->execute([$email]);
         if ($stmt->fetchColumn() > 0) {
-            return "Uživatel s tímto emailem už existuje!";
+            return "User with this email already exists!";
         }
 
         $hash = password_hash($password, PASSWORD_BCRYPT);
@@ -102,7 +102,7 @@ class user_controller {
     }
 
     // ================================================================
-    // ADMIN: SPRÁVA UŽIVATELŮ
+    // ADMIN: USER MANAGEMENT
     // ================================================================
 
     public function getAllUsers(): array {
@@ -117,13 +117,13 @@ class user_controller {
     }
 
     public function approveUser(int $userId): void {
-        // 🛡 CSRF ochrana
+        // 🛡 CSRF protection
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
                 !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
             ) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
@@ -132,13 +132,13 @@ class user_controller {
     }
 
     public function blockUser(int $userId): void {
-        // 🛡 CSRF ochrana
+        // 🛡 CSRF protection
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
                 !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
             ) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 

@@ -1,6 +1,6 @@
 <?php
 // -------------------------------------------------
-// Router: autentizace uživatelů (login / logout / register)
+// Router: user authentication (login / logout / register)
 // -------------------------------------------------
 
 require_once __DIR__ . '/../../app/Controllers/user_controller.php';
@@ -21,10 +21,10 @@ switch ($action) {
                 header("Location: index.php?action=dashboard");
                 exit;
             } elseif ($result === 'inactive') {
-                $error = "Účet ještě není schválen. Počkejte na aktivaci administrátorem.";
+                $error = "Account is not yet approved. Wait for administrator activation.";
                 require __DIR__ . "/../../app/Views/login_view.php";
             } else {
-                $error = "Neplatné přihlašovací údaje.";
+                $error = "Invalid credentials.";
                 require __DIR__ . "/../../app/Views/login_view.php";
             }
         } else {
@@ -41,7 +41,7 @@ switch ($action) {
             $role = $_POST['role'] ?? 'customer';
 
             if ($password !== $passwordConfirm) {
-                $error = "Hesla se neshodují.";
+                $error = "Passwords do not match.";
                 require __DIR__ . "/../../app/Views/register_view.php";
                 break;
             }
@@ -49,8 +49,8 @@ switch ($action) {
             $result = $userController->register($name, $email, $password, $role);
 
             if ($result === 'ok') {
-                echo "<p style='color:green'>✅ Registrace proběhla úspěšně. Počkejte na schválení administrátorem.</p>";
-                echo "<p><a href='index.php?action=login'>← Přihlásit se</a></p>";
+                echo "<p style='color:green'>✅ Registration successful. Wait for administrator approval.</p>";
+                echo "<p><a href='index.php?action=login'>← Log in</a></p>";
             } else {
                 $error = $result;
                 require __DIR__ . "/../../app/Views/register_view.php";

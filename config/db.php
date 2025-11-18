@@ -1,47 +1,47 @@
 <?php
 /**
- * Třída Database
+ * Database Class
  * ------------------
- * Zajišťuje připojení k databázi pomocí PDO.
- * Implementuje návrhový vzor "Singleton" – připojení se vytvoří jen jednou
- * a všude v aplikaci se používá stejná instance.
+ * Provides database connection using PDO.
+ * Implements the "Singleton" design pattern – the connection is created only once
+ * and the same instance is used throughout the application.
  */
 class Database {
-    // Jediná instance této třídy (singleton)
+    // Single instance of this class (singleton)
     private static $instance = null;
 
-    // PDO objekt (samotné připojení k databázi)
+    // PDO object (actual database connection)
     private $pdo;
 
     /**
-     * Konstruktor je private → nelze vytvořit instanci pomocí new zvenku.
-     * Připojí se k databázi a uloží PDO objekt.
+     * Constructor is private → cannot create instance using new from outside.
+     * Connects to the database and stores the PDO object.
      */
     private function __construct() {
-        // Přihlašovací údaje k databázi
-        $host    = "127.0.0.1";           // databázový server
-        $db      = "objednavkovy_system"; // název databáze
-        $user    = "root";                // výchozí uživatel v XAMPP
-        $pass    = "";                    // heslo (ve výchozím stavu prázdné)
-        $charset = "utf8mb4";             // správné kódování češtiny a emoji
+        // Database credentials
+        $host    = "127.0.0.1";           // database server
+        $db      = "objednavkovy_system"; // database name
+        $user    = "root";                // default user in XAMPP
+        $pass    = "";                    // password (empty by default)
+        $charset = "utf8mb4";             // proper encoding for Czech and emoji
 
-        // DSN = Data Source Name (řetězec pro PDO)
+        // DSN = Data Source Name (string for PDO)
         $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 
-        // Volby pro PDO
+        // PDO options
         $options = [
-            // Chyby se budou házet jako výjimky (lepší pro debug)
+            // Errors will be thrown as exceptions (better for debugging)
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            // Výsledky se budou vracet jako asociativní pole
+            // Results will be returned as associative arrays
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ];
 
-        // Vytvoření samotného PDO objektu (připojení k DB)
+        // Create the PDO object (database connection)
         $this->pdo = new PDO($dsn, $user, $pass, $options);
     }
 
     /**
-     * Statická metoda na získání jediné instance PDO
+     * Static method to get the single PDO instance
      *
      * @return PDO
      */

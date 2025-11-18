@@ -14,19 +14,19 @@ $productController = new product_controller($pdo);
 $orderController   = new order_controller($pdo);
 $userController    = new user_controller($pdo);
 
-// Pokud je uživatel přihlášený
+// If user is logged in
 if (!empty($_SESSION['user_id'])) {
-    // Načteme produkty (zobrazí se všem přihlášeným)
+    // Load products (displayed to all logged in users)
     $products = $productController->index();
 
-    // Zavoláme view dashboard (obsahuje odkazy podle role)
+    // Call dashboard view (contains links by role)
     require __DIR__ . '/../../app/Views/dashboard_view.php';
 
-    // Pod dashboardem rovnou zobrazíme seznam produktů
+    // Below dashboard immediately display product list
     require __DIR__ . '/../../app/Views/products_view.php';
     exit;
 }
 
-// Pokud není přihlášený → přesměrujeme na login
+// If not logged in → redirect to login
 require __DIR__ . '/../../app/Views/login_view.php';
 exit;

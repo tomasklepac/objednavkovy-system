@@ -1,6 +1,6 @@
 <?php
 
-// Controller pro produkty – zajišťuje CRUD operace a napojení na model.
+// Controller for products – handles CRUD operations and model connection.
 require_once __DIR__ . '/../Models/product_model.php';
 
 class product_controller {
@@ -52,13 +52,13 @@ class product_controller {
         int $supplierId,
         ?string $imagePath = null
     ): void {
-        // CSRF ochrana
+        // CSRF protection
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
                 !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
             ) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
@@ -89,13 +89,13 @@ class product_controller {
         int $stock,
         ?string $imagePath = null
     ): void {
-        // CSRF ochrana
+        // CSRF protection
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
                 !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
             ) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
@@ -120,13 +120,13 @@ class product_controller {
     // ================================================================
 
     public function deleteProduct(int $id): void {
-        // CSRF ochrana pro mazání
+        // CSRF protection for deletion
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
                 !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
             ) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
@@ -143,17 +143,17 @@ class product_controller {
         }
 
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            throw new RuntimeException("Chyba při nahrávání souboru.");
+            throw new RuntimeException("Error uploading file.");
         }
 
         if ($file['size'] > 2 * 1024 * 1024) {
-            throw new RuntimeException("Soubor je příliš velký (max 2 MB).");
+            throw new RuntimeException("File is too large (max 2 MB).");
         }
 
         $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $mime = mime_content_type($file['tmp_name']);
         if (!isset($allowed[$mime])) {
-            throw new RuntimeException("Nepodporovaný typ souboru.");
+            throw new RuntimeException("Unsupported file type.");
         }
 
         $uploadDir = __DIR__ . '/../../public/uploads/';
@@ -165,7 +165,7 @@ class product_controller {
         $targetPath = $uploadDir . $filename;
 
         if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
-            throw new RuntimeException("Nepodařilo se uložit soubor.");
+            throw new RuntimeException("Failed to save file.");
         }
 
         return 'uploads/' . $filename;

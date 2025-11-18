@@ -1,19 +1,19 @@
 <?php
 
 /**
- * Model pro produkty.
- * Obsahuje metody pro komunikaci s tabulkou `products` v databázi.
+ * Model for products.
+ * Contains methods for communicating with the `products` table in the database.
  */
 class product_model {
     /** @var PDO */
-    private $pdo; // Připojení k databázi
+    private $pdo; // Database connection
 
     // ================================================================
-    // KONSTRUKTOR
+    // CONSTRUCTOR
     // ================================================================
 
     /**
-     * Vytvoří instanci modelu a uloží PDO připojení.
+     * Creates a model instance and stores the PDO connection.
      */
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
@@ -24,9 +24,9 @@ class product_model {
     // ================================================================
 
     /**
-     * Vrátí všechny aktivní produkty (is_active = 1).
+     * Returns all active products (is_active = 1).
      *
-     * @return array[] Seznam produktů jako asociativní pole
+     * @return array[] List of products as associative array
      */
     public function getAllProducts(): array {
         $stmt = $this->pdo->query("

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Controller pro práci s objednávkami.
- * Obsahuje metody pro čtení, změny stavu a potvrzování objednávek,
- * a to jak z pohledu admina, zákazníka, tak i dodavatele.
+ * Controller for working with orders.
+ * Contains methods for reading, changing status and confirming orders,
+ * from the perspective of admin, customer, and supplier.
  */
 class order_controller {
     /** @var PDO */
@@ -29,7 +29,7 @@ class order_controller {
     }
 
     // ================================================================
-    // ZÁKAZNÍK
+    // CUSTOMER
     // ================================================================
 
     public function getOrdersByCustomer(int $customerId): array {
@@ -55,14 +55,14 @@ class order_controller {
     }
 
     // ================================================================
-    // ZMĚNY STAVU OBJEDNÁVEK
+    // ORDER STATUS CHANGES
     // ================================================================
 
-    /** Nastaví objednávce nový stav. */
+    /** Sets a new status for the order. */
     public function updateStatus(int $orderId, string $status): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
@@ -70,11 +70,11 @@ class order_controller {
         $stmt->execute([$status, $orderId]);
     }
 
-    /** Potvrdí objednávku (odečte zboží ze skladu a změní stav na confirmed). */
+    /** Confirms the order (deducts items from stock and changes status to confirmed). */
     public function confirmOrder(int $orderId): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
@@ -101,7 +101,7 @@ class order_controller {
                 ]);
 
                 if ($stmt->rowCount() === 0) {
-                    throw new Exception("Nedostatek zásob pro produkt ID " . $item['product_id']);
+                    throw new Exception("Insufficient stock for product ID " . $item['product_id']);
                 }
             }
 
@@ -119,22 +119,22 @@ class order_controller {
         }
     }
 
-    /** Přechod objednávky na stav shipped. */
+    /** Transitions order to shipped status. */
     public function markShipped(int $orderId): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
         $this->updateStatus($orderId, 'shipped');
     }
 
-    /** Přechod objednávky na stav delivered. */
+    /** Transitions order to delivered status. */
     public function markDelivered(int $orderId): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-                die('Neplatný CSRF token.');
+                die('Invalid CSRF token.');
             }
         }
 
@@ -142,7 +142,7 @@ class order_controller {
     }
 
     // ================================================================
-    // DODAVATEL
+    // SUPPLIER
     // ================================================================
 
     public function getOrdersBySupplier(int $supplierId): array {

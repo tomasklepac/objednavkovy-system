@@ -4,9 +4,9 @@
     <h2>Objednávky</h2>
 
     <?php
-    // převést role na malá písmena pro spolehlivé porovnání
+    // Convert roles to lowercase for reliable comparison
     $roles = array_map('strtolower', $_SESSION['roles'] ?? []);
-    $isCustomer = in_array('customer', $roles)
+    $isCustomer = in_array('customer', $roles);
     ?>
 
     <table class="table table-striped align-middle mt-3">
@@ -86,7 +86,7 @@
 
                         <td>
                             <?php
-                            // pouze admin nebo dodavatel mají tlačítka
+                            // Only admin or supplier roles can see action buttons
                             if (in_array('admin', $roles) || in_array('supplier', $roles)) {
                                 if ($order['status'] === 'confirmed') {
                                     echo '<a href="index.php?action=mark_shipped&id=' . urlencode($order['id']) . '" 

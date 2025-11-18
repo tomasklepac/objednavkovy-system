@@ -1,11 +1,11 @@
 <?php
 
-// Načteme soubor s databázovým připojením
+// Load the database connection file
 require_once __DIR__ . '/../../config/db.php';
 
 /**
- * Model pro uživatele.
- * Obsahuje metody pro komunikaci s tabulkou `users`.
+ * Model for users.
+ * Contains methods for communicating with the `users` table.
  */
 class user_model {
 
@@ -14,10 +14,10 @@ class user_model {
     // ================================================================
 
     /**
-     * Najde uživatele podle emailu.
+     * Finds a user by email.
      *
-     * @param string $email Email uživatele
-     * @return array|false Asociativní pole uživatele nebo false, pokud neexistuje
+     * @param string $email User's email
+     * @return array|false Associative array of user or false if doesn't exist
      */
     public static function findByEmail(string $email) {
         $pdo = Database::getInstance();
