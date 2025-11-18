@@ -40,7 +40,7 @@ switch ($action) {
         if (isset($_SESSION['cart'][$id])) {
             if ($_SESSION['cart'][$id]['quantity'] < $available) {
                 $_SESSION['cart'][$id]['quantity']++;
-            } // else full, you can add flash message
+            }
         } else {
             $_SESSION['cart'][$id] = [
                 'name'        => $product['name'],
