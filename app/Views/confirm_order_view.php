@@ -35,7 +35,7 @@
     <!-- Action buttons: back to cart or confirm order -->
     <div class="d-flex justify-content-between">
         <a href="index.php?action=view_cart" class="btn btn-outline-danger">❌ Zpět do košíku</a>
-        <button type="submit" class="btn btn-success">✅ Potvrdit objednávku</button>
+        <button type="submit" class="btn btn-success">Potvrdit objednávku</button>
     </div>
 </form>
 

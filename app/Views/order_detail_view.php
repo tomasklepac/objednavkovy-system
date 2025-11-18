@@ -20,10 +20,10 @@
                 echo '<span class="badge bg-info text-dark">Odesláno</span>';
                 break;
             case 'canceled':
-                echo '<span class="badge bg-danger">✗ Zrušeno</span>';
+                echo '<span class="badge bg-danger">Zrušeno</span>';
                 break;
             case 'delivered':
-                echo '<span class="badge bg-success">✓ Ukončeno</span>';
+                echo '<span class="badge bg-success">Ukončeno</span>';
                 break;
             default:
                 echo htmlspecialchars($order['status']);

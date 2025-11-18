@@ -48,7 +48,7 @@
                             <!-- Increase quantity button -->
                             <form method="post" action="index.php?action=increase_from_cart&id=<?= (int)$id ?>" style="display:inline;">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary">➕</button>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
                             </form>
                         </div>
                     </td>

@@ -46,13 +46,13 @@
                             <?php if ($user['is_active']): ?>
                                 <form method="post" action="index.php?action=block_user&id=<?= (int)$user['id'] ?>" style="display:inline;">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">🚫 Blokovat</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Blokovat</button>
                                 </form>
                             <!-- Approve blocked/pending user button -->
                             <?php else: ?>
                                 <form method="post" action="index.php?action=approve_user&id=<?= (int)$user['id'] ?>" style="display:inline;">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                    <button type="submit" class="btn btn-sm btn-success">✅ Schválit</button>
+                                    <button type="submit" class="btn btn-sm btn-success">Schválit</button>
                                 </form>
                             <?php endif; ?>
                         <?php endif; ?>

@@ -5,7 +5,7 @@
 
 <!-- Button to add new product -->
 <p>
-    <a href="index.php?action=add_product" class="btn btn-success">➕ Přidat nový produkt</a>
+    <a href="index.php?action=add_product" class="btn btn-success">Přidat nový produkt</a>
 </p>
 
 <!-- Display products table if there are any products -->
@@ -53,12 +53,12 @@
                     <!-- Action buttons: edit and delete -->
                     <td class="d-flex gap-1">
                         <!-- Edit button -->
-                        <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">✏ Upravit</a>
+                        <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">Upravit</a>
 
                         <!-- Delete button with confirmation -->
                         <form method="post" action="index.php?action=delete_product&id=<?= (int)$product['id'] ?>" onsubmit="return confirm('Opravdu smazat tento produkt?');">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">🗑 Smazat</button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Smazat</button>
                         </form>
                     </td>
                 </tr>
