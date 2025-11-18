@@ -7,12 +7,8 @@ class product_controller {
     /** @var PDO */
     private $pdo;
 
-    /** @var product_model */
-    private $productModel;
-
     public function __construct($pdo) {
         $this->pdo = $pdo;
-        $this->productModel = new product_model($pdo);
     }
 
     // ================================================================
@@ -20,7 +16,7 @@ class product_controller {
     // ================================================================
 
     public function index(): array {
-        return $this->productModel->getAllProducts();
+        return ProductModel::getAllProducts();
     }
 
     public function getById(int $id): ?array {
