@@ -58,7 +58,7 @@ class user_controller {
         string $role,
         string $name
     ): string {
-        // 🛡 CSRF protection
+        // CSRF protection
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
@@ -117,7 +117,7 @@ class user_controller {
     }
 
     public function approveUser(int $userId): void {
-        // 🛡 CSRF protection
+        // CSRF protection
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
@@ -132,7 +132,7 @@ class user_controller {
     }
 
     public function blockUser(int $userId): void {
-        // 🛡 CSRF protection
+        // CSRF protection
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
                 !isset($_POST['csrf_token']) ||
