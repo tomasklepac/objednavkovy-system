@@ -54,21 +54,21 @@ $action = $_GET['action'] ?? null;
 // ------------------------------------------------------------
 switch ($action) {
 
-    // 🟩 Authentication: login, logout, registration
+    // Authentication: login, logout, registration
     case 'register':
     case 'login':
     case 'logout':
         require __DIR__ . '/routers/auth_router.php';
         break;
 
-    // 🟦 Admin: user management
+    // Admin: user management
     case 'users':
     case 'approve_user':
     case 'block_user':
         require __DIR__ . '/routers/admin_router.php';
         break;
 
-    // 🟨 Products: CRUD and supplier's own products
+    // Products: CRUD and supplier's own products
     case 'add_product':
     case 'edit_product':
     case 'delete_product':
@@ -76,7 +76,7 @@ switch ($action) {
         require __DIR__ . '/routers/product_router.php';
         break;
 
-    // 🟧 Cart: adding, removing, changing quantities
+    // Cart: adding, removing, changing quantities
     case 'add_to_cart':
     case 'view_cart':
     case 'remove_from_cart':
@@ -85,7 +85,7 @@ switch ($action) {
         require __DIR__ . '/routers/cart_router.php';
         break;
 
-    // 🟥 Orders: creation, listing, status changes
+    // Orders: creation, listing, status changes
     case 'confirm_order':
     case 'orders':
     case 'update_order':
@@ -96,7 +96,7 @@ switch ($action) {
         require __DIR__ . '/routers/order_router.php';
         break;
 
-    // 🟪 Default overview (dashboard, products)
+    // Default overview (dashboard, products)
     default:
         require __DIR__ . '/routers/dashboard_router.php';
         break;
