@@ -80,8 +80,8 @@ switch ($action) {
             unset($_SESSION['cart']);
 
             echo "<p style='color:green'>Order was successfully created!</p>";
-            echo "<p><a href='index.php'>🏠 Back to main page</a></p>";
-            echo "<p><a href='index.php?action=orders'>📦 Show my orders</a></p>";
+            echo "<p><a href='index.php'>Back to main page</a></p>";
+            echo "<p><a href='index.php?action=orders'>Show my orders</a></p>";
             exit;
         }
 
