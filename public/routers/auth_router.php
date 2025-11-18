@@ -49,7 +49,11 @@ switch ($action) {
             $result = $userController->register($name, $email, $password, $role);
 
             if ($result === 'ok') {
-                echo "<p style='color:green'>✅ Registration successful. Wait for administrator approval.</p>";
+                if ($role === 'supplier') {
+                    echo "<p style='color:green'>Registration successful. Wait for administrator approval.</p>";
+                } else {
+                    echo "<p style='color:green'>Registration successful. You can now log in.</p>";
+                }
                 echo "<p><a href='index.php?action=login'>← Log in</a></p>";
             } else {
                 $error = $result;
