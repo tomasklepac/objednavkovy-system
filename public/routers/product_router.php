@@ -51,8 +51,8 @@ switch ($action) {
                 $imagePath
             );
 
-            echo "<p style='color:green'>✅ Product was added!</p>";
-            echo "<p><a href='index.php?action=products'>← Back to products</a></p>";
+            echo "<p style='color:green'>Product was added!</p>";
+            echo "<p><a href='index.php?action=products'>Back to products</a></p>";
         } else {
             require __DIR__ . '/../../app/Views/add_product_view.php';
         }
@@ -89,7 +89,7 @@ switch ($action) {
             // Keep original image
             $imagePath = $product['image_path'] ?? null;
 
-            // If new file was uploaded → overwrite
+            // If new file was uploaded -> overwrite
             if (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
                 try {
                     $imagePath = $productController->handleImageUpload($_FILES['image']);
@@ -107,9 +107,9 @@ switch ($action) {
                 $imagePath
             );
 
-            echo "<p style='color:green'>✅ Product was updated!</p>";
-            echo "<p><a href='index.php'>← Back to dashboard</a></p>";
-            echo "<p><a href='index.php?action=my_products'>← Back to my products</a></p>";
+            echo "<p style='color:green'>Product was updated!</p>";
+            echo "<p><a href='index.php'>Back to dashboard</a></p>";
+            echo "<p><a href='index.php?action=my_products'>Back to my products</a></p>";
 
         } else {
             require __DIR__ . '/../../app/Views/edit_product_view.php';
