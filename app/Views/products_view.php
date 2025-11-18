@@ -3,7 +3,7 @@
 <!-- Link to add product (only for suppliers or admins) -->
 <?php if (!empty($_SESSION['roles']) && (in_array('supplier', $_SESSION['roles']) || in_array('admin', $_SESSION['roles']))): ?>
     <p class="mb-3">
-        <a href="index.php?action=add_product" class="btn btn-success">➕ Přidat produkt</a>
+        <a href="index.php?action=add_product" class="btn btn-success">Přidat produkt</a>
     </p>
 <?php endif; ?>
 
@@ -53,13 +53,13 @@
                     <td><?= htmlspecialchars($product['supplier_id']) ?></td>
                     <td>
                         <?php if ($isOwner || $isAdmin): ?>
-                            <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">✏ Upravit</a>
+                            <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">Upravit</a>
 
                             <form method="post" action="index.php?action=delete_product" style="display:inline;">
                                 <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Opravdu smazat tento produkt?');">🗑 Smazat</button>
+                                        onclick="return confirm('Opravdu smazat tento produkt?');">Smazat</button>
                             </form>
                         <?php endif; ?>
 
@@ -68,7 +68,7 @@
                                 <form method="post" action="index.php?action=add_to_cart" style="display:inline;">
                                     <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                    <button type="submit" class="btn btn-sm btn-success">🛒 Přidat do košíku</button>
+                                    <button type="submit" class="btn btn-sm btn-success">Přidat do košíku</button>
                                 </form>
                             <?php else: ?>
                                 <span class="text-muted">Nelze přidat</span>
