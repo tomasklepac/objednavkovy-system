@@ -9,7 +9,9 @@
     <!-- Page title that appears in browser tab -->
     <title><?= htmlspecialchars($title ?? 'Objednávkový systém') ?></title>
 
-    <!-- Custom application styles -->
+    <!-- Bootstrap CSS from CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom application styles (minimal overrides) -->
     <link rel="stylesheet" href="css/app.css">
 </head>
 <body>

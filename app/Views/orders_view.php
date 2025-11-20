@@ -9,9 +9,10 @@
     $isCustomer = in_array('customer', $roles);
     ?>
 
-    <table class="table table-striped align-middle mt-3">
-        <thead>
-        <tr>
+    <div class="table-responsive">
+        <table class="table table-striped align-middle mt-3">
+            <thead>
+            <tr>
             <th>ID</th>
             <th>Stav</th>
             <th>Celkem</th>
@@ -117,7 +118,8 @@
             </tr>
         <?php endif; ?>
         </tbody>
-    </table>
+            </table>
+    </div>
 
     <a href="index.php" class="btn btn-secondary mt-3">← Zpět na hlavní stránku</a>
 </div>
