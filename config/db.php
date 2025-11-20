@@ -38,6 +38,9 @@ class Database {
 
         // Create the PDO object (database connection)
         $this->pdo = new PDO($dsn, $user, $pass, $options);
+        
+        // Set character set for the connection
+        $this->pdo->exec("SET NAMES utf8mb4");
     }
 
     /**

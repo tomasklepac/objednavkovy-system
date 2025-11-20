@@ -21,6 +21,9 @@ SET time_zone = "+00:00";
 -- Databáze: `objednavkovy_system`
 --
 
+CREATE DATABASE IF NOT EXISTS `objednavkovy_system` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `objednavkovy_system`;
+
 -- --------------------------------------------------------
 
 --
