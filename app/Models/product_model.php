@@ -57,6 +57,25 @@ class ProductModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Returns ALL products (active and archived) from a specific supplier.
+     * Used for supplier management interface.
+     *
+     * @param int $supplierId Supplier ID
+     * @return array[] List of ALL supplier's products
+     */
+    public static function getAllBySupplierId(int $supplierId): array {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("
+            SELECT * 
+            FROM products 
+            WHERE supplier_id = ?
+            ORDER BY is_active DESC, name ASC
+        ");
+        $stmt->execute([$supplierId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // ================================================================
     // CREATE
     // ================================================================
@@ -164,6 +183,19 @@ class ProductModel {
      */
     public static function deleteProduct(int $id): void {
         self::archiveProduct($id);
+    }
+
+    /**
+     * Reactivates an archived product (soft undelete).
+     * Sets is_active to 1 and stock to 0 (user must set stock manually).
+     *
+     * @param int $id Product ID
+     * @return void
+     */
+    public static function reactivateProduct(int $id): void {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("UPDATE products SET is_active = 1, stock = 0 WHERE id = ?");
+        $stmt->execute([$id]);
     }
 }
 

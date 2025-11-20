@@ -158,12 +158,48 @@ switch ($action) {
         exit;
 
     // ------------------------------------------------
-    // 4. Current supplier's products
+    // 4. Current supplier's products (all, including archived)
     // ------------------------------------------------
     case 'my_products':
-        $products = $productController->getBySupplierId($_SESSION['user_id']);
+        $products = $productController->getAllBySupplierId($_SESSION['user_id']);
         require __DIR__ . '/../../app/Views/my_products_view.php';
         break;
+
+    // ------------------------------------------------
+    // 4b. Reactivate product (supplier or admin)
+    // ------------------------------------------------
+    case 'reactivate_product':
+        $id      = (int)($_GET['id'] ?? 0);
+        $product = $productController->getById($id);
+
+        if (!$product) {
+            http_response_code(404);
+            echo "<p style='color:red'>Product not found.</p>";
+            echo "<p><a href='index.php?action=my_products'>Back to my products</a></p>";
+            break;
+        }
+
+        $isOwner = ((int)$product['supplier_id'] === (int)$_SESSION['user_id']);
+        $isAdmin = in_array('admin', $_SESSION['roles'] ?? [], true);
+
+        if (!$isOwner && !$isAdmin) {
+            http_response_code(403);
+            echo "<p style='color:red'>You cannot reactivate this product.</p>";
+            break;
+        }
+
+        // Check if product is already active
+        if ($product['is_active']) {
+            echo "<p style='color:orange'>This product is already active.</p>";
+            echo "<p><a href='index.php?action=my_products'>Back to my products</a></p>";
+            break;
+        }
+
+        $productController->reactivateProduct($id);
+        echo "<p style='color:green'>Product has been reactivated successfully with stock set to 0. Please update the stock.</p>";
+        echo "<p><a href='index.php?action=edit_product&id=" . (int)$id . "'>Edit product</a> | ";
+        echo "<a href='index.php?action=my_products'>Back to my products</a></p>";
+        exit;
 
     // ------------------------------------------------
     // 5. List all products

@@ -20,6 +20,7 @@
                 <th>Popis</th>
                 <th>Cena</th>
                 <th>Skladem</th>
+                <th>Status</th>
                 <th>Akce</th>
             </tr>
             </thead>
@@ -50,16 +51,32 @@
                             <span class="text-danger fw-bold">Vyprodáno</span>
                         <?php endif; ?>
                     </td>
-                    <!-- Action buttons: edit and delete -->
-                    <td class="d-flex gap-1">
+                    <!-- Product status: active or archived -->
+                    <td>
+                        <?php if ($product['is_active']): ?>
+                            <span class="badge bg-success">Aktivní</span>
+                        <?php else: ?>
+                            <span class="badge bg-secondary">Archivován</span>
+                        <?php endif; ?>
+                    </td>
+                    <!-- Action buttons: edit, archive, reactivate -->
+                    <td class="d-flex gap-1 flex-wrap">
                         <!-- Edit button -->
                         <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">Upravit</a>
 
-                        <!-- Delete button with confirmation -->
-                        <form method="post" action="index.php?action=delete_product&id=<?= (int)$product['id'] ?>" onsubmit="return confirm('Opravdu smazat tento produkt?');">
-                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Smazat</button>
-                        </form>
+                        <?php if ($product['is_active']): ?>
+                            <!-- Archive button (only for active products) -->
+                            <form method="post" action="index.php?action=delete_product" style="display:inline;" onsubmit="return confirm('Archivovat tento produkt?');">
+                                <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-warning">Archivovat</button>
+                            </form>
+                        <?php else: ?>
+                            <!-- Reactivate button (only for archived products) -->
+                            <a href="index.php?action=reactivate_product&id=<?= (int)$product['id'] ?>" 
+                               class="btn btn-sm btn-outline-success"
+                               onclick="return confirm('Reaktivovat tento produkt? Stock bude nastaven na 0.');">Reaktivovat</a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

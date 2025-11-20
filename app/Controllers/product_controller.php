@@ -41,6 +41,17 @@ class product_controller {
         return ProductModel::getBySupplierId($supplierId);
     }
 
+    /**
+     * Returns ALL products (active and archived) from a specific supplier.
+     * Used for supplier management interface.
+     *
+     * @param int $supplierId Supplier ID
+     * @return array[] List of ALL supplier's products
+     */
+    public function getAllBySupplierId(int $supplierId): array {
+        return ProductModel::getAllBySupplierId($supplierId);
+    }
+
     // ================================================================
     // CREATE
     // ================================================================
@@ -139,6 +150,17 @@ class product_controller {
      */
     public function deleteProduct(int $id): void {
         $this->archiveProduct($id);
+    }
+
+    /**
+     * Reactivates an archived product.
+     * Sets is_active to 1 and stock to 0.
+     *
+     * @param int $id Product ID
+     * @return void
+     */
+    public function reactivateProduct(int $id): void {
+        ProductModel::reactivateProduct($id);
     }
 
     // ================================================================
