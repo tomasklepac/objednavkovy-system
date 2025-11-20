@@ -65,7 +65,7 @@
                         ?>
                     </td>
 
-                    <td><?= htmlspecialchars($order['created_at']) ?></td>
+                    <td><?= date('d.m.Y H:i', strtotime($order['created_at'])) ?></td>
 
                     <td>
                         <a href="index.php?action=order_detail&id=<?= urlencode($order['id']) ?>"

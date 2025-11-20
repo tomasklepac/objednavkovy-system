@@ -54,7 +54,7 @@
                     </td>
 
                     <!-- Order creation date -->
-                    <td><?= htmlspecialchars($order['created_at']) ?></td>
+                    <td><?= date('d.m.Y H:i', strtotime($order['created_at'])) ?></td>
                     <!-- Link to view order details (supplier only sees their items) -->
                     <td>
                         <a href="index.php?action=supplier_order_detail&id=<?= (int)$order['id'] ?>"

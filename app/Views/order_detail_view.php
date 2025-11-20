@@ -59,7 +59,7 @@
                     }
                     ?>
                     <br><br>
-                    <strong>Datum vytvoření:</strong> <?= htmlspecialchars($order['created_at']) ?><br>
+                    <strong>Datum vytvoření:</strong> <?= date('d.m.Y H:i', strtotime($order['created_at'])) ?><br>
                     <strong>Celková cena:</strong> <?= number_format($order['total_cents'] / 100, 2, ',', ' ') ?> Kč
                 </div>
             </div>
