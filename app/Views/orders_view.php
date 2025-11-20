@@ -89,7 +89,12 @@
                             <?php
                             // Only admin or supplier roles can see action buttons
                             if (in_array('admin', $roles) || in_array('supplier', $roles)) {
-                                if ($order['status'] === 'confirmed') {
+                                if ($order['status'] === 'pending') {
+                                    echo '<a href="index.php?action=confirm_admin_order&id=' . urlencode($order['id']) . '" 
+                                           class="btn btn-sm btn-success" 
+                                           style="border:none;">
+                                           ✓ Potvrdit</a>';
+                                } elseif ($order['status'] === 'confirmed') {
                                     echo '<a href="index.php?action=mark_shipped&id=' . urlencode($order['id']) . '" 
                                            class="btn btn-sm btn-primary" 
                                            style="background-color:#7e57c2;border:none;">
