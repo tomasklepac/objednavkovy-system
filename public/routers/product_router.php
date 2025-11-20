@@ -85,17 +85,11 @@ switch ($action) {
             $price = (float)($_POST['price'] ?? 0);
             $stock = (int)($_POST['stock'] ?? 0);
 
-            // Keep original image
-            $imagePath = $product['image_path'] ?? null;
-
-            // If new file was uploaded -> overwrite
-            if (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
-                try {
-                    $imagePath = $productController->handleImageUpload($_FILES['image']);
-                } catch (RuntimeException $e) {
-                    echo "<p style='color:red'>" . htmlspecialchars($e->getMessage()) . "</p>";
-                }
-            }
+            // Pass $_FILES['image'] directly to controller
+            // Controller will handle image upload and fallback to existing image if needed
+            $imageFile = (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE)
+                ? $_FILES['image']
+                : null;
 
             $productController->updateProduct(
                 $id,
@@ -103,7 +97,7 @@ switch ($action) {
                 $description,
                 $price,
                 $stock,
-                $imagePath
+                $imageFile
             );
 
             echo "<p style='color:green'>Product was updated!</p>";
