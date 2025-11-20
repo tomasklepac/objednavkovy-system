@@ -115,17 +115,30 @@ class product_controller {
     }
 
     // ================================================================
-    // DELETE
+    // DELETE (ARCHIVE)
     // ================================================================
 
     /**
-     * Deletes a product by ID.
+     * Archives a product by ID (soft delete).
+     * Sets is_active to 0 instead of deleting the record.
      *
      * @param int $id Product ID
      * @return void
      */
+    public function archiveProduct(int $id): void {
+        ProductModel::archiveProduct($id);
+    }
+
+    /**
+     * Deletes a product by ID (kept for compatibility).
+     * Calls archiveProduct instead.
+     *
+     * @param int $id Product ID
+     * @return void
+     * @deprecated Use archiveProduct() instead
+     */
     public function deleteProduct(int $id): void {
-        ProductModel::deleteProduct($id);
+        $this->archiveProduct($id);
     }
 
     // ================================================================

@@ -137,19 +137,33 @@ class ProductModel {
     }
 
     // ================================================================
-    // DELETE
+    // DELETE (ARCHIVE)
     // ================================================================
 
     /**
-     * Deletes a product by ID.
+     * Archives a product by ID (soft delete).
+     * Sets is_active to 0 instead of deleting the record.
+     * This preserves referential integrity with order_item records.
      *
      * @param int $id Product ID
      * @return void
      */
-    public static function deleteProduct(int $id): void {
+    public static function archiveProduct(int $id): void {
         $db = Database::getInstance();
-        $stmt = $db->prepare("DELETE FROM products WHERE id = ?");
+        $stmt = $db->prepare("UPDATE products SET is_active = 0 WHERE id = ?");
         $stmt->execute([$id]);
+    }
+
+    /**
+     * Deletes a product by ID (kept for compatibility).
+     * Calls archiveProduct instead.
+     *
+     * @param int $id Product ID
+     * @return void
+     * @deprecated Use archiveProduct() instead
+     */
+    public static function deleteProduct(int $id): void {
+        self::archiveProduct($id);
     }
 }
 

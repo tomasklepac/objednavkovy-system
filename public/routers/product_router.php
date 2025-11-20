@@ -137,8 +137,16 @@ switch ($action) {
             break;
         }
 
-        $productController->deleteProduct($id);
-        header("Location: index.php?action=my_products");
+        // Check if product is already archived
+        if (!$product['is_active']) {
+            echo "<p style='color:orange'>This product is already archived.</p>";
+            echo "<p><a href='index.php?action=my_products'>Back to my products</a></p>";
+            break;
+        }
+
+        $productController->archiveProduct($id);
+        echo "<p style='color:green'>Product has been archived successfully.</p>";
+        echo "<p><a href='index.php?action=my_products'>Back to my products</a></p>";
         exit;
 
     // ------------------------------------------------
