@@ -150,6 +150,34 @@ switch ($action) {
         exit;
 
     // ------------------------------------------------
+    // 5b. Admin marks order as shipped
+    // ------------------------------------------------
+    case 'mark_shipped':
+        if (!in_array('admin', $_SESSION['roles'] ?? [], true)) {
+            echo "<p style='color:red'>You don't have permission to change order status.</p>";
+            exit;
+        }
+
+        $orderId = (int)($_GET['id'] ?? 0);
+        $orderController->markShipped($orderId);
+        header("Location: index.php?action=orders");
+        exit;
+
+    // ------------------------------------------------
+    // 5c. Admin marks order as completed/delivered
+    // ------------------------------------------------
+    case 'mark_completed':
+        if (!in_array('admin', $_SESSION['roles'] ?? [], true)) {
+            echo "<p style='color:red'>You don't have permission to change order status.</p>";
+            exit;
+        }
+
+        $orderId = (int)($_GET['id'] ?? 0);
+        $orderController->markDelivered($orderId);
+        header("Location: index.php?action=orders");
+        exit;
+
+    // ------------------------------------------------
     // 6. Supplier – list of orders for their products
     // ------------------------------------------------
     case 'supplier_orders':
