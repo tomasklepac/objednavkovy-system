@@ -119,12 +119,20 @@ switch ($action) {
     // 3. Delete product (only owner or admin)
     // ------------------------------------------------
     case 'delete_product':
-        $id      = (int)($_GET['id'] ?? 0);
+        // Handle both GET and POST requests
+        $id = null;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = (int)($_POST['product_id'] ?? 0);
+        } else {
+            $id = (int)($_GET['id'] ?? 0);
+        }
+        
         $product = $productController->getById($id);
 
         if (!$product) {
             http_response_code(404);
             echo "<p style='color:red'>Product not found.</p>";
+            echo "<p><a href='index.php?action=my_products'>Back to my products</a></p>";
             break;
         }
 
