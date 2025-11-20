@@ -46,6 +46,16 @@ class order_controller {
         return OrderModel::getOrderItems($orderId);
     }
 
+    /**
+     * Returns complete order information with customer details.
+     *
+     * @param int $orderId Order ID
+     * @return array|null Order data with customer info
+     */
+    public function getOrderWithCustomer(int $orderId): ?array {
+        return OrderModel::getOrderWithCustomer($orderId);
+    }
+
     // ================================================================
     // ORDER STATUS CHANGES
     // ================================================================

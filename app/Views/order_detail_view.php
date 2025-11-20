@@ -3,39 +3,74 @@
 <!-- Order detail heading with order ID -->
 <h1 class="h3 mb-3">Detail objednávky #<?= htmlspecialchars($_GET['id'] ?? '') ?></h1>
 
-<!-- Display order status if order exists -->
+<!-- Order header with customer info -->
 <?php if (!empty($order)): ?>
-    <p>
-        <strong>Stav objednávky:</strong>
-        <!-- Order status badge with color coding -->
-        <?php
-        switch ($order['status']) {
-            case 'pending':
-                echo '<span class="badge bg-secondary">Čeká na potvrzení</span>';
-                break;
-            case 'confirmed':
-                echo '<span class="badge bg-warning text-dark">Potvrzeno</span>';
-                break;
-            case 'shipped':
-                echo '<span class="badge bg-info text-dark">Odesláno</span>';
-                break;
-            case 'canceled':
-                echo '<span class="badge bg-danger">Zrušeno</span>';
-                break;
-            case 'delivered':
-                echo '<span class="badge bg-success">Ukončeno</span>';
-                break;
-            default:
-                echo htmlspecialchars($order['status']);
-                break;
-        }
-        ?>
-    </p>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">Zákazník</h5>
+                    <p>
+                        <strong>Jméno:</strong> <?= htmlspecialchars($order['customer_name']) ?><br>
+                        <strong>E-mail:</strong> <?= htmlspecialchars($order['customer_email']) ?>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">Doručovací adresa</h5>
+                    <p>
+                        <strong>Ulice:</strong> <?= htmlspecialchars($order['street']) ?><br>
+                        <strong>Město:</strong> <?= htmlspecialchars($order['city']) ?><br>
+                        <strong>PSČ:</strong> <?= htmlspecialchars($order['zip']) ?>
+                    </p>
+                </div>
+            </div>
+            <?php if (!empty($order['note'])): ?>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <strong>Poznámka:</strong><br>
+                        <p class="text-muted"><?= htmlspecialchars($order['note']) ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <hr>
+            <div class="row">
+                <div class="col-12">
+                    <strong>Stav objednávky:</strong>
+                    <?php
+                    switch ($order['status']) {
+                        case 'pending':
+                            echo '<span class="badge bg-secondary">Čeká na potvrzení</span>';
+                            break;
+                        case 'confirmed':
+                            echo '<span class="badge bg-warning text-dark">Potvrzeno</span>';
+                            break;
+                        case 'shipped':
+                            echo '<span class="badge bg-info text-dark">Odesláno</span>';
+                            break;
+                        case 'canceled':
+                            echo '<span class="badge bg-danger">Zrušeno</span>';
+                            break;
+                        case 'delivered':
+                            echo '<span class="badge bg-success">Ukončeno</span>';
+                            break;
+                        default:
+                            echo htmlspecialchars($order['status']);
+                            break;
+                    }
+                    ?>
+                    <br><br>
+                    <strong>Datum vytvoření:</strong> <?= htmlspecialchars($order['created_at']) ?><br>
+                    <strong>Celková cena:</strong> <?= number_format($order['total_cents'] / 100, 2, ',', ' ') ?> Kč
+                </div>
+            </div>
+        </div>
+    </div>
 <?php endif; ?>
 
 <!-- Display order items table if there are any items -->
 <?php if (!empty($items)): ?>
-    <div class="table-responsive mt-3">
+    <h4 class="mb-3">Objednané položky</h4>
+    <div class="table-responsive">
         <table class="table table-striped table-hover align-middle">
             <!-- Table headers -->
             <thead class="table-light">

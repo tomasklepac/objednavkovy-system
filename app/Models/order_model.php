@@ -235,4 +235,24 @@ class OrderModel {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
+
+    /**
+     * Returns complete order information including customer and delivery details.
+     *
+     * @param int $orderId Order ID
+     * @return array|null Order data with customer info or null if not found
+     */
+    public static function getOrderWithCustomer(int $orderId): ?array {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("
+            SELECT o.*, u.name as customer_name, u.email as customer_email
+            FROM orders o
+            JOIN users u ON u.id = o.customer_id
+            WHERE o.id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$orderId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
 }

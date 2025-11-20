@@ -113,10 +113,11 @@ switch ($action) {
     // ------------------------------------------------
     case 'order_detail':
         $orderId = (int)($_GET['id'] ?? 0);
-        $items   = $orderController->getOrderItems($orderId);
+        $order = $orderController->getOrderWithCustomer($orderId);
+        $items = $orderController->getOrderItems($orderId);
 
-        if (!$items) {
-            echo "<p style='color:red'>Order #$orderId has no items or doesn't exist.</p>";
+        if (!$order || !$items) {
+            echo "<p style='color:red'>Order #$orderId not found or has no items.</p>";
             echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
             exit;
         }
