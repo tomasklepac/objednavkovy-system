@@ -170,6 +170,57 @@ class OrderModel {
         self::updateStatus($orderId, 'delivered');
     }
 
+    /**
+     * Cancels an order and refunds stock.
+     * Adds stock back for all items in the order.
+     *
+     * @param int $orderId Order ID
+     * @return void
+     * @throws Exception If transaction fails
+     */
+    public static function cancelOrder(int $orderId): void {
+        $db = Database::getInstance();
+
+        try {
+            $db->beginTransaction();
+
+            // Get all order items
+            $stmt = $db->prepare("
+                SELECT product_id, quantity 
+                FROM order_item 
+                WHERE order_id = ?
+            ");
+            $stmt->execute([$orderId]);
+            $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Return stock for each item
+            foreach ($items as $item) {
+                $stmt = $db->prepare("
+                    UPDATE products
+                    SET stock = stock + ?
+                    WHERE id = ?
+                ");
+                $stmt->execute([
+                    $item['quantity'],
+                    $item['product_id']
+                ]);
+            }
+
+            // Update order status to canceled
+            $stmt = $db->prepare("
+                UPDATE orders 
+                SET status = 'canceled' 
+                WHERE id = ?
+            ");
+            $stmt->execute([$orderId]);
+
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollBack();
+            throw $e;
+        }
+    }
+
     // ================================================================
     // SUPPLIER - SUPPLIER'S ORDERS
     // ================================================================

@@ -114,6 +114,17 @@ class order_controller {
         OrderModel::markDelivered($orderId);
     }
 
+    /**
+     * Cancels an order and refunds stock.
+     *
+     * @param int $orderId Order ID
+     * @return void
+     * @throws Exception If cancellation fails
+     */
+    public function cancelOrder(int $orderId): void {
+        OrderModel::cancelOrder($orderId);
+    }
+
     // ================================================================
     // SUPPLIER
     // ================================================================

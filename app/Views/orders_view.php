@@ -93,17 +93,32 @@
                                     echo '<a href="index.php?action=confirm_admin_order&id=' . urlencode($order['id']) . '" 
                                            class="btn btn-sm btn-success" 
                                            style="border:none;">
-                                           ✓ Potvrdit</a>';
+                                           ✓ Potvrdit</a> ';
+                                    echo '<a href="index.php?action=cancel_order&id=' . urlencode($order['id']) . '" 
+                                           class="btn btn-sm btn-danger" 
+                                           style="border:none;"
+                                           onclick="return confirm(\'Opravdu zrušit tuto objednávku?\');">
+                                           ✕ Zrušit</a>';
                                 } elseif ($order['status'] === 'confirmed') {
                                     echo '<a href="index.php?action=mark_shipped&id=' . urlencode($order['id']) . '" 
                                            class="btn btn-sm btn-primary" 
                                            style="background-color:#7e57c2;border:none;">
-                                           📦 Odeslat</a>';
+                                           📦 Odeslat</a> ';
+                                    echo '<a href="index.php?action=cancel_order&id=' . urlencode($order['id']) . '" 
+                                           class="btn btn-sm btn-danger" 
+                                           style="border:none;"
+                                           onclick="return confirm(\'Opravdu zrušit tuto objednávku?\');">
+                                           ✕ Zrušit</a>';
                                 } elseif ($order['status'] === 'shipped') {
                                     echo '<a href="index.php?action=mark_completed&id=' . urlencode($order['id']) . '" 
                                            class="btn btn-sm btn-info text-white" 
                                            style="background-color:#26c6da;border:none;">
-                                           📬 Doručeno</a>';
+                                           📬 Doručeno</a> ';
+                                    echo '<a href="index.php?action=cancel_order&id=' . urlencode($order['id']) . '" 
+                                           class="btn btn-sm btn-danger" 
+                                           style="border:none;"
+                                           onclick="return confirm(\'Opravdu zrušit tuto objednávku?\');">
+                                           ✕ Zrušit</a>';
                                 } else {
                                     echo '<span class="text-muted">–</span>';
                                 }

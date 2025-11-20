@@ -222,6 +222,48 @@ switch ($action) {
         exit;
 
     // ------------------------------------------------
+    // 8. Cancel order (admin only) and refund stock
+    // ------------------------------------------------
+    case 'cancel_order':
+        if (!in_array('admin', $_SESSION['roles'] ?? [], true)) {
+            echo "<p style='color:red'>You don't have permission to cancel orders.</p>";
+            exit;
+        }
+
+        $orderId = (int)($_GET['id'] ?? 0);
+        
+        // Check if order can be canceled (not already canceled or delivered)
+        $orders = $orderController->getAllOrders();
+        $order = null;
+        foreach ($orders as $o) {
+            if ($o['id'] == $orderId) {
+                $order = $o;
+                break;
+            }
+        }
+        
+        if (!$order) {
+            echo "<p style='color:red'>Order not found.</p>";
+            echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
+            exit;
+        }
+
+        if ($order['status'] === 'canceled' || $order['status'] === 'delivered') {
+            echo "<p style='color:orange'>This order cannot be canceled (status: {$order['status']}).</p>";
+            echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
+            exit;
+        }
+
+        try {
+            $orderController->cancelOrder($orderId);
+            echo "<p style='color:green'>Order #$orderId was canceled and stock refunded.</p>";
+        } catch (Exception $e) {
+            echo "<p style='color:red'>Error: {$e->getMessage()}</p>";
+        }
+        echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
+        exit;
+
+    // ------------------------------------------------
     // Unknown action
     // ------------------------------------------------
     default:

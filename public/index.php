@@ -97,6 +97,7 @@ switch ($action) {
     case 'confirm_admin_order':
     case 'mark_shipped':
     case 'mark_completed':
+    case 'cancel_order':
     case 'supplier_orders':
     case 'supplier_order_detail':
         require __DIR__ . '/routers/order_router.php';
