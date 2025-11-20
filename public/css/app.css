@@ -158,3 +158,120 @@ footer {
     }
 }
 
+/* =====================
+   SIDEBAR MENU STYLES
+   ===================== */
+
+.sidebar-menu {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 350px;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
+    z-index: 1040;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-menu.show {
+    right: 0;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-gray);
+    flex-shrink: 0;
+}
+
+.sidebar-header h5 {
+    font-weight: 700;
+    color: var(--dark-gray);
+}
+
+.sidebar-body {
+    padding: 1rem 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sidebar-section {
+    padding: 1rem 0;
+}
+
+.sidebar-section:not(:last-child) {
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.sidebar-title {
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.sidebar-item {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    color: var(--text-gray);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-item:hover {
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+    border-left-color: var(--primary-color);
+    padding-left: calc(1.5rem + 3px);
+}
+
+.sidebar-item i {
+    margin-right: 0.75rem;
+    width: 1.2rem;
+    text-align: center;
+}
+
+.sidebar-item.text-danger:hover {
+    background-color: rgba(245, 54, 92, 0.1);
+    color: var(--danger-color);
+    border-left-color: var(--danger-color);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0);
+    z-index: 1030;
+    transition: background 0.3s ease;
+    pointer-events: none;
+}
+
+.sidebar-overlay.show {
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .sidebar-menu {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+
