@@ -1,5 +1,3 @@
-<?php require __DIR__ . '/partials/header.php'; ?>
-
 <!-- Link to add product (only for suppliers or admins) -->
 <?php if (!empty($_SESSION['roles']) && (in_array('supplier', $_SESSION['roles']) || in_array('admin', $_SESSION['roles']))): ?>
     <div class="mb-4">
@@ -85,5 +83,3 @@
 <?php else: ?>
     <p>Žádné produkty nejsou dostupné.</p>
 <?php endif; ?>
-
-<?php require __DIR__ . '/partials/footer.php'; ?>

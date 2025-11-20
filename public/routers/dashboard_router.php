@@ -21,6 +21,9 @@ if (!empty($_SESSION['user_id'])) {
 
     // Below dashboard immediately display product list
     require __DIR__ . '/../../app/Views/products_view.php';
+    
+    // Close HTML document with footer
+    require __DIR__ . '/../../app/Views/partials/footer.php';
     exit;
 }
 
