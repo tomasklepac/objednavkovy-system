@@ -74,6 +74,15 @@ switch ($action) {
                 $itemStmt->execute([$orderId, $productId, $item['quantity'], $item['price_cents']]);
             }
 
+            // Deduct stock immediately when order is placed
+            try {
+                $orderController->confirmOrder($orderId);
+            } catch (Exception $e) {
+                // If stock deduction fails, we still have the order record
+                // Admin will see the error when trying to process it
+                echo "<p style='color:orange'>Warning: " . htmlspecialchars($e->getMessage()) . "</p>";
+            }
+
             // clear cart
             unset($_SESSION['cart']);
 
@@ -126,8 +135,8 @@ switch ($action) {
 
         $orderId = (int)($_GET['id'] ?? 0);
         try {
-            $orderController->confirmOrder($orderId);
-            echo "<p style='color:green'>Order #$orderId was confirmed and stock updated.</p>";
+            $orderController->confirmPendingOrder($orderId);
+            echo "<p style='color:green'>Order #$orderId was confirmed.</p>";
         } catch (Exception $e) {
             echo "<p style='color:red'>Error: {$e->getMessage()}</p>";
         }

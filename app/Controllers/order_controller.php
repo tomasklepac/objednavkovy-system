@@ -74,6 +74,17 @@ class order_controller {
     }
 
     /**
+     * Admin confirms a pending order (stock already deducted).
+     * Simply changes status to confirmed.
+     *
+     * @param int $orderId Order ID
+     * @return void
+     */
+    public function confirmPendingOrder(int $orderId): void {
+        OrderModel::confirmPendingOrder($orderId);
+    }
+
+    /**
      * Marks an order as shipped.
      *
      * @param int $orderId Order ID

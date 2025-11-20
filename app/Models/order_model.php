@@ -140,6 +140,17 @@ class OrderModel {
     }
 
     /**
+     * Admin confirms an order that was already created (stock already deducted).
+     * Simply updates the status to confirmed without deducting stock again.
+     *
+     * @param int $orderId Order ID
+     * @return void
+     */
+    public static function confirmPendingOrder(int $orderId): void {
+        self::updateStatus($orderId, 'confirmed');
+    }
+
+    /**
      * Marks an order as shipped.
      *
      * @param int $orderId Order ID
