@@ -5,8 +5,7 @@
 
 require_once __DIR__ . '/../../app/Controllers/user_controller.php';
 
-$pdo = Database::getInstance();
-$userController = new user_controller($pdo);
+$userController = new user_controller();
 
 // Get action from parameter
 $action = $_GET['action'] ?? null;

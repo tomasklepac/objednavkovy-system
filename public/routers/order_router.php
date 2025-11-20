@@ -8,10 +8,8 @@
 // ----------------------------------------------
 
 require_once __DIR__ . '/../../app/Controllers/order_controller.php';
-require_once __DIR__ . '/../../config/db.php';
 
-$pdo = Database::getInstance();
-$orderController = new order_controller($pdo);
+$orderController = new order_controller();
 
 // Get action
 $action = $_GET['action'] ?? null;

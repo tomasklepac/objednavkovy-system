@@ -7,9 +7,8 @@
 // ----------------------------------------------
 
 require_once __DIR__ . '/../../app/Controllers/product_controller.php';
-require_once __DIR__ . '/../../config/db.php';
 
-$productController = new product_controller(Database::getInstance());
+$productController = new product_controller();
 
 // Action from URL
 $action = $_GET['action'] ?? null;

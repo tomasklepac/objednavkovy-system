@@ -4,10 +4,9 @@
 // -------------------------------------------------
 
 require_once __DIR__ . '/../../app/Controllers/user_controller.php';
-require_once __DIR__ . '/../../config/db.php';
 
 $action = $_GET['action'] ?? null;
-$userController = new user_controller(Database::getInstance());
+$userController = new user_controller();
 
 switch ($action) {
     case 'login':
