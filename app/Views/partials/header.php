@@ -22,7 +22,7 @@
     <div class="container-fluid">
         <!-- Logo/Brand -->
         <a class="navbar-brand fw-bold" href="index.php">
-            <i class="fas fa-shopping-cart"></i> Objednávkový Systém
+            <i class="fas fa-shopping-cart"></i> E-Shop
         </a>
         <!-- Navbar toggle for mobile -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

@@ -2,12 +2,14 @@
 
 <!-- Link to add product (only for suppliers or admins) -->
 <?php if (!empty($_SESSION['roles']) && (in_array('supplier', $_SESSION['roles']) || in_array('admin', $_SESSION['roles']))): ?>
-    <p class="mb-3">
-        <a href="index.php?action=add_product" class="btn btn-success">Přidat produkt</a>
-    </p>
+    <div class="mb-4">
+        <a href="index.php?action=add_product" class="btn btn-success">
+            <i class="fas fa-plus"></i> Přidat produkt
+        </a>
+    </div>
 <?php endif; ?>
 
-<h1 class="h3 mb-3">Seznam produktů</h1>
+<h1 class="h3 mb-4">Produkty</h1>
 
 <?php if (!empty($products)): ?>
     <div class="table-responsive">
