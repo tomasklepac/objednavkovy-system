@@ -20,7 +20,7 @@
 /* Body styling */
 body {
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: var(--dark-gray);
     display: flex;
     flex-direction: column;
@@ -34,7 +34,8 @@ main {
 /* Navbar styling */
 .navbar {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    background: #ffffff !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
 }
 
 .navbar-brand {
@@ -144,10 +145,10 @@ main {
 
 /* Footer */
 footer {
-    background-color: var(--light-gray);
+    background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 100%);
     color: var(--text-gray);
     margin-top: auto;
-    border-top: 1px solid var(--border-gray);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Responsive adjustments */
@@ -328,6 +329,7 @@ footer {
     border-radius: 8px;
     text-align: center;
     font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .stock-badge {
