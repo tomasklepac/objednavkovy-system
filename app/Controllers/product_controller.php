@@ -1,138 +1,146 @@
 <?php
 
-// Controller for products – handles CRUD operations and model connection.
+/**
+ * Controller for products – handles CRUD operations for products.
+ * Works with product_model.php for database operations.
+ */
 require_once __DIR__ . '/../Models/product_model.php';
 
 class product_controller {
-    /** @var PDO */
-    private $pdo;
-
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
-    }
 
     // ================================================================
     // READ
     // ================================================================
 
+    /**
+     * Returns all active products.
+     *
+     * @return array[] List of all active products
+     */
     public function index(): array {
         return ProductModel::getAllProducts();
     }
 
+    /**
+     * Returns a specific product by ID.
+     *
+     * @param int $id Product ID
+     * @return array|null Product data or null if not found
+     */
     public function getById(int $id): ?array {
-        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = ?");
-        $stmt->execute([$id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ?: null;
+        return ProductModel::getById($id);
     }
 
+    /**
+     * Returns all products from a specific supplier.
+     *
+     * @param int $supplierId Supplier ID
+     * @return array[] List of supplier's products
+     */
     public function getBySupplierId(int $supplierId): array {
-        $stmt = $this->pdo->prepare("
-            SELECT * 
-            FROM products 
-            WHERE is_active = 1 AND supplier_id = ?
-        ");
-        $stmt->execute([$supplierId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return ProductModel::getBySupplierId($supplierId);
     }
 
     // ================================================================
     // CREATE
     // ================================================================
 
+    /**
+     * Creates a new product with image upload handling.
+     *
+     * @param string $name Product name
+     * @param string $description Product description
+     * @param float $price Price in CZK
+     * @param int $stock Stock quantity
+     * @param int $supplierId Supplier ID
+     * @param array|null $imageFile Image file from $_FILES
+     * @return void
+     * @throws RuntimeException If image upload fails
+     */
     public function createProduct(
         string $name,
         string $description,
         float $price,
         int $stock,
         int $supplierId,
-        ?string $imagePath = null
+        ?array $imageFile = null
     ): void {
-        // CSRF protection
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (
-                !isset($_POST['csrf_token']) ||
-                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
-            ) {
-                die('Invalid CSRF token.');
-            }
+        $imagePath = null;
+
+        if ($imageFile) {
+            $imagePath = $this->handleImageUpload($imageFile);
         }
 
-        $stmt = $this->pdo->prepare("
-            INSERT INTO products (name, description, price_cents, stock, supplier_id, image_path, created_at, is_active)
-            VALUES (?, ?, ?, ?, ?, ?, NOW(), 1)
-        ");
-
-        $stmt->execute([
-            $name,
-            $description,
-            (int)round($price * 100),
-            $stock,
-            $supplierId,
-            $imagePath
-        ]);
+        ProductModel::createProduct($name, $description, $price, $stock, $supplierId, $imagePath);
     }
 
     // ================================================================
     // UPDATE
     // ================================================================
 
+    /**
+     * Updates an existing product with image upload handling.
+     *
+     * @param int $id Product ID
+     * @param string $name Product name
+     * @param string $description Product description
+     * @param float $price Price in CZK
+     * @param int $stock Stock quantity
+     * @param array|null $imageFile Image file from $_FILES
+     * @return void
+     * @throws RuntimeException If image upload fails
+     */
     public function updateProduct(
         int $id,
         string $name,
         string $description,
         float $price,
         int $stock,
-        ?string $imagePath = null
+        ?array $imageFile = null
     ): void {
-        // CSRF protection
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (
-                !isset($_POST['csrf_token']) ||
-                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
-            ) {
-                die('Invalid CSRF token.');
-            }
+        $imagePath = null;
+
+        // Only process image if provided
+        if ($imageFile && $imageFile['error'] !== UPLOAD_ERR_NO_FILE) {
+            $imagePath = $this->handleImageUpload($imageFile);
         }
 
-        $stmt = $this->pdo->prepare("
-            UPDATE products
-            SET name = ?, description = ?, price_cents = ?, stock = ?, image_path = ?
-            WHERE id = ?
-        ");
+        // If no new image, keep existing image path
+        if (!$imagePath) {
+            $existing = ProductModel::getById($id);
+            $imagePath = $existing['image_path'] ?? null;
+        }
 
-        $stmt->execute([
-            $name,
-            $description,
-            (int)round($price * 100),
-            $stock,
-            $imagePath,
-            $id
-        ]);
+        ProductModel::updateProduct($id, $name, $description, $price, $stock, $imagePath);
     }
 
     // ================================================================
     // DELETE
     // ================================================================
 
+    /**
+     * Deletes a product by ID.
+     *
+     * @param int $id Product ID
+     * @return void
+     */
     public function deleteProduct(int $id): void {
-        // CSRF protection for deletion
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (
-                !isset($_POST['csrf_token']) ||
-                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
-            ) {
-                die('Invalid CSRF token.');
-            }
-        }
-
-        $stmt = $this->pdo->prepare("DELETE FROM products WHERE id = ?");
-        $stmt->execute([$id]);
+        ProductModel::deleteProduct($id);
     }
 
     // ================================================================
     // IMAGE UPLOAD
     // ================================================================
+
+    /**
+     * Handles image file upload with validation.
+     * Validates file size (max 2MB) and MIME type (JPEG, PNG, WebP).
+     * Generates unique filename using uniqid().
+     *
+     * @param array $file File from $_FILES
+     * @return string|null Path to uploaded file or null if no file
+     * @throws RuntimeException If validation or upload fails
+     */
     public function handleImageUpload(array $file): ?string {
         if ($file['error'] === UPLOAD_ERR_NO_FILE) {
             return null;
@@ -142,24 +150,29 @@ class product_controller {
             throw new RuntimeException("Error uploading file.");
         }
 
+        // Validate file size (max 2 MB)
         if ($file['size'] > 2 * 1024 * 1024) {
             throw new RuntimeException("File is too large (max 2 MB).");
         }
 
+        // Validate MIME type
         $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $mime = mime_content_type($file['tmp_name']);
         if (!isset($allowed[$mime])) {
             throw new RuntimeException("Unsupported file type.");
         }
 
+        // Create upload directory if needed
         $uploadDir = __DIR__ . '/../../public/uploads/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
+        // Generate unique filename with uniqid()
         $filename = uniqid('prod_', true) . '.' . $allowed[$mime];
         $targetPath = $uploadDir . $filename;
 
+        // Move uploaded file
         if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
             throw new RuntimeException("Failed to save file.");
         }

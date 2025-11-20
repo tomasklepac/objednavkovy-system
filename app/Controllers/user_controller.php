@@ -1,24 +1,27 @@
 <?php
 
-// Controller for users – handles registration, login/logout, user management and roles.
+/**
+ * Controller for users – handles registration, login/logout, user management and roles.
+ * Works with user_model.php for database operations.
+ */
 require_once __DIR__ . '/../Models/user_model.php';
 
 class user_controller {
-    /** @var PDO */
-    private $pdo; // Database connection
-
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
-    }
 
     // ================================================================
     // LOGIN / LOGOUT
     // ================================================================
 
+    /**
+     * Authenticates a user with email and password.
+     * Sets session variables on successful login.
+     *
+     * @param string $email User's email
+     * @param string $password User's password (plain text)
+     * @return string Status: 'ok', 'invalid', or 'inactive'
+     */
     public function login(string $email, string $password): string {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = user_model::findByEmail($email);
 
         if (!$user) {
             return 'invalid';
@@ -35,11 +38,16 @@ class user_controller {
         $_SESSION['user_id']    = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name']  = $user['name'];
-        $_SESSION['roles']      = $this->fetchRoles($user['id']);
+        $_SESSION['roles']      = user_model::fetchRoles($user['id']);
 
         return 'ok';
     }
 
+    /**
+     * Logs out the user by destroying the session.
+     *
+     * @return void
+     */
     public function logout(): void {
         $_SESSION = [];
         if (session_status() === PHP_SESSION_ACTIVE) {
@@ -51,6 +59,16 @@ class user_controller {
     // REGISTRATION
     // ================================================================
 
+    /**
+     * Registers a new user with validation.
+     *
+     * @param string $email User's email
+     * @param string $password Password (plain text)
+     * @param string $passwordConfirm Password confirmation
+     * @param string $role Role ('customer' or 'supplier')
+     * @param string $name User's full name
+     * @return string Registration status message
+     */
     public function register(
         string $email,
         string $password,
@@ -58,45 +76,32 @@ class user_controller {
         string $role,
         string $name
     ): string {
-        // CSRF protection
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (
-                !isset($_POST['csrf_token']) ||
-                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
-            ) {
-                die('Invalid CSRF token.');
-            }
-        }
-
+        // Validate passwords match
         if ($password !== $passwordConfirm) {
             return "Passwords do not match!";
         }
 
+        // Validate role is allowed
         if (!in_array($role, ['customer', 'supplier'], true)) {
             return "Invalid role.";
         }
 
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        if ($stmt->fetchColumn() > 0) {
+        // Check if email already exists
+        if (user_model::emailExists($email)) {
             return "User with this email already exists!";
         }
 
+        // Hash password with BCRYPT
         $hash = password_hash($password, PASSWORD_BCRYPT);
+
+        // Customers are auto-activated, suppliers need approval
         $isActive = ($role === 'customer') ? 1 : 0;
 
-        $stmt = $this->pdo->prepare("
-            INSERT INTO users (email, password_hash, name, is_active)
-            VALUES (?, ?, ?, ?)
-        ");
-        $stmt->execute([$email, $hash, $name, $isActive]);
-        $userId = $this->pdo->lastInsertId();
+        // Create user
+        $userId = user_model::createUser($email, $hash, $name, $isActive);
 
-        $roleStmt = $this->pdo->prepare("
-            INSERT INTO user_role (user_id, role_id)
-            SELECT ?, id FROM roles WHERE code = ?
-        ");
-        $roleStmt->execute([$userId, $role]);
+        // Assign role
+        user_model::assignRole($userId, $role);
 
         return $isActive === 1 ? 'registered_active' : 'registered_inactive';
     }
@@ -105,59 +110,33 @@ class user_controller {
     // ADMIN: USER MANAGEMENT
     // ================================================================
 
+    /**
+     * Returns all users with their roles and active status.
+     *
+     * @return array[] List of all users
+     */
     public function getAllUsers(): array {
-        $stmt = $this->pdo->query("
-            SELECT u.id, u.email, u.is_active, GROUP_CONCAT(r.code) as roles
-            FROM users u
-            LEFT JOIN user_role ur ON u.id = ur.user_id
-            LEFT JOIN roles r ON ur.role_id = r.id
-            GROUP BY u.id
-        ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return user_model::getAllUsers();
     }
 
+    /**
+     * Activates (approves) a user account.
+     *
+     * @param int $userId User ID
+     * @return void
+     */
     public function approveUser(int $userId): void {
-        // CSRF protection
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (
-                !isset($_POST['csrf_token']) ||
-                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
-            ) {
-                die('Invalid CSRF token.');
-            }
-        }
-
-        $stmt = $this->pdo->prepare("UPDATE users SET is_active = 1 WHERE id = ?");
-        $stmt->execute([$userId]);
+        user_model::approveUser($userId);
     }
 
+    /**
+     * Deactivates (blocks) a user account.
+     *
+     * @param int $userId User ID
+     * @return void
+     */
     public function blockUser(int $userId): void {
-        // CSRF protection
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (
-                !isset($_POST['csrf_token']) ||
-                !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])
-            ) {
-                die('Invalid CSRF token.');
-            }
-        }
-
-        $stmt = $this->pdo->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
-        $stmt->execute([$userId]);
-    }
-
-    // ================================================================
-    // PRIVATE
-    // ================================================================
-
-    private function fetchRoles(int $userId): array {
-        $roleStmt = $this->pdo->prepare("
-            SELECT r.code
-            FROM roles r
-            JOIN user_role ur ON r.id = ur.role_id
-            WHERE ur.user_id = ?
-        ");
-        $roleStmt->execute([$userId]);
-        return $roleStmt->fetchAll(PDO::FETCH_COLUMN);
+        user_model::blockUser($userId);
     }
 }
+

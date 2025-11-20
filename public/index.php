@@ -32,6 +32,9 @@ error_reporting(E_ALL);
 // Load configuration and controllers
 // ------------------------------------------------------------
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../app/Models/user_model.php';
+require_once __DIR__ . '/../app/Models/product_model.php';
+require_once __DIR__ . '/../app/Models/order_model.php';
 require_once __DIR__ . '/../app/Controllers/user_controller.php';
 require_once __DIR__ . '/../app/Controllers/product_controller.php';
 require_once __DIR__ . '/../app/Controllers/order_controller.php';
