@@ -45,7 +45,7 @@
             <?php foreach ($orders as $order): ?>
                 <tr class="cart-item-row">
                     <!-- Order ID -->
-                    <td class="fw-600">#<?= (int)$order['id'] ?></td>
+                    <td class="text-center fw-600">#<?= (int)$order['id'] ?></td>
                     <!-- Customer name who placed the order -->
                     <td class="text-center">
                         <small><?= htmlspecialchars($order['customer_name']) ?></small>

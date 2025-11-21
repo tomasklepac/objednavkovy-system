@@ -42,7 +42,7 @@
             <!-- Table headers -->
             <thead>
             <tr>
-                <th><i class="fas fa-hashtag"></i> ID</th>
+                <th class="text-center"><i class="fas fa-hashtag"></i> ID</th>
                 <th class="text-center"><i class="fas fa-envelope"></i> Email</th>
                 <th class="text-center"><i class="fas fa-shield-alt"></i> Role</th>
                 <th class="text-center"><i class="fas fa-circle"></i> Stav</th>
@@ -54,7 +54,7 @@
             <?php foreach ($users as $user): ?>
                 <tr class="cart-item-row">
                     <!-- User ID -->
-                    <td class="fw-600">#<?= htmlspecialchars($user['id']) ?></td>
+                    <td class="text-center fw-600">#<?= htmlspecialchars($user['id']) ?></td>
                     <!-- User email address -->
                     <td class="text-center">
                         <small><?= htmlspecialchars($user['email']) ?></small>

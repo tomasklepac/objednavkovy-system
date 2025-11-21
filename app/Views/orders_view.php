@@ -59,7 +59,7 @@ $isCustomer = in_array('customer', $roles);
             <tbody>
             <?php foreach ($orders as $order): ?>
                 <tr class="cart-item-row">
-                    <td class="fw-600">#<?= htmlspecialchars($order['id']) ?></td>
+                    <td class="text-center fw-600">#<?= htmlspecialchars($order['id']) ?></td>
 
                     <td class="text-center">
                         <?php
