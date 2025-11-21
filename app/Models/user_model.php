@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 // Load the database connection file
 require_once __DIR__ . '/../../config/db.php';
 
@@ -7,7 +9,7 @@ require_once __DIR__ . '/../../config/db.php';
  * Model for users.
  * Contains static methods for communicating with the `users` table.
  */
-class user_model {
+class UserModel {
 
     // ================================================================
     // READ

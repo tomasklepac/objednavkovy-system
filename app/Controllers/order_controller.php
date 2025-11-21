@@ -1,13 +1,17 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\OrderModel;
+
+require_once __DIR__ . '/../../config/db.php';
+
 /**
  * Controller for working with orders.
  * Handles order management from perspectives of admin, customer, and supplier.
- * Works with order_model.php for database operations.
+ * Works with OrderModel for database operations.
  */
-require_once __DIR__ . '/../Models/order_model.php';
-
-class order_controller {
+class OrderController {
 
     // ================================================================
     // ADMIN

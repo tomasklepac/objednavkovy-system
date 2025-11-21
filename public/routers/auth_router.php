@@ -3,10 +3,10 @@
 // Router: user authentication (login / logout / register)
 // -------------------------------------------------
 
-require_once __DIR__ . '/../../app/Controllers/user_controller.php';
+use App\Controllers\UserController;
 
 $action = $_GET['action'] ?? null;
-$userController = new user_controller();
+$userController = new UserController();
 
 switch ($action) {
     case 'login':

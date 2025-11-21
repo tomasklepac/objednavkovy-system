@@ -7,9 +7,9 @@
 // Supplier: sees orders containing their products
 // ----------------------------------------------
 
-require_once __DIR__ . '/../../app/Controllers/order_controller.php';
+use App\Controllers\OrderController;
 
-$orderController = new order_controller();
+$orderController = new OrderController();
 
 // Get action
 $action = $_GET['action'] ?? null;

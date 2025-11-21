@@ -3,18 +3,19 @@
 // Router: dashboard / homepage
 // -------------------------------------------------
 
-require_once __DIR__ . '/../../app/Controllers/product_controller.php';
-require_once __DIR__ . '/../../app/Controllers/order_controller.php';
-require_once __DIR__ . '/../../app/Controllers/user_controller.php';
+use App\Controllers\ProductController;
+use App\Controllers\OrderController;
+use App\Controllers\UserController;
+use App\Models\UserModel;
 
-$productController = new product_controller();
-$orderController   = new order_controller();
-$userController    = new user_controller();
+$productController = new ProductController();
+$orderController   = new OrderController();
+$userController    = new UserController();
 
 // If user is logged in
 if (!empty($_SESSION['user_id'])) {
     // If user is SuperAdmin, redirect to SuperAdmin panel
-    if (user_model::isSuperAdmin($_SESSION['user_id'])) {
+    if (UserModel::isSuperAdmin($_SESSION['user_id'])) {
         header("Location: index.php?action=super_admin");
         exit;
     }

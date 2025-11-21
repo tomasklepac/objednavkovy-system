@@ -1,13 +1,16 @@
 <?php
 
-/**
- * Controller for users – handles registration, login/logout, user management and roles.
- * Works with user_model.php for database operations.
- */
-require_once __DIR__ . '/../Models/user_model.php';
+namespace App\Controllers;
+
+use App\Models\UserModel;
+
 require_once __DIR__ . '/../../config/db.php';
 
-class user_controller {
+/**
+ * Controller for users – handles registration, login/logout, user management and roles.
+ * Works with UserModel for database operations.
+ */
+class UserController {
 
     // ================================================================
     // LOGIN / LOGOUT
@@ -23,7 +26,7 @@ class user_controller {
      * @return string Status: 'ok', 'invalid', 'inactive', or 'not_approved'
      */
     public function login(string $email, string $password): string {
-        $user = user_model::findByEmail($email);
+        $user = UserModel::findByEmail($email);
 
         if (!$user) {
             return 'invalid';
@@ -45,7 +48,7 @@ class user_controller {
         $_SESSION['user_id']    = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name']  = $user['name'];
-        $_SESSION['roles']      = user_model::fetchRoles($user['id']);
+        $_SESSION['roles']      = UserModel::fetchRoles($user['id']);
 
         return 'ok';
     }
@@ -95,7 +98,7 @@ class user_controller {
         }
 
         // Check if email already exists
-        if (user_model::emailExists($email)) {
+        if (UserModel::emailExists($email)) {
             return "User with this email already exists!";
         }
 
@@ -107,10 +110,10 @@ class user_controller {
         $isApproved = ($role === 'customer') ? 1 : 0;
 
         // Create user
-        $userId = user_model::createUser($email, $hash, $name, $isActive, $isApproved);
+        $userId = UserModel::createUser($email, $hash, $name, $isActive, $isApproved);
 
         // Assign role
-        user_model::assignRole($userId, $role);
+        UserModel::assignRole($userId, $role);
 
         if ($role === 'customer') {
             return 'registered_active';
@@ -132,7 +135,7 @@ class user_controller {
      * @return array[] List of all users
      */
     public function getAllUsers(): array {
-        return user_model::getAllUsers();
+        return UserModel::getAllUsers();
     }
 
     /**
@@ -142,7 +145,7 @@ class user_controller {
      * @return void
      */
     public function approveUser(int $userId): void {
-        user_model::approveUser($userId);
+        UserModel::approveUser($userId);
     }
 
     /**
@@ -152,7 +155,7 @@ class user_controller {
      * @return void
      */
     public function blockUser(int $userId): void {
-        user_model::blockUser($userId);
+        UserModel::blockUser($userId);
     }
 
     // ================================================================
@@ -165,7 +168,7 @@ class user_controller {
      * @return array[] List of all admins
      */
     public function getAllAdmins(): array {
-        return user_model::getAllAdmins();
+        return UserModel::getAllAdmins();
     }
 
     /**
@@ -174,7 +177,7 @@ class user_controller {
      * @return array[] List of pending requests
      */
     public function getPendingAdminRequests(): array {
-        return user_model::getPendingAdminRequests();
+        return UserModel::getPendingAdminRequests();
     }
 
     /**
@@ -184,7 +187,7 @@ class user_controller {
      * @return void
      */
     public function approveAdmin(int $userId): void {
-        user_model::approveAdmin($userId);
+        UserModel::approveAdmin($userId);
     }
 
     /**
@@ -194,7 +197,7 @@ class user_controller {
      * @return void
      */
     public function rejectAdmin(int $userId): void {
-        user_model::rejectAdmin($userId);
+        UserModel::rejectAdmin($userId);
     }
 
     /**
@@ -204,7 +207,7 @@ class user_controller {
      * @return void
      */
     public function blockAdmin(int $userId): void {
-        user_model::blockUser($userId);
+        UserModel::blockUser($userId);
     }
 
     /**

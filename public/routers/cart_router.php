@@ -3,8 +3,9 @@
 // Router: cart management
 // -------------------------------------------------
 
-require_once __DIR__ . '/../../app/Controllers/product_controller.php';
-$productController = new product_controller();
+use App\Controllers\ProductController;
+
+$productController = new ProductController();
 $action = $_GET['action'] ?? null;
 
 // Only logged in users can work with cart

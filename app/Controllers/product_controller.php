@@ -1,12 +1,16 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\ProductModel;
+
+require_once __DIR__ . '/../../config/db.php';
+
 /**
  * Controller for products – handles CRUD operations for products.
- * Works with product_model.php for database operations.
+ * Works with ProductModel for database operations.
  */
-require_once __DIR__ . '/../Models/product_model.php';
-
-class product_controller {
+class ProductController {
 
     // ================================================================
     // READ

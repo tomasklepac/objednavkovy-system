@@ -3,9 +3,9 @@
 // Router: user management (admin)
 // -------------------------------------------------
 
-require_once __DIR__ . '/../../app/Controllers/user_controller.php';
+use App\Controllers\UserController;
 
-$userController = new user_controller();
+$userController = new UserController();
 
 // Get action from parameter
 $action = $_GET['action'] ?? null;

@@ -3,16 +3,17 @@
 // Router: SuperAdmin - Management of admin users
 // -------------------------------------------------
 
-require_once __DIR__ . '/../../app/Controllers/user_controller.php';
+use App\Controllers\UserController;
+use App\Models\UserModel;
 
 // Check if user is SuperAdmin
-if (!isset($_SESSION['user_id']) || !user_model::isSuperAdmin($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || !UserModel::isSuperAdmin($_SESSION['user_id'])) {
     header("Location: index.php?action=dashboard");
     exit;
 }
 
 $action = $_GET['action'] ?? null;
-$userController = new user_controller();
+$userController = new UserController();
 
 switch ($action) {
     case 'super_admin':
@@ -28,7 +29,7 @@ switch ($action) {
             $adminId = (int)$_POST['admin_id'];
             
             // Verify it's a pending request
-            $admin = user_model::findById($adminId);
+            $admin = UserModel::findById($adminId);
             if ($admin && (int)$admin['is_approved'] === 0) {
                 $userController->approveAdmin($adminId);
                 // Auto-activate when approving
@@ -44,7 +45,7 @@ switch ($action) {
             $adminId = (int)$_POST['admin_id'];
             
             // Verify it's a pending request
-            $admin = user_model::findById($adminId);
+            $admin = UserModel::findById($adminId);
             if ($admin && (int)$admin['is_approved'] === 0) {
                 $userController->rejectAdmin($adminId);
             }
@@ -58,7 +59,7 @@ switch ($action) {
             $adminId = (int)$_POST['admin_id'];
             
             // Verify admin exists and is approved
-            $admin = user_model::findById($adminId);
+            $admin = UserModel::findById($adminId);
             if ($admin && (int)$admin['is_approved'] === 1) {
                 $userController->blockAdmin($adminId);
             }
@@ -72,7 +73,7 @@ switch ($action) {
             $adminId = (int)$_POST['admin_id'];
             
             // Verify admin exists
-            $admin = user_model::findById($adminId);
+            $admin = UserModel::findById($adminId);
             if ($admin) {
                 $userController->unblockAdmin($adminId);
             }

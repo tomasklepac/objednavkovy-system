@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Models;
+
+require_once __DIR__ . '/../../config/db.php';
+
 /**
  * Model for orders.
  * Contains static methods for communicating with the `orders` table and related operations.

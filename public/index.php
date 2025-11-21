@@ -29,23 +29,24 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // ------------------------------------------------------------
-// Load configuration and controllers
+// Load configuration and autoloader
 // ------------------------------------------------------------
 require_once __DIR__ . '/../config/db.php';
-require_once __DIR__ . '/../app/Models/user_model.php';
-require_once __DIR__ . '/../app/Models/product_model.php';
-require_once __DIR__ . '/../app/Models/order_model.php';
-require_once __DIR__ . '/../app/Controllers/user_controller.php';
-require_once __DIR__ . '/../app/Controllers/product_controller.php';
-require_once __DIR__ . '/../app/Controllers/order_controller.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Use namespaced classes
+use App\Controllers\UserController;
+use App\Controllers\ProductController;
+use App\Controllers\OrderController;
+use App\Models\UserModel;
 
 // Database connection
 $pdo = Database::getInstance();
 
 // Create controller instances
-$userController    = new user_controller($pdo);
-$productController = new product_controller($pdo);
-$orderController   = new order_controller($pdo);
+$userController    = new UserController();
+$productController = new ProductController();
+$orderController   = new OrderController();
 
 // ------------------------------------------------------------
 // Get action (from URL parameter ?action=...)

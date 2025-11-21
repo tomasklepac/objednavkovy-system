@@ -6,9 +6,9 @@
 // Customer: view only
 // ----------------------------------------------
 
-require_once __DIR__ . '/../../app/Controllers/product_controller.php';
+use App\Controllers\ProductController;
 
-$productController = new product_controller();
+$productController = new ProductController();
 
 // Action from URL
 $action = $_GET['action'] ?? null;
