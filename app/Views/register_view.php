@@ -44,8 +44,8 @@
         <label for="role" class="form-label">Role:</label>
         <select id="role" name="role" class="form-select" required>
             <option value="customer">Zákazník</option>
-            <option value="supplier">Dodavatel</option>
-            <option value="admin">Správce (Admin) - čeká na schválení</option>
+            <option value="supplier">Dodavatel (nutné schválení)</option>
+            <option value="admin">Správce (nutné schválení)</option>
         </select>
     </div>
 
