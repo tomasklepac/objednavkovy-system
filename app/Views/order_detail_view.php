@@ -70,15 +70,15 @@
 <!-- Display order items table if there are any items -->
 <?php if (!empty($items)): ?>
     <h4 class="mb-3">Objednané položky</h4>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
+    <div class="table-responsive cart-table-wrapper mb-4">
+        <table class="table cart-table align-middle">
             <!-- Table headers -->
-            <thead class="table-light">
+            <thead>
             <tr>
-                <th>Produkt</th>
-                <th>Množství</th>
-                <th>Cena/ks</th>
-                <th>Celkem</th>
+                <th class="text-center">Produkt</th>
+                <th class="text-center">Množství</th>
+                <th class="text-center">Cena/ks</th>
+                <th class="text-center">Celkem</th>
             </tr>
             </thead>
             <!-- Loop through and display each order item -->
