@@ -104,7 +104,8 @@ switch ($action) {
             exit;
         }
 
-        // GET → show form
+        // GET → show form (ensure $error is null for initial page load)
+        $error = null;
         require __DIR__ . '/../../app/Views/confirm_order_view.php';
         exit;
 
