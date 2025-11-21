@@ -10,18 +10,18 @@
 
 <!-- Display products table if there are any products -->
 <?php if (!empty($products)): ?>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
+    <div class="table-responsive cart-table-wrapper mb-4">
+        <table class="table cart-table align-middle">
             <!-- Table headers -->
-            <thead class="table-light">
+            <thead>
             <tr>
-                <th>Obrázek</th>
-                <th>Název</th>
-                <th>Popis</th>
-                <th>Cena</th>
-                <th>Skladem</th>
-                <th>Status</th>
-                <th>Akce</th>
+                <th class="text-center">Obrázek</th>
+                <th class="text-center">Název</th>
+                <th class="text-center">Popis</th>
+                <th class="text-center">Cena</th>
+                <th class="text-center">Skladem</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Akce</th>
             </tr>
             </thead>
             <!-- Loop through and display each product -->
