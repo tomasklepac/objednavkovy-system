@@ -20,7 +20,7 @@ class OrderModel {
      * @return array[] List of orders with customer names
      */
     public static function getAllOrders(): array {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->query("
             SELECT o.id, o.customer_id, u.name AS customer_name, 
                    o.status, o.total_cents, o.created_at
@@ -42,7 +42,7 @@ class OrderModel {
      * @return array[] List of customer's orders
      */
     public static function getOrdersByCustomer(int $customerId): array {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->prepare("
             SELECT id, status, total_cents, created_at
             FROM orders
@@ -60,7 +60,7 @@ class OrderModel {
      * @return array[] List of order items with product names
      */
     public static function getOrderItems(int $orderId): array {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->prepare("
             SELECT oi.product_id, oi.quantity, oi.unit_price_cents, p.name
             FROM order_item oi
@@ -83,7 +83,7 @@ class OrderModel {
      * @return void
      */
     public static function updateStatus(int $orderId, string $status): void {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->prepare("UPDATE orders SET status = ? WHERE id = ?");
         $stmt->execute([$status, $orderId]);
     }
@@ -96,7 +96,7 @@ class OrderModel {
      * @throws Exception If stock is insufficient or transaction fails
      */
     public static function confirmOrder(int $orderId): void {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
 
         try {
             $db->beginTransaction();
@@ -183,7 +183,7 @@ class OrderModel {
      * @throws Exception If transaction fails
      */
     public static function cancelOrder(int $orderId): void {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
 
         try {
             $db->beginTransaction();
@@ -236,7 +236,7 @@ class OrderModel {
      * @return array[] List of orders containing supplier's products
      */
     public static function getOrdersBySupplier(int $supplierId): array {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->prepare("
             SELECT DISTINCT o.id, o.customer_id, u.name AS customer_name,
                    o.status, o.total_cents, o.created_at
@@ -259,7 +259,7 @@ class OrderModel {
      * @return array[] List of order items from the supplier
      */
     public static function getSupplierOrderItems(int $orderId, int $supplierId): array {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->prepare("
             SELECT oi.product_id, p.name, oi.quantity, oi.unit_price_cents
             FROM order_item oi
@@ -278,7 +278,7 @@ class OrderModel {
      * @return array|null Customer data or null if not found
      */
     public static function getOrderCustomer(int $orderId): ?array {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->prepare("
             SELECT u.id, u.name, u.email
             FROM orders o
@@ -298,7 +298,7 @@ class OrderModel {
      * @return array|null Order data with customer info or null if not found
      */
     public static function getOrderWithCustomer(int $orderId): ?array {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->prepare("
             SELECT o.*, u.name as customer_name, u.email as customer_email
             FROM orders o

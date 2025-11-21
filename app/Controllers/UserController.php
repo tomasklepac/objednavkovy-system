@@ -217,7 +217,7 @@ class UserController {
      * @return void
      */
     public function unblockAdmin(int $userId): void {
-        $db = Database::getInstance();
+        $db = \Database::getInstance();
         $stmt = $db->prepare("UPDATE users SET is_active = 1 WHERE id = ?");
         $stmt->execute([$userId]);
     }
