@@ -25,7 +25,7 @@ class UserModel {
         $db = \Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $row ?: null;
     }
 
@@ -43,7 +43,7 @@ class UserModel {
             LEFT JOIN roles r ON ur.role_id = r.id
             GROUP BY u.id
         ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -61,7 +61,7 @@ class UserModel {
             WHERE ur.user_id = ?
         ");
         $stmt->execute([$userId]);
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     // ================================================================
@@ -166,7 +166,7 @@ class UserModel {
             WHERE r.code = 'admin'
             ORDER BY u.created_at DESC
         ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -184,7 +184,7 @@ class UserModel {
             WHERE r.code = 'admin' AND u.is_approved = 0
             ORDER BY u.created_at ASC
         ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -253,7 +253,7 @@ class UserModel {
         $db = \Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$userId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $row ?: null;
     }
 }

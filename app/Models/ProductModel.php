@@ -28,7 +28,7 @@ class ProductModel {
             WHERE p.is_active = 1
         ");
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -41,7 +41,7 @@ class ProductModel {
         $db = \Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM products WHERE id = ?");
         $stmt->execute([$id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $row ?: null;
     }
 
@@ -59,7 +59,7 @@ class ProductModel {
             WHERE is_active = 1 AND supplier_id = ?
         ");
         $stmt->execute([$supplierId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -78,7 +78,7 @@ class ProductModel {
             ORDER BY is_active DESC, name ASC
         ");
         $stmt->execute([$supplierId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     // ================================================================

@@ -28,7 +28,7 @@ class OrderModel {
             JOIN users u ON o.customer_id = u.id
             ORDER BY o.created_at DESC
         ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     // ================================================================
@@ -50,7 +50,7 @@ class OrderModel {
             ORDER BY created_at DESC
         ");
         $stmt->execute([$customerId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -68,7 +68,7 @@ class OrderModel {
             WHERE oi.order_id = ?
         ");
         $stmt->execute([$orderId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     // ================================================================
@@ -108,7 +108,7 @@ class OrderModel {
                 WHERE order_id = ?
             ");
             $stmt->execute([$orderId]);
-            $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Deduct stock for each item
             foreach ($items as $item) {
@@ -195,7 +195,7 @@ class OrderModel {
                 WHERE order_id = ?
             ");
             $stmt->execute([$orderId]);
-            $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Return stock for each item
             foreach ($items as $item) {
@@ -248,7 +248,7 @@ class OrderModel {
             ORDER BY o.created_at DESC
         ");
         $stmt->execute([$supplierId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -268,7 +268,7 @@ class OrderModel {
             ORDER BY p.name
         ");
         $stmt->execute([$orderId, $supplierId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -287,7 +287,7 @@ class OrderModel {
             LIMIT 1
         ");
         $stmt->execute([$orderId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $row ?: null;
     }
 
@@ -307,7 +307,7 @@ class OrderModel {
             LIMIT 1
         ");
         $stmt->execute([$orderId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $row ?: null;
     }
 }
