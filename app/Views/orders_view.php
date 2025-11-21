@@ -89,10 +89,12 @@ $isCustomer = in_array('customer', $roles);
                     <td class="text-center"><?= date('d.m.Y H:i', strtotime($order['created_at'])) ?></td>
 
                     <td class="text-center">
-                        <a href="index.php?action=order_detail&id=<?= urlencode($order['id']) ?>"
-                           class="btn btn-sm btn-quantity" title="Zobrazit detail">
-                            <i class="fas fa-eye"></i>
-                        </a>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <a href="index.php?action=order_detail&id=<?= urlencode($order['id']) ?>"
+                               class="btn btn-sm btn-quantity" title="Zobrazit detail">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
                     </td>
 
                     <?php if (!$isCustomer): ?>
