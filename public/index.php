@@ -39,6 +39,7 @@ use App\Controllers\UserController;
 use App\Controllers\ProductController;
 use App\Controllers\OrderController;
 use App\Models\UserModel;
+use App\Config\Database;
 
 // Database connection
 $pdo = Database::getInstance();

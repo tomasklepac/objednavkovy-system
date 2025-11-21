@@ -34,13 +34,13 @@ class Database {
         // PDO options
         $options = [
             // Errors will be thrown as exceptions (better for debugging)
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
             // Results will be returned as associative arrays
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
         ];
 
         // Create the PDO object (database connection)
-        $this->pdo = new PDO($dsn, $user, $pass, $options);
+        $this->pdo = new \PDO($dsn, $user, $pass, $options);
         
         // Set character set for the connection
         $this->pdo->exec("SET NAMES utf8mb4");
