@@ -15,6 +15,9 @@ $userController    = new user_controller();
 if (!empty($_SESSION['user_id'])) {
     // Load products (displayed to all logged in users)
     $products = $productController->index();
+    
+    // Hide action buttons on dashboard (show only "Add to cart" for customers)
+    $hideActions = true;
 
     // Call dashboard view (contains links by role)
     require __DIR__ . '/../../app/Views/dashboard_view.php';

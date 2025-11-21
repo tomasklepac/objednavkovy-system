@@ -58,19 +58,23 @@
                         
                         <!-- Actions -->
                         <div class="d-flex gap-2 flex-wrap">
-                            <?php if ($isOwner || $isAdmin): ?>
-                                <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary flex-grow-1">
-                                    <i class="fas fa-edit"></i> Upravit
-                                </a>
+                            <?php if (!empty($hideActions) && $hideActions === true): ?>
+                                <!-- No edit/archive buttons on dashboard -->
+                            <?php else: ?>
+                                <?php if ($isOwner || $isAdmin): ?>
+                                    <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                        <i class="fas fa-edit"></i> Upravit
+                                    </a>
 
-                                <form method="post" action="index.php?action=delete_product" style="display:contents;">
-                                    <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
-                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger flex-grow-1"
-                                            onclick="return confirm('Opravdu archivovat tento produkt?');">
-                                        <i class="fas fa-trash"></i> Archivovat
-                                    </button>
-                                </form>
+                                    <form method="post" action="index.php?action=delete_product" style="display:contents;">
+                                        <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger flex-grow-1"
+                                                onclick="return confirm('Opravdu archivovat tento produkt?');">
+                                            <i class="fas fa-trash"></i> Archivovat
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
                             <?php endif; ?>
 
                             <?php if ($isCustomer): ?>
