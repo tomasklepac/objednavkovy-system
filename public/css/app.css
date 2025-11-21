@@ -632,6 +632,12 @@ footer {
     vertical-align: middle;
 }
 
+/* Action buttons container in tables - allow wrapping */
+.cart-item-row .d-flex {
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+}
+
 .fw-600 {
     font-weight: 600;
 }
