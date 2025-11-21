@@ -122,12 +122,9 @@
         <a href="index.php?action=products" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left"></i> Pokračovat v nákupu
         </a>
-        <form method="post" action="index.php?action=confirm_order" style="display:contents;">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-            <button type="submit" class="btn btn-primary btn-lg">
-                <i class="fas fa-check-circle"></i> Potvrdit objednávku
-            </button>
-        </form>
+        <a href="index.php?action=confirm_order" class="btn btn-primary btn-lg">
+            <i class="fas fa-check-circle"></i> Potvrdit objednávku
+        </a>
     </div>
 
 <?php else: ?>
