@@ -7,6 +7,7 @@ use App\Controllers\ProductController;
 use App\Controllers\OrderController;
 use App\Controllers\UserController;
 use App\Models\UserModel;
+use App\Config\Database;
 
 $productController = new ProductController();
 $orderController   = new OrderController();

@@ -3,8 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\OrderModel;
-
-require_once __DIR__ . '/../../config/db.php';
+use App\Config\Database;
 
 /**
  * Controller for working with orders.

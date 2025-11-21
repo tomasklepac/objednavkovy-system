@@ -8,6 +8,7 @@
 // ----------------------------------------------
 
 use App\Controllers\OrderController;
+use App\Config\Database;
 
 $orderController = new OrderController();
 

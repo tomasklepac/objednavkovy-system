@@ -4,6 +4,7 @@
 // -------------------------------------------------
 
 use App\Controllers\ProductController;
+use App\Config\Database;
 
 $productController = new ProductController();
 $action = $_GET['action'] ?? null;

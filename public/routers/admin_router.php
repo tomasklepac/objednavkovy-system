@@ -4,6 +4,7 @@
 // -------------------------------------------------
 
 use App\Controllers\UserController;
+use App\Config\Database;
 
 $userController = new UserController();
 

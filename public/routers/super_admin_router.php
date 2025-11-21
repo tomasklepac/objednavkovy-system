@@ -5,6 +5,7 @@
 
 use App\Controllers\UserController;
 use App\Models\UserModel;
+use App\Config\Database;
 
 // Check if user is SuperAdmin
 if (!isset($_SESSION['user_id']) || !UserModel::isSuperAdmin($_SESSION['user_id'])) {

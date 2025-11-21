@@ -4,6 +4,7 @@
 // -------------------------------------------------
 
 use App\Controllers\UserController;
+use App\Config\Database;
 
 $action = $_GET['action'] ?? null;
 $userController = new UserController();

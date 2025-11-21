@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-require_once __DIR__ . '/../../config/db.php';
+use App\Config\Database;
 
 /**
  * Model for products.
@@ -20,7 +20,7 @@ class ProductModel {
      * @return array[] List of products as associative array
      */
     public static function getAllProducts(): array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->query("
             SELECT p.*, u.name AS supplier_name
             FROM products p
@@ -38,7 +38,7 @@ class ProductModel {
      * @return array|null Product data or null if not found
      */
     public static function getById(int $id): ?array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM products WHERE id = ?");
         $stmt->execute([$id]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -52,7 +52,7 @@ class ProductModel {
      * @return array[] List of supplier's products
      */
     public static function getBySupplierId(int $supplierId): array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("
             SELECT * 
             FROM products 
@@ -70,7 +70,7 @@ class ProductModel {
      * @return array[] List of ALL supplier's products
      */
     public static function getAllBySupplierId(int $supplierId): array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("
             SELECT * 
             FROM products 
@@ -104,7 +104,7 @@ class ProductModel {
         int $supplierId,
         ?string $imagePath = null
     ): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("
             INSERT INTO products (name, description, price_cents, stock, supplier_id, image_path, created_at, is_active)
             VALUES (?, ?, ?, ?, ?, ?, NOW(), 1)
@@ -143,7 +143,7 @@ class ProductModel {
         int $stock,
         ?string $imagePath = null
     ): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("
             UPDATE products
             SET name = ?, description = ?, price_cents = ?, stock = ?, image_path = ?
@@ -173,7 +173,7 @@ class ProductModel {
      * @return void
      */
     public static function archiveProduct(int $id): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("UPDATE products SET is_active = 0 WHERE id = ?");
         $stmt->execute([$id]);
     }
@@ -198,7 +198,7 @@ class ProductModel {
      * @return void
      */
     public static function reactivateProduct(int $id): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("UPDATE products SET is_active = 1, stock = 0 WHERE id = ?");
         $stmt->execute([$id]);
     }

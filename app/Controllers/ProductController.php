@@ -3,8 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ProductModel;
-
-require_once __DIR__ . '/../../config/db.php';
+use App\Config\Database;
 
 /**
  * Controller for products – handles CRUD operations for products.

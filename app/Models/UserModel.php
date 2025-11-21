@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-// Load the database connection file
-require_once __DIR__ . '/../../config/db.php';
+use App\Config\Database;
 
 /**
  * Model for users.
@@ -22,7 +21,7 @@ class UserModel {
      * @return array|null User data or null if not found
      */
     public static function findByEmail(string $email): ?array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -35,7 +34,7 @@ class UserModel {
      * @return array[] List of all users with roles
      */
     public static function getAllUsers(): array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->query("
             SELECT u.id, u.email, u.name, u.is_active, GROUP_CONCAT(r.code) as roles
             FROM users u
@@ -53,7 +52,7 @@ class UserModel {
      * @return array List of role codes
      */
     public static function fetchRoles(int $userId): array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("
             SELECT r.code
             FROM roles r
@@ -75,7 +74,7 @@ class UserModel {
      * @return bool True if email exists, false otherwise
      */
     public static function emailExists(string $email): bool {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->execute([$email]);
         return $stmt->fetchColumn() > 0;
@@ -98,7 +97,7 @@ class UserModel {
         int $isActive,
         int $isApproved = 1
     ): int {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("
             INSERT INTO users (email, password_hash, name, is_active, is_approved)
             VALUES (?, ?, ?, ?, ?)
@@ -115,7 +114,7 @@ class UserModel {
      * @return void
      */
     public static function assignRole(int $userId, string $roleCode): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("
             INSERT INTO user_role (user_id, role_id)
             SELECT ?, id FROM roles WHERE code = ?
@@ -134,7 +133,7 @@ class UserModel {
      * @return void
      */
     public static function approveUser(int $userId): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("UPDATE users SET is_active = 1 WHERE id = ?");
         $stmt->execute([$userId]);
     }
@@ -146,7 +145,7 @@ class UserModel {
      * @return void
      */
     public static function blockUser(int $userId): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
         $stmt->execute([$userId]);
     }
@@ -157,7 +156,7 @@ class UserModel {
      * @return array[] List of admins with approval status
      */
     public static function getAllAdmins(): array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->query("
             SELECT u.id, u.email, u.name, u.is_active, u.is_approved, u.created_at
             FROM users u
@@ -175,7 +174,7 @@ class UserModel {
      * @return array[] List of pending admin requests
      */
     public static function getPendingAdminRequests(): array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->query("
             SELECT u.id, u.email, u.name, u.created_at
             FROM users u
@@ -194,7 +193,7 @@ class UserModel {
      * @return void
      */
     public static function approveAdmin(int $userId): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
         $stmt->execute([$userId]);
     }
@@ -206,7 +205,7 @@ class UserModel {
      * @return void
      */
     public static function rejectAdmin(int $userId): void {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         // First, remove admin role
         $stmt = $db->prepare("
             DELETE FROM user_role 
@@ -233,7 +232,7 @@ class UserModel {
      * @return bool True if user is super_admin
      */
     public static function isSuperAdmin(int $userId): bool {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("
             SELECT COUNT(*) FROM user_role ur
             JOIN roles r ON ur.role_id = r.id
@@ -250,7 +249,7 @@ class UserModel {
      * @return array|null User data or null if not found
      */
     public static function findById(int $userId): ?array {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
