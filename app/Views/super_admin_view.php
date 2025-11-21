@@ -145,8 +145,8 @@
 
     <!-- Back to Dashboard Link -->
     <div class="mt-4 text-center">
-        <a href="index.php?action=dashboard" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Zpět na dashboard
+        <a href="index.php?action=logout" class="btn btn-secondary">
+            <i class="fas fa-sign-out-alt"></i> Odhlásit se
         </a>
     </div>
 </div>
