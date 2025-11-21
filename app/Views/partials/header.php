@@ -108,6 +108,7 @@
                 <h6 class="sidebar-title"><i class="fas fa-shield-alt"></i> Administrátor</h6>
                 <a href="index.php?action=users" class="sidebar-item">Správa uživatelů</a>
                 <a href="index.php?action=orders" class="sidebar-item">Všechny objednávky</a>
+                <a href="index.php?action=all_products" class="sidebar-item">Všechny produkty</a>
             </div>
         <?php endif; ?>
         

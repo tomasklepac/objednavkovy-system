@@ -235,7 +235,20 @@ switch ($action) {
         exit;
 
     // ------------------------------------------------
-    // 5. List all products
+    // 5. List all products (admin only)
+    // ------------------------------------------------
+    case 'all_products':
+        if (!in_array('admin', $_SESSION['roles'] ?? [])) {
+            echo "<p style='color:red'>You don't have permission to view all products.</p>";
+            break;
+        }
+        
+        $products = $productController->index();
+        require __DIR__ . '/../../app/Views/all_products_view.php';
+        break;
+
+    // ------------------------------------------------
+    // 6. List all products (public/dashboard view)
     // ------------------------------------------------
     default:
         $products = $productController->index();
