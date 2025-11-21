@@ -524,4 +524,215 @@ footer {
     color: white;
 }
 
+/* =====================
+   CART PAGE STYLES
+   ===================== */
+
+/* Summary Cards */
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.summary-card.highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.summary-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 12px;
+}
+
+.summary-card.highlight .summary-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.summary-content h6 {
+    color: #999;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.summary-card.highlight .summary-content h6 {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.summary-content h3 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-gray);
+    font-size: 1.8rem;
+}
+
+.summary-card.highlight .summary-content h3 {
+    color: white;
+}
+
+/* Cart Table */
+.cart-table-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cart-table {
+    background: white;
+    margin-bottom: 0;
+}
+
+.cart-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+}
+
+.cart-table thead th {
+    border: none;
+    padding: 1.2rem;
+    font-size: 0.95rem;
+}
+
+.cart-table tbody tr {
+    border-bottom: 1px solid #e9ecef;
+    transition: background 0.2s ease;
+}
+
+.cart-table tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+.cart-item-row td {
+    padding: 1.2rem;
+    vertical-align: middle;
+}
+
+.fw-600 {
+    font-weight: 600;
+}
+
+.price-badge-small {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--primary-color);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Quantity Control */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-quantity {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    background: white;
+    color: var(--text-gray);
+    transition: all 0.2s ease;
+}
+
+.btn-quantity:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.quantity-display {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-weight: 600;
+    background: #f8f9fa;
+}
+
+.btn-remove {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid #f5365c;
+    background: white;
+    color: #f5365c;
+    transition: all 0.2s ease;
+}
+
+.btn-remove:hover {
+    background: #f5365c;
+    color: white;
+}
+
+/* Cart Actions */
+.cart-actions {
+    padding: 2rem 0;
+    justify-content: space-between;
+}
+
+.cart-actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.cart-actions .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    flex: 1;
+    min-width: 250px;
+}
+
+.cart-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.cart-actions .btn-outline-secondary {
+    border: 2px solid #e9ecef;
+    color: var(--text-gray);
+    transition: all 0.2s ease;
+}
+
+.cart-actions .btn-outline-secondary:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(102, 126, 234, 0.05);
+}
+
 
