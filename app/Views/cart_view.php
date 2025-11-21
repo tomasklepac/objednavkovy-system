@@ -64,13 +64,13 @@
                 <!-- Display each item in cart as a row -->
                 <tr class="cart-item-row">
                     <!-- Product name -->
-                    <td class="fw-600"><?= htmlspecialchars($item['name']) ?></td>
+                    <td class="text-center fw-600"><?= htmlspecialchars($item['name']) ?></td>
                     <!-- Unit price formatted as currency -->
                     <td class="text-center">
                         <span class="price-badge-small"><?= number_format($item['price_cents'] / 100, 2, ',', ' ') ?> Kč</span>
                     </td>
                     <!-- Quantity adjustment buttons -->
-                    <td>
+                    <td class="text-center">
                         <div class="quantity-control">
                             <!-- Decrease quantity button -->
                             <form method="post" action="index.php?action=decrease_from_cart&id=<?= (int)$id ?>" style="display:inline;">
