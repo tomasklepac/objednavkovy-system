@@ -92,28 +92,30 @@
                     </td>
                     <!-- Action buttons: block/approve user -->
                     <td class="text-center">
-                        <!-- Prevent admin users from being blocked -->
-                        <?php if (strpos($user['roles'], 'admin') !== false): ?>
-                            <span class="text-muted" title="Admina nelze blokovat">–</span>
-                        <?php else: ?>
-                            <!-- Block active user button -->
-                            <?php if ($user['is_active']): ?>
-                                <form method="post" action="index.php?action=block_user&id=<?= (int)$user['id'] ?>" style="display:inline;">
-                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                    <button type="submit" class="btn btn-remove" title="Blokovat uživatele">
-                                        <i class="fas fa-ban"></i>
-                                    </button>
-                                </form>
-                            <!-- Approve blocked/pending user button -->
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <!-- Prevent admin users from being blocked -->
+                            <?php if (strpos($user['roles'], 'admin') !== false): ?>
+                                <span class="text-muted" title="Admina nelze blokovat">–</span>
                             <?php else: ?>
-                                <form method="post" action="index.php?action=approve_user&id=<?= (int)$user['id'] ?>" style="display:inline;">
-                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                    <button type="submit" class="btn btn-sm btn-quantity" style="background:#2dce89; color:white;" title="Schválit uživatele">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                </form>
+                                <!-- Block active user button -->
+                                <?php if ($user['is_active']): ?>
+                                    <form method="post" action="index.php?action=block_user&id=<?= (int)$user['id'] ?>" style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                        <button type="submit" class="btn btn-remove" title="Blokovat uživatele">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    </form>
+                                <!-- Approve blocked/pending user button -->
+                                <?php else: ?>
+                                    <form method="post" action="index.php?action=approve_user&id=<?= (int)$user['id'] ?>" style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                        <button type="submit" class="btn btn-sm btn-quantity" style="background:#2dce89; color:white;" title="Schválit uživatele">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
                             <?php endif; ?>
-                        <?php endif; ?>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
