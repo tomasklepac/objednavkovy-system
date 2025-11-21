@@ -48,7 +48,7 @@
             <!-- Table header with column names -->
             <thead>
             <tr>
-                <th><i class="fas fa-box"></i> Název</th>
+                <th class="text-center"><i class="fas fa-box"></i> Název</th>
                 <th class="text-center"><i class="fas fa-tag"></i> Cena</th>
                 <th class="text-center"><i class="fas fa-hashtag"></i> Množství</th>
                 <th class="text-center"><i class="fas fa-calculator"></i> Celkem</th>
