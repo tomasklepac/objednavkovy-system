@@ -86,9 +86,19 @@ switch ($action) {
             // clear cart
             unset($_SESSION['cart']);
 
-            echo "<p style='color:green'>Order was successfully created!</p>";
-            echo "<p><a href='index.php'>Back to main page</a></p>";
-            echo "<p><a href='index.php?action=orders'>Show my orders</a></p>";
+            $title = 'Děkujeme za vaši objednávku!';
+            $message = 'Vaše objednávka byla úspěšně vytvořena a je nyní v přípravě.';
+            $details = [
+                'Číslo objednávky' => '#' . $orderId,
+                'Celková cena' => number_format($totalCents / 100, 2, ',', ' ') . ' Kč',
+                'Stav' => 'Čeká na potvrzení',
+                'Doručení na' => $street . ', ' . $zip . ' ' . $city
+            ];
+            $actions = [
+                'Moje objednávky' => 'index.php?action=orders',
+                'Pokračovat v nákupu' => 'index.php?action=products'
+            ];
+            require __DIR__ . '/../../app/Views/success_message_view.php';
             exit;
         }
 
@@ -256,11 +266,24 @@ switch ($action) {
 
         try {
             $orderController->cancelOrder($orderId);
-            echo "<p style='color:green'>Order #$orderId was canceled and stock refunded.</p>";
+            
+            $title = 'Objednávka byla zrušena';
+            $message = 'Vaše objednávka byla úspěšně zrušena a peníze vám byly vráceny do skladu.';
+            $details = [
+                'Číslo objednávky' => '#' . $orderId,
+                'Původní stav' => $order['status'],
+                'Nový stav' => 'Zrušena',
+                'Vráceno do skladu' => 'Ano'
+            ];
+            $actions = [
+                'Moje objednávky' => 'index.php?action=orders',
+                'Pokračovat v nákupu' => 'index.php?action=products'
+            ];
+            require __DIR__ . '/../../app/Views/success_message_view.php';
         } catch (Exception $e) {
             echo "<p style='color:red'>Error: {$e->getMessage()}</p>";
+            echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
         }
-        echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
         exit;
 
     // ------------------------------------------------

@@ -50,8 +50,18 @@ switch ($action) {
                 $imagePath
             );
 
-            echo "<p style='color:green'>Product was added!</p>";
-            echo "<p><a href='index.php?action=products'>Back to products</a></p>";
+            $title = 'Produkt byl úspěšně přidán!';
+            $message = "Produkt '$name' je nyní dostupný v katalogu.";
+            $details = [
+                'Název' => $name,
+                'Cena' => number_format($price, 2, ',', ' ') . ' Kč',
+                'Skladem' => $stock . ' ks'
+            ];
+            $actions = [
+                'Zpět na produkty' => 'index.php?action=products',
+                'Dashboard' => 'index.php'
+            ];
+            require __DIR__ . '/../../app/Views/success_message_view.php';
         } else {
             require __DIR__ . '/../../app/Views/add_product_view.php';
         }
@@ -100,9 +110,18 @@ switch ($action) {
                 $imageFile
             );
 
-            echo "<p style='color:green'>Product was updated!</p>";
-            echo "<p><a href='index.php'>Back to dashboard</a></p>";
-            echo "<p><a href='index.php?action=my_products'>Back to my products</a></p>";
+            $title = 'Produkt byl úspěšně aktualizován!';
+            $message = "Změny v produktu '$name' byly uloženy.";
+            $details = [
+                'Název' => $name,
+                'Cena' => number_format($price, 2, ',', ' ') . ' Kč',
+                'Skladem' => $stock . ' ks'
+            ];
+            $actions = [
+                'Moje produkty' => 'index.php?action=my_products',
+                'Dashboard' => 'index.php'
+            ];
+            require __DIR__ . '/../../app/Views/success_message_view.php';
 
         } else {
             require __DIR__ . '/../../app/Views/edit_product_view.php';
@@ -147,8 +166,18 @@ switch ($action) {
         }
 
         $productController->archiveProduct($id);
-        echo "<p style='color:green'>Product has been archived successfully.</p>";
-        echo "<p><a href='index.php?action=my_products'>Back to my products</a></p>";
+        
+        $title = 'Produkt byl úspěšně archivován';
+        $message = "Produkt '{$product['name']}' je nyní archivován a nebude viditelný v katalogu.";
+        $details = [
+            'Produkt' => $product['name'],
+            'Stav' => 'Archivován'
+        ];
+        $actions = [
+            'Moje produkty' => 'index.php?action=my_products',
+            'Dashboard' => 'index.php'
+        ];
+        require __DIR__ . '/../../app/Views/success_message_view.php';
         exit;
 
     // ------------------------------------------------
@@ -190,9 +219,19 @@ switch ($action) {
         }
 
         $productController->reactivateProduct($id);
-        echo "<p style='color:green'>Product has been reactivated successfully with stock set to 0. Please update the stock.</p>";
-        echo "<p><a href='index.php?action=edit_product&id=" . (int)$id . "'>Edit product</a> | ";
-        echo "<a href='index.php?action=my_products'>Back to my products</a></p>";
+        
+        $title = 'Produkt byl úspěšně reaktivován';
+        $message = "Produkt '{$product['name']}' je nyní znovu aktivní. Skladem je nyní 0 ks - prosím aktualizujte stav skladem.";
+        $details = [
+            'Produkt' => $product['name'],
+            'Stav' => 'Aktivní',
+            'Skladem' => '0 ks'
+        ];
+        $actions = [
+            'Upravit produkt' => 'index.php?action=edit_product&id=' . (int)$id,
+            'Moje produkty' => 'index.php?action=my_products'
+        ];
+        require __DIR__ . '/../../app/Views/success_message_view.php';
         exit;
 
     // ------------------------------------------------
