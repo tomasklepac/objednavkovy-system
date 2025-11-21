@@ -18,9 +18,10 @@ class ProductModel {
     public static function getAllProducts(): array {
         $db = Database::getInstance();
         $stmt = $db->query("
-            SELECT *
-            FROM products
-            WHERE is_active = 1
+            SELECT p.*, u.name AS supplier_name
+            FROM products p
+            LEFT JOIN users u ON p.supplier_id = u.id
+            WHERE p.is_active = 1
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
