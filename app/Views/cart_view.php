@@ -51,7 +51,7 @@
                 <th><i class="fas fa-box"></i> Název</th>
                 <th class="text-center"><i class="fas fa-tag"></i> Cena</th>
                 <th class="text-center"><i class="fas fa-hashtag"></i> Množství</th>
-                <th class="text-end"><i class="fas fa-calculator"></i> Celkem</th>
+                <th class="text-center"><i class="fas fa-calculator"></i> Celkem</th>
                 <th class="text-center"><i class="fas fa-tools"></i> Akce</th>
             </tr>
             </thead>
@@ -93,7 +93,7 @@
                         </div>
                     </td>
                     <!-- Subtotal for this item (price × quantity) -->
-                    <td class="text-end">
+                    <td class="text-center">
                         <strong><?= number_format($subtotal, 2, ',', ' ') ?> Kč</strong>
                     </td>
                     <!-- Remove item from cart button -->
