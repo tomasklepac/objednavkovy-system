@@ -10,15 +10,15 @@
 
 <!-- Display order items table if there are any items for this supplier -->
 <?php if (!empty($items)): ?>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
+    <div class="table-responsive cart-table-wrapper mb-4">
+        <table class="table cart-table align-middle">
             <!-- Table headers -->
-            <thead class="table-light">
+            <thead>
             <tr>
-                <th>Produkt</th>
-                <th>Množství</th>
-                <th>Cena/ks</th>
-                <th>Mezisoučet</th>
+                <th class="text-center">Produkt</th>
+                <th class="text-center">Množství</th>
+                <th class="text-center">Cena/ks</th>
+                <th class="text-center">Mezisoučet</th>
             </tr>
             </thead>
             <!-- Loop through and display each item belonging to this supplier -->
