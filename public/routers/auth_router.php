@@ -53,7 +53,7 @@ switch ($action) {
                 } else {
                     echo "<p style='color:green'>Registration successful. You can now log in.</p>";
                 }
-                echo "<p><a href='index.php?action=login'>← Log in</a></p>";
+                echo "<p><a href='index.php?action=login'><i class='fas fa-arrow-left'></i> Log in</a></p>";
             } else {
                 $error = $result;
                 require __DIR__ . "/../../app/Views/register_view.php";

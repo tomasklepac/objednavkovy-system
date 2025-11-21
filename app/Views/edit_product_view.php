@@ -54,7 +54,7 @@
 
     <!-- Save and cancel buttons -->
     <button type="submit" class="btn btn-primary">💾 Uložit změny</button>
-    <a href="index.php?action=products" class="btn btn-secondary">← Zpět na produkty</a>
+    <a href="index.php?action=products" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Zpět na produkty</a>
 </form>
 
 <?php require __DIR__ . '/partials/footer.php'; ?>

@@ -57,7 +57,7 @@
 
 <!-- Link back to supplier orders list -->
 <p class="mt-3">
-    <a href="index.php?action=supplier_orders" class="btn btn-secondary">← Zpět na objednávky mých produktů</a>
+    <a href="index.php?action=supplier_orders" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Zpět na objednávky mých produktů</a>
 </p>
 
 <?php require __DIR__ . '/partials/footer.php'; ?>
