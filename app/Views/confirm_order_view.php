@@ -3,6 +3,13 @@
 <!-- Order confirmation heading -->
 <h1 class="h3 mb-3">Potvrzení objednávky</h1>
 
+<!-- Display error message if validation failed -->
+<?php if (!empty($error)): ?>
+    <div class="alert alert-danger" role="alert">
+        <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?>
+    </div>
+<?php endif; ?>
+
 <!-- Form for entering delivery address and additional order information -->
 <form method="post" class="card p-4 mx-auto" style="max-width: 500px;">
     <!-- CSRF token for security -->

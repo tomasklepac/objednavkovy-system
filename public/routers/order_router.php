@@ -30,6 +30,8 @@ switch ($action) {
             exit;
         }
 
+        $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $street = trim($_POST['street'] ?? '');
             $city   = trim($_POST['city'] ?? '');
@@ -38,7 +40,7 @@ switch ($action) {
 
             // address validation
             if ($street === '' || $city === '' || $zip === '') {
-                echo "<p style='color:red'>You must fill in all address fields!</p>";
+                $error = "You must fill in all address fields!";
                 require __DIR__ . '/../../app/Views/confirm_order_view.php';
                 exit;
             }
