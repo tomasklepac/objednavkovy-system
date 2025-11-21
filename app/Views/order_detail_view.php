@@ -86,13 +86,13 @@
             <?php foreach ($items as $item): ?>
                 <tr>
                     <!-- Product name -->
-                    <td><?= htmlspecialchars($item['name']) ?></td>
+                    <td class="text-center"><?= htmlspecialchars($item['name']) ?></td>
                     <!-- Ordered quantity -->
-                    <td><?= (int)$item['quantity'] ?></td>
+                    <td class="text-center"><?= (int)$item['quantity'] ?></td>
                     <!-- Unit price in CZK -->
-                    <td><?= number_format($item['unit_price_cents'] / 100, 2, ',', ' ') ?> Kč</td>
+                    <td class="text-center"><?= number_format($item['unit_price_cents'] / 100, 2, ',', ' ') ?> Kč</td>
                     <!-- Total for this line (price × quantity) -->
-                    <td><?= number_format(($item['unit_price_cents'] * $item['quantity']) / 100, 2, ',', ' ') ?> Kč</td>
+                    <td class="text-center"><?= number_format(($item['unit_price_cents'] * $item['quantity']) / 100, 2, ',', ' ') ?> Kč</td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

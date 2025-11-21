@@ -29,7 +29,7 @@
             <?php foreach ($products as $product): ?>
                 <tr>
                     <!-- Display product image or placeholder text -->
-                    <td>
+                    <td class="text-center">
                         <?php if (!empty($product['image_path'])): ?>
                             <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="Obrázek produktu"
                                  style="max-height:80px;" class="img-thumbnail">
@@ -38,13 +38,13 @@
                         <?php endif; ?>
                     </td>
                     <!-- Product name -->
-                    <td><?= htmlspecialchars($product['name']) ?></td>
+                    <td class="text-center"><?= htmlspecialchars($product['name']) ?></td>
                     <!-- Product description -->
-                    <td><?= htmlspecialchars($product['description']) ?></td>
+                    <td class="text-center"><?= htmlspecialchars($product['description']) ?></td>
                     <!-- Product price in CZK -->
-                    <td><?= number_format($product['price_cents'] / 100, 2, ',', ' ') ?> Kč</td>
+                    <td class="text-center"><?= number_format($product['price_cents'] / 100, 2, ',', ' ') ?> Kč</td>
                     <!-- Stock quantity or sold out message -->
-                    <td>
+                    <td class="text-center">
                         <?php if ((int)$product['stock'] > 0): ?>
                             <?= (int)$product['stock'] ?> ks
                         <?php else: ?>
@@ -52,7 +52,7 @@
                         <?php endif; ?>
                     </td>
                     <!-- Product status: active or archived -->
-                    <td>
+                    <td class="text-center">
                         <?php if ($product['is_active']): ?>
                             <span class="badge bg-success">Aktivní</span>
                         <?php else: ?>
@@ -60,7 +60,7 @@
                         <?php endif; ?>
                     </td>
                     <!-- Action buttons: edit, archive, reactivate -->
-                    <td>
+                    <td class="text-center">
                         <div class="d-flex gap-2">
                             <!-- Edit button -->
                             <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">Upravit</a>

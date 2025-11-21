@@ -33,19 +33,19 @@
                 ?>
                 <tr>
                     <!-- Product name -->
-                    <td><?= htmlspecialchars($it['name']) ?></td>
+                    <td class="text-center"><?= htmlspecialchars($it['name']) ?></td>
                     <!-- Ordered quantity -->
-                    <td><?= (int)$it['quantity'] ?></td>
+                    <td class="text-center"><?= (int)$it['quantity'] ?></td>
                     <!-- Unit price in CZK -->
-                    <td><?= number_format($it['unit_price_cents'] / 100, 2, ',', ' ') ?> Kč</td>
+                    <td class="text-center"><?= number_format($it['unit_price_cents'] / 100, 2, ',', ' ') ?> Kč</td>
                     <!-- Line total (price × quantity) -->
-                    <td><?= number_format($line / 100, 2, ',', ' ') ?> Kč</td>
+                    <td class="text-center"><?= number_format($line / 100, 2, ',', ' ') ?> Kč</td>
                 </tr>
             <?php endforeach; ?>
             <!-- Total row showing sum of supplier's items only -->
             <tr>
                 <td colspan="3" class="text-end fw-bold">Součet mých položek:</td>
-                <td class="fw-bold"><?= number_format($subtotalCents / 100, 2, ',', ' ') ?> Kč</td>
+                <td class="text-center fw-bold"><?= number_format($subtotalCents / 100, 2, ',', ' ') ?> Kč</td>
             </tr>
             </tbody>
         </table>
