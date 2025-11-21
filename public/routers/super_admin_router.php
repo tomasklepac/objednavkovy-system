@@ -31,6 +31,8 @@ switch ($action) {
             $admin = user_model::findById($adminId);
             if ($admin && (int)$admin['is_approved'] === 0) {
                 $userController->approveAdmin($adminId);
+                // Auto-activate when approving
+                $userController->unblockAdmin($adminId);
             }
         }
         header("Location: index.php?action=super_admin");

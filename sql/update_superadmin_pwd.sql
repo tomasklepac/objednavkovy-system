@@ -1,0 +1,1 @@
+UPDATE users SET password_hash = '$2y$12$r5OwxikzyH/6VbbDx7QMluWl.UDpWbXyCukA4cB04J8M1y3GKcuwm' WHERE email = 'superadmin@local.test';

@@ -43,7 +43,7 @@ switch ($action) {
             $role = $_POST['role'] ?? 'customer';
 
             if ($password !== $passwordConfirm) {
-                $error = "Passwords do not match.";
+                $error = "Hesla se neshodují.";
                 require __DIR__ . "/../../app/Views/register_view.php";
                 break;
             }
@@ -51,27 +51,27 @@ switch ($action) {
             $result = $userController->register($email, $password, $passwordConfirm, $role, $name);
 
             if ($result === 'registered_active') {
-                $title = "Registration Successful!";
-                $message = "Your account has been created. You can now log in.";
+                $title = "Registrace úspěšná!";
+                $message = "Tvůj účet byl vytvořen. Nyní se můžeš přihlásit.";
                 $details = [];
                 $buttons = [
-                    ['label' => 'Go to Login', 'url' => 'index.php?action=login']
+                    ['label' => 'Přejít na přihlášení', 'url' => 'index.php?action=login']
                 ];
                 require __DIR__ . "/../../app/Views/success_message_view.php";
             } elseif ($result === 'registered_inactive') {
-                $title = "Registration Successful!";
-                $message = "Your account has been created. Wait for administrator approval before logging in.";
+                $title = "Registrace úspěšná!";
+                $message = "Tvůj účet byl vytvořen. Počkej na schválení administrátorem, než se budeš moci přihlásit.";
                 $details = [];
                 $buttons = [
-                    ['label' => 'Return to Login', 'url' => 'index.php?action=login']
+                    ['label' => 'Zpět na přihlášení', 'url' => 'index.php?action=login']
                 ];
                 require __DIR__ . "/../../app/Views/success_message_view.php";
             } elseif ($result === 'admin_request_sent') {
-                $title = "Admin Request Submitted!";
-                $message = "Your admin account request has been submitted. SuperAdmin will review your request soon.";
+                $title = "Žádost o admin přístup odeslána!";
+                $message = "Tvá žádost o admin práva byla odeslána. SuperAdmin si ji brzy projde a rozhodne.";
                 $details = [];
                 $buttons = [
-                    ['label' => 'Return to Login', 'url' => 'index.php?action=login']
+                    ['label' => 'Zpět na přihlášení', 'url' => 'index.php?action=login']
                 ];
                 require __DIR__ . "/../../app/Views/success_message_view.php";
             } else {
