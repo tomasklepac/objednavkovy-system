@@ -92,7 +92,7 @@
 
 <!-- Link back to dashboard -->
 <p>
-    <a href="index.php" class="btn btn-secondary">🏠 Zpět na dashboard</a>
+    <a href="index.php" class="btn btn-secondary"><i class="fas fa-home"></i> Zpět na dashboard</a>
 </p>
 
 <?php require __DIR__ . '/partials/footer.php'; ?>
