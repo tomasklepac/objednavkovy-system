@@ -61,7 +61,7 @@
                     </td>
                     <!-- Action buttons: edit, archive, reactivate -->
                     <td class="text-center">
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 justify-content-center">
                             <!-- Edit button -->
                             <a href="index.php?action=edit_product&id=<?= (int)$product['id'] ?>" class="btn btn-sm btn-outline-primary">Upravit</a>
 

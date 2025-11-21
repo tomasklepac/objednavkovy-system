@@ -98,14 +98,16 @@
                     </td>
                     <!-- Remove item from cart button -->
                     <td class="text-center">
-                        <form method="post" action="index.php?action=remove_from_cart&id=<?= (int)$id ?>" style="display:inline;">
-                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                            <button type="submit" class="btn btn-sm btn-remove"
-                                    onclick="return confirm('Opravdu smazat tento produkt z košíku?');"
-                                    title="Odstranit z košíku">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </form>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <form method="post" action="index.php?action=remove_from_cart&id=<?= (int)$id ?>" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <button type="submit" class="btn btn-sm btn-remove"
+                                        onclick="return confirm('Opravdu smazat tento produkt z košíku?');"
+                                        title="Odstranit z košíku">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
