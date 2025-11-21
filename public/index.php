@@ -77,6 +77,7 @@ switch ($action) {
     case 'delete_product':
     case 'reactivate_product':
     case 'my_products':
+    case 'all_products':
         require __DIR__ . '/routers/product_router.php';
         break;
 
