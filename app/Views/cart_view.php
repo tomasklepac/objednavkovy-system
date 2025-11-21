@@ -83,13 +83,15 @@
                             <!-- Display current quantity -->
                             <input type="number" value="<?= (int)$item['quantity'] ?>" disabled class="quantity-display">
 
-                            <!-- Increase quantity button -->
-                            <form method="post" action="index.php?action=increase_from_cart&id=<?= (int)$id ?>" style="display:inline;">
-                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                <button type="submit" class="btn btn-sm btn-quantity" title="Zvýšit množství">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
+                            <!-- Increase quantity button (hidden if at max stock) -->
+                            <?php if ((int)$item['quantity'] < (int)($item['stock'] ?? 0)): ?>
+                                <form method="post" action="index.php?action=increase_from_cart&id=<?= (int)$id ?>" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-quantity" title="Zvýšit množství">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </td>
                     <!-- Subtotal for this item (price × quantity) -->

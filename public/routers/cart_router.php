@@ -47,6 +47,7 @@ switch ($action) {
                 'name'        => $product['name'],
                 'price_cents' => $product['price_cents'],
                 'quantity'    => 1,
+                'stock'       => $available,
             ];
         }
 
