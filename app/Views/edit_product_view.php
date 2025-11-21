@@ -53,7 +53,7 @@
     </div>
 
     <!-- Save and cancel buttons -->
-    <button type="submit" class="btn btn-primary">💾 Uložit změny</button>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Uložit změny</button>
     <a href="index.php?action=products" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Zpět na produkty</a>
 </form>
 
