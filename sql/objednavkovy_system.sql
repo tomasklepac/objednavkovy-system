@@ -134,9 +134,10 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`id`, `code`) VALUES
-(3, 'admin'),
 (1, 'customer'),
-(2, 'supplier');
+(2, 'supplier'),
+(3, 'admin'),
+(4, 'super_admin');
 
 -- --------------------------------------------------------
 
@@ -150,6 +151,7 @@ CREATE TABLE `users` (
   `password_hash` varchar(255) NOT NULL,
   `name` varchar(120) NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `is_approved` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -157,12 +159,13 @@ CREATE TABLE `users` (
 -- Vypisuji data pro tabulku `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password_hash`, `name`, `is_active`, `created_at`) VALUES
-(1, 'admin@local.test', '$2y$10$uGizEsfsRj7kdHVF0qRTXeyav3BD3BXDph3Y0y4OlxGJFEYBE0EpW', 'Admin', 1, '2025-09-27 13:27:38'),
-(2, 'supplier@local.test', '$2y$10$G3Y2.R7fsX9eYudr0gF4MeVzho9VLenulmX3AdrXwWP/AR6Vqi65m', 'Dodavatel', 1, '2025-09-27 14:44:18'),
-(3, 'customer@local.test', '$2y$10$WLTKTS.qz6L2ONdKx/OvZ.KhY99i.IBKVVNWVmEe6nIpkCRqsLmpW', 'Zákazník', 1, '2025-09-27 19:13:13'),
-(5, 'tomasklepac@post.cz', '$2y$10$S0LBa9RYgmQRqVJhL2HAjuEgRUrTZn6i3C3VnKgZSiGmmbj1KGw7a', 'Tomáš Klepač', 1, '2025-09-29 17:19:35'),
-(7, 'petrnovak@local.test', '$2y$10$442oRYMbiPcw2IjktG2dVuO/NoHPwE3FRDBdjc.LmSPgNo2er69C6', 'Petr Novák', 1, '2025-09-29 18:33:04');
+INSERT INTO `users` (`id`, `email`, `password_hash`, `name`, `is_active`, `is_approved`, `created_at`) VALUES
+(1, 'admin@local.test', '$2y$10$uGizEsfsRj7kdHVF0qRTXeyav3BD3BXDph3Y0y4OlxGJFEYBE0EpW', 'Admin', 1, 1, '2025-09-27 13:27:38'),
+(2, 'supplier@local.test', '$2y$10$G3Y2.R7fsX9eYudr0gF4MeVzho9VLenulmX3AdrXwWP/AR6Vqi65m', 'Dodavatel', 1, 1, '2025-09-27 14:44:18'),
+(3, 'customer@local.test', '$2y$10$WLTKTS.qz6L2ONdKx/OvZ.KhY99i.IBKVVNWVmEe6nIpkCRqsLmpW', 'Zákazník', 1, 1, '2025-09-27 19:13:13'),
+(5, 'tomasklepac@post.cz', '$2y$10$S0LBa9RYgmQRqVJhL2HAjuEgRUrTZn6i3C3VnKgZSiGmmbj1KGw7a', 'Tomáš Klepač', 1, 1, '2025-09-29 17:19:35'),
+(7, 'petrnovak@local.test', '$2y$10$442oRYMbiPcw2IjktG2dVuO/NoHPwE3FRDBdjc.LmSPgNo2er69C6', 'Petr Novák', 1, 1, '2025-09-29 18:33:04'),
+(8, 'superadmin@local.test', '$2y$10$K9Uw6xGZHqX5V8mN2pQ7feL0R3S4T5U6V7W8X9Y0Z1A2B3C4D5E6', 'SuperAdmin', 1, 1, '2025-10-01 10:00:00');
 
 -- --------------------------------------------------------
 
@@ -184,7 +187,8 @@ INSERT INTO `user_role` (`user_id`, `role_id`) VALUES
 (2, 2),
 (3, 1),
 (5, 1),
-(7, 2);
+(7, 2),
+(8, 4);
 
 --
 -- Indexy pro exportované tabulky

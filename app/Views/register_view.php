@@ -39,12 +39,13 @@
         <input type="password" id="password_confirm" name="password_confirm" class="form-control" required>
     </div>
 
-    <!-- Role selection dropdown (customer or supplier) -->
+    <!-- Role selection dropdown (customer, supplier, or admin) -->
     <div class="mb-3">
         <label for="role" class="form-label">Role:</label>
         <select id="role" name="role" class="form-select" required>
             <option value="customer">Zákazník</option>
             <option value="supplier">Dodavatel</option>
+            <option value="admin">Správce (Admin) - čeká na schválení</option>
         </select>
     </div>
 

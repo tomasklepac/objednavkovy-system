@@ -22,6 +22,9 @@ switch ($action) {
             } elseif ($result === 'inactive') {
                 $error = "Account is not yet approved. Wait for administrator activation.";
                 require __DIR__ . "/../../app/Views/login_view.php";
+            } elseif ($result === 'not_approved') {
+                $error = "Your admin account is awaiting approval from SuperAdmin. Please wait.";
+                require __DIR__ . "/../../app/Views/login_view.php";
             } else {
                 $error = "Invalid credentials.";
                 require __DIR__ . "/../../app/Views/login_view.php";
@@ -45,15 +48,32 @@ switch ($action) {
                 break;
             }
 
-            $result = $userController->register($name, $email, $password, $role);
+            $result = $userController->register($email, $password, $passwordConfirm, $role, $name);
 
-            if ($result === 'ok') {
-                if ($role === 'supplier') {
-                    echo "<p style='color:green'>Registration successful. Wait for administrator approval.</p>";
-                } else {
-                    echo "<p style='color:green'>Registration successful. You can now log in.</p>";
-                }
-                echo "<p><a href='index.php?action=login'><i class='fas fa-arrow-left'></i> Log in</a></p>";
+            if ($result === 'registered_active') {
+                $title = "Registration Successful!";
+                $message = "Your account has been created. You can now log in.";
+                $details = [];
+                $buttons = [
+                    ['label' => 'Go to Login', 'url' => 'index.php?action=login']
+                ];
+                require __DIR__ . "/../../app/Views/success_message_view.php";
+            } elseif ($result === 'registered_inactive') {
+                $title = "Registration Successful!";
+                $message = "Your account has been created. Wait for administrator approval before logging in.";
+                $details = [];
+                $buttons = [
+                    ['label' => 'Return to Login', 'url' => 'index.php?action=login']
+                ];
+                require __DIR__ . "/../../app/Views/success_message_view.php";
+            } elseif ($result === 'admin_request_sent') {
+                $title = "Admin Request Submitted!";
+                $message = "Your admin account request has been submitted. SuperAdmin will review your request soon.";
+                $details = [];
+                $buttons = [
+                    ['label' => 'Return to Login', 'url' => 'index.php?action=login']
+                ];
+                require __DIR__ . "/../../app/Views/success_message_view.php";
             } else {
                 $error = $result;
                 require __DIR__ . "/../../app/Views/register_view.php";

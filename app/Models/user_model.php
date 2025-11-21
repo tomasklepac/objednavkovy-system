@@ -80,26 +80,28 @@ class user_model {
     }
 
     /**
-     * Creates a new user with email, password hash, name and active status.
+     * Creates a new user with email, password hash, name, active status and approval status.
      *
      * @param string $email User's email
      * @param string $passwordHash Password hash (use PASSWORD_BCRYPT)
      * @param string $name User's name
      * @param int $isActive Active status (1 or 0)
+     * @param int $isApproved Approval status for admins (1 or 0)
      * @return int Last inserted user ID
      */
     public static function createUser(
         string $email,
         string $passwordHash,
         string $name,
-        int $isActive
+        int $isActive,
+        int $isApproved = 1
     ): int {
         $db = Database::getInstance();
         $stmt = $db->prepare("
-            INSERT INTO users (email, password_hash, name, is_active)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO users (email, password_hash, name, is_active, is_approved)
+            VALUES (?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$email, $passwordHash, $name, $isActive]);
+        $stmt->execute([$email, $passwordHash, $name, $isActive, $isApproved]);
         return (int)$db->lastInsertId();
     }
 
@@ -145,6 +147,112 @@ class user_model {
         $db = Database::getInstance();
         $stmt = $db->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
         $stmt->execute([$userId]);
+    }
+
+    /**
+     * Gets all admin users with their approval status for SuperAdmin panel.
+     *
+     * @return array[] List of admins with approval status
+     */
+    public static function getAllAdmins(): array {
+        $db = Database::getInstance();
+        $stmt = $db->query("
+            SELECT u.id, u.email, u.name, u.is_active, u.is_approved, u.created_at
+            FROM users u
+            JOIN user_role ur ON u.id = ur.user_id
+            JOIN roles r ON ur.role_id = r.id
+            WHERE r.code = 'admin'
+            ORDER BY u.created_at DESC
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Gets pending admin requests (not yet approved by SuperAdmin).
+     *
+     * @return array[] List of pending admin requests
+     */
+    public static function getPendingAdminRequests(): array {
+        $db = Database::getInstance();
+        $stmt = $db->query("
+            SELECT u.id, u.email, u.name, u.created_at
+            FROM users u
+            JOIN user_role ur ON u.id = ur.user_id
+            JOIN roles r ON ur.role_id = r.id
+            WHERE r.code = 'admin' AND u.is_approved = 0
+            ORDER BY u.created_at ASC
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Approves an admin user (SuperAdmin only).
+     *
+     * @param int $userId Admin user ID
+     * @return void
+     */
+    public static function approveAdmin(int $userId): void {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
+        $stmt->execute([$userId]);
+    }
+
+    /**
+     * Rejects an admin user (SuperAdmin only).
+     *
+     * @param int $userId Admin user ID
+     * @return void
+     */
+    public static function rejectAdmin(int $userId): void {
+        $db = Database::getInstance();
+        // First, remove admin role
+        $stmt = $db->prepare("
+            DELETE FROM user_role 
+            WHERE user_id = ? AND role_id = (SELECT id FROM roles WHERE code = 'admin')
+        ");
+        $stmt->execute([$userId]);
+        
+        // Then delete the user if no other roles
+        $stmt = $db->prepare("
+            SELECT COUNT(*) FROM user_role WHERE user_id = ?
+        ");
+        $stmt->execute([$userId]);
+        
+        if ($stmt->fetchColumn() === 0) {
+            $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+        }
+    }
+
+    /**
+     * Checks if a user has super_admin role.
+     *
+     * @param int $userId User ID
+     * @return bool True if user is super_admin
+     */
+    public static function isSuperAdmin(int $userId): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("
+            SELECT COUNT(*) FROM user_role ur
+            JOIN roles r ON ur.role_id = r.id
+            WHERE ur.user_id = ? AND r.code = 'super_admin'
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    /**
+     * Finds a user by ID.
+     *
+     * @param int $userId User ID
+     * @return array|null User data or null if not found
+     */
+    public static function findById(int $userId): ?array {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
     }
 }
 

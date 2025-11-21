@@ -64,6 +64,15 @@ switch ($action) {
         require __DIR__ . '/routers/auth_router.php';
         break;
 
+    // SuperAdmin: admin user management
+    case 'super_admin':
+    case 'approve_admin':
+    case 'reject_admin':
+    case 'block_admin':
+    case 'unblock_admin':
+        require __DIR__ . '/routers/super_admin_router.php';
+        break;
+
     // Admin: user management
     case 'users':
     case 'approve_user':

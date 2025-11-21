@@ -102,6 +102,14 @@
         $roles = array_map('strtolower', $_SESSION['roles'] ?? []);
         ?>
         
+        <!-- SuperAdmin section -->
+        <?php if (in_array('super_admin', $roles)): ?>
+            <div class="sidebar-section">
+                <h6 class="sidebar-title"><i class="fas fa-crown"></i> SuperAdmin</h6>
+                <a href="index.php?action=super_admin" class="sidebar-item">Správa adminů</a>
+            </div>
+        <?php endif; ?>
+        
         <!-- Admin section -->
         <?php if (in_array('admin', $roles)): ?>
             <div class="sidebar-section">

@@ -13,6 +13,12 @@ $userController    = new user_controller();
 
 // If user is logged in
 if (!empty($_SESSION['user_id'])) {
+    // If user is SuperAdmin, redirect to SuperAdmin panel
+    if (user_model::isSuperAdmin($_SESSION['user_id'])) {
+        header("Location: index.php?action=super_admin");
+        exit;
+    }
+
     // Load products (displayed to all logged in users)
     $products = $productController->index();
     
