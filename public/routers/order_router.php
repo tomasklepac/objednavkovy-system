@@ -8,7 +8,6 @@
 // ----------------------------------------------
 
 use App\Controllers\OrderController;
-use App\Config\Database;
 
 $orderController = new OrderController();
 
@@ -46,44 +45,21 @@ switch ($action) {
                 exit;
             }
 
-            // total price
-            $totalCents = 0;
-            foreach ($_SESSION['cart'] as $item) {
-                $totalCents += $item['price_cents'] * $item['quantity'];
-            }
-
-            // create order
-            $stmt = $pdo->prepare("
-                INSERT INTO orders (customer_id, status, street, city, zip, note, total_cents, created_at)
-                VALUES (?, 'pending', ?, ?, ?, ?, ?, NOW())
-            ");
-            $stmt->execute([
-                $_SESSION['user_id'],
-                $street,
-                $city,
-                $zip,
-                $note,
-                $totalCents
-            ]);
-
-            $orderId = $pdo->lastInsertId();
-
-            // insert order items
-            $itemStmt = $pdo->prepare("
-                INSERT INTO order_item (order_id, product_id, quantity, unit_price_cents)
-                VALUES (?, ?, ?, ?)
-            ");
-            foreach ($_SESSION['cart'] as $productId => $item) {
-                $itemStmt->execute([$orderId, $productId, $item['quantity'], $item['price_cents']]);
-            }
-
-            // Deduct stock immediately when order is placed
             try {
-                $orderController->deductStock($orderId);
+                $result = $orderController->createOrder(
+                    (int)$_SESSION['user_id'],
+                    $street,
+                    $city,
+                    $zip,
+                    $note,
+                    $_SESSION['cart']
+                );
+                $orderId = $result['order_id'];
+                $totalCents = $result['total_cents'];
             } catch (Exception $e) {
-                // If stock deduction fails, we still have the order record
-                // Admin will see the error when trying to process it
-                echo "<p style='color:orange'>Warning: " . htmlspecialchars($e->getMessage()) . "</p>";
+                $error = $e->getMessage();
+                require __DIR__ . '/../../app/Views/confirm_order_view.php';
+                exit;
             }
 
             // clear cart

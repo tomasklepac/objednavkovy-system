@@ -15,6 +15,86 @@ class OrderModel {
     // ================================================================
 
     /**
+     * Creates an order with items in a single transaction.
+     * Calculates total price, inserts order, inserts order_item rows and deducts stock.
+     *
+     * @param int $customerId
+     * @param string $street
+     * @param string $city
+     * @param string $zip
+     * @param string $note
+     * @param array $cartItems array keyed by product_id with quantity/price_cents
+     * @return array{order_id:int,total_cents:int}
+     * @throws \Exception when stock is insufficient or DB error occurs
+     */
+    public static function createOrder(
+        int $customerId,
+        string $street,
+        string $city,
+        string $zip,
+        string $note,
+        array $cartItems
+    ): array {
+        $db = Database::getInstance();
+
+        // compute total
+        $totalCents = 0;
+        foreach ($cartItems as $item) {
+            $totalCents += (int)$item['price_cents'] * (int)$item['quantity'];
+        }
+
+        try {
+            $db->beginTransaction();
+
+            // create order
+            $stmt = $db->prepare("
+                INSERT INTO orders (customer_id, status, street, city, zip, note, total_cents, created_at)
+                VALUES (?, 'pending', ?, ?, ?, ?, ?, NOW())
+            ");
+            $stmt->execute([$customerId, $street, $city, $zip, $note, $totalCents]);
+            $orderId = (int)$db->lastInsertId();
+
+            // insert items
+            $itemStmt = $db->prepare("
+                INSERT INTO order_item (order_id, product_id, quantity, unit_price_cents)
+                VALUES (?, ?, ?, ?)
+            ");
+            foreach ($cartItems as $productId => $item) {
+                $itemStmt->execute([
+                    $orderId,
+                    (int)$productId,
+                    (int)$item['quantity'],
+                    (int)$item['price_cents']
+                ]);
+            }
+
+            // deduct stock inside same transaction
+            foreach ($cartItems as $productId => $item) {
+                $update = $db->prepare("
+                    UPDATE products
+                    SET stock = stock - ?
+                    WHERE id = ? AND stock >= ?
+                ");
+                $update->execute([
+                    (int)$item['quantity'],
+                    (int)$productId,
+                    (int)$item['quantity']
+                ]);
+
+                if ($update->rowCount() === 0) {
+                    throw new \Exception("Insufficient stock for product ID " . (int)$productId);
+                }
+            }
+
+            $db->commit();
+            return ['order_id' => $orderId, 'total_cents' => $totalCents];
+        } catch (\Exception $e) {
+            $db->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * Returns all orders with customer information.
      *
      * @return array[] List of orders with customer names

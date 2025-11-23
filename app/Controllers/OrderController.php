@@ -17,6 +17,29 @@ class OrderController {
     // ================================================================
 
     /**
+     * Creates an order with items (customer checkout).
+     * Returns order id and total cents.
+     *
+     * @param int $customerId
+     * @param string $street
+     * @param string $city
+     * @param string $zip
+     * @param string $note
+     * @param array $cartItems
+     * @return array{order_id:int,total_cents:int}
+     */
+    public function createOrder(
+        int $customerId,
+        string $street,
+        string $city,
+        string $zip,
+        string $note,
+        array $cartItems
+    ): array {
+        return OrderModel::createOrder($customerId, $street, $city, $zip, $note, $cartItems);
+    }
+
+    /**
      * Returns all orders for admin view.
      *
      * @return array[] List of all orders with customer information
