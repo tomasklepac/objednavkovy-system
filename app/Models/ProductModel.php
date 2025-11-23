@@ -81,6 +81,23 @@ class ProductModel {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Returns ALL products (active and archived) for admin view.
+     *
+     * @return array[] List of all products
+     */
+    public static function getAllProductsAdmin(): array {
+        $db = Database::getInstance();
+        $stmt = $db->query("
+            SELECT p.*, u.name AS supplier_name
+            FROM products p
+            LEFT JOIN users u ON p.supplier_id = u.id
+            ORDER BY p.is_active DESC, p.name ASC
+        ");
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     // ================================================================
     // CREATE
     // ================================================================

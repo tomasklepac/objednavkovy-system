@@ -25,6 +25,15 @@ class ProductController {
     }
 
     /**
+     * Returns ALL products (active and archived) for admin view.
+     *
+     * @return array[] List of all products
+     */
+    public function getAllProductsAdmin(): array {
+        return ProductModel::getAllProductsAdmin();
+    }
+
+    /**
      * Returns a specific product by ID.
      *
      * @param int $id Product ID

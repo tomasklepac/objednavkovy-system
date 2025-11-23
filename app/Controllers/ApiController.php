@@ -19,7 +19,6 @@ class ApiController {
      * 
      * Supports filtering by:
      * - ?supplier_id=X - Filter by supplier
-     * - ?price_min=X&price_max=Y - Filter by price range
      * 
      * @return void (outputs JSON)
      */
@@ -28,13 +27,10 @@ class ApiController {
             $products = ProductModel::getAllProducts();
             
             // Apply filters if provided
-            if (!empty($_GET['price_min']) || !empty($_GET['price_max'])) {
-                $priceMin = (float)($_GET['price_min'] ?? 0);
-                $priceMax = (float)($_GET['price_max'] ?? PHP_FLOAT_MAX);
-                
-                $products = array_filter($products, function($product) use ($priceMin, $priceMax) {
-                    $price = (float)$product['price'];
-                    return $price >= $priceMin && $price <= $priceMax;
+            if (!empty($_GET['supplier_id'])) {
+                $supplierId = (int)$_GET['supplier_id'];
+                $products = array_filter($products, function($product) use ($supplierId) {
+                    return (int)$product['supplier_id'] === $supplierId;
                 });
             }
             

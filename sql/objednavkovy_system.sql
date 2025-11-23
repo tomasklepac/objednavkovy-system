@@ -126,7 +126,7 @@ INSERT INTO `products` (`id`, `name`, `description`, `price_cents`, `stock`, `im
 
 CREATE TABLE `roles` (
   `id` int(11) NOT NULL,
-  `code` varchar(32) NOT NULL
+  `code` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -134,10 +134,36 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`id`, `code`) VALUES
-(1, 'customer'),
+(1, 'admin'),
 (2, 'supplier'),
-(3, 'admin'),
+(3, 'customer'),
 (4, 'super_admin');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabulky `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `is_approved` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Vypisuji data pro tabulku `users`
+--
+
+INSERT INTO `users` (`id`, `email`, `password_hash`, `name`, `is_active`, `is_approved`, `created_at`) VALUES
+(1, 'admin@local.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin User', 1, 1, '2025-09-30 20:50:00'),
+(2, 'supplier@local.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Petr Novák', 1, 1, '2025-09-30 20:50:00'),
+(3, 'customer@local.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Zákazník', 1, 1, '2025-09-30 20:50:00'),
+(8, 'superadmin@local.test', '$2y$12$r5OwxikzyH/6VbbDx7QMluWl.UDpWbXyCukA4cB04J8M1y3GKcuwm', 'SuperAdmin', 1, 1, '2025-11-21 12:00:00');
 
 -- --------------------------------------------------------
 

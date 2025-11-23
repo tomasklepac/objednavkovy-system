@@ -79,7 +79,7 @@ switch ($action) {
 
             // Deduct stock immediately when order is placed
             try {
-                $orderController->confirmOrder($orderId);
+                $orderController->deductStock($orderId);
             } catch (Exception $e) {
                 // If stock deduction fails, we still have the order record
                 // Admin will see the error when trying to process it
@@ -151,11 +151,25 @@ switch ($action) {
         $orderId = (int)($_GET['id'] ?? 0);
         try {
             $orderController->confirmPendingOrder($orderId);
-            echo "<p style='color:green'>Order #$orderId was confirmed.</p>";
+            
+            $title = 'Objednávka byla potvrzena';
+            $message = "Objednávka #$orderId byla úspěšně potvrzena.";
+            $details = [
+                'Číslo objednávky' => '#' . $orderId,
+                'Nový stav' => 'Potvrzeno'
+            ];
+            $actions = [
+                'Zpět na objednávky' => 'index.php?action=orders',
+                'Dashboard' => 'index.php'
+            ];
+            require __DIR__ . '/../../app/Views/success_message_view.php';
         } catch (Exception $e) {
-            echo "<p style='color:red'>Error: {$e->getMessage()}</p>";
+            echo "<div style='padding: 2rem; text-align: center;'>";
+            echo "<h2 style='color:red'>Chyba</h2>";
+            echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
+            echo "<a href='index.php?action=orders' style='display: inline-block; padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px;'>Zpět na objednávky</a>";
+            echo "</div>";
         }
-        echo "<p><a href='index.php?action=orders'>Back to orders</a></p>";
         exit;
 
     // ------------------------------------------------

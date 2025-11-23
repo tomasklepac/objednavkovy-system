@@ -31,7 +31,7 @@ error_reporting(E_ALL);
 // ------------------------------------------------------------
 // Load configuration and autoloader
 // ------------------------------------------------------------
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../app/autoload.php';
 
 // Use namespaced classes
 use App\Controllers\UserController;

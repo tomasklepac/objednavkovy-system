@@ -75,15 +75,15 @@ class OrderController {
     }
 
     /**
-     * Confirms an order and deducts stock (transaction-based).
+     * Deducts stock for a new order.
      * Checks if sufficient stock exists before committing.
      *
      * @param int $orderId Order ID
      * @return void
      * @throws Exception If stock is insufficient
      */
-    public function confirmOrder(int $orderId): void {
-        OrderModel::confirmOrder($orderId);
+    public function deductStock(int $orderId): void {
+        OrderModel::deductStock($orderId);
     }
 
     /**

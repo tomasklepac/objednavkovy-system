@@ -89,13 +89,14 @@ class OrderModel {
     }
 
     /**
-     * Confirms an order and deducts items from stock (transaction-based).
+     * Deducts items from stock for a new order (transaction-based).
+     * Does NOT change order status (remains pending).
      *
      * @param int $orderId Order ID
      * @return void
      * @throws Exception If stock is insufficient or transaction fails
      */
-    public static function confirmOrder(int $orderId): void {
+    public static function deductStock(int $orderId): void {
         $db = Database::getInstance();
 
         try {
@@ -127,14 +128,6 @@ class OrderModel {
                     throw new Exception("Insufficient stock for product ID " . $item['product_id']);
                 }
             }
-
-            // Update order status to confirmed
-            $stmt = $db->prepare("
-                UPDATE orders 
-                SET status = 'confirmed' 
-                WHERE id = ?
-            ");
-            $stmt->execute([$orderId]);
 
             $db->commit();
         } catch (Exception $e) {

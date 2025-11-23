@@ -71,6 +71,7 @@
                                 'dodavatel' => ['badge bg-primary', 'Dodavatel'],
                                 'customer' => ['badge bg-success', 'Zákazník'],
                                 'zakaznik' => ['badge bg-success', 'Zákazník'],
+                                'super_admin' => ['badge bg-secondary', 'Super Admin'],
                             ];
                             $config = $roleConfig[strtolower($role)] ?? ['badge bg-secondary', $role];
                             echo '<span class="' . $config[0] . '">' . $config[1] . '</span> ';

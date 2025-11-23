@@ -32,24 +32,26 @@ switch ($action) {
             $price       = (float)($_POST['price'] ?? 0);
             $stock       = (int)($_POST['stock'] ?? 0);
 
-            // Image upload
-            $imagePath = null;
-            if (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
-                try {
-                    $imagePath = $productController->handleImageUpload($_FILES['image']);
-                } catch (RuntimeException $e) {
-                    echo "<p style='color:red'>" . htmlspecialchars($e->getMessage()) . "</p>";
-                }
+            // Prepare image file
+            $imageFile = (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE)
+                ? $_FILES['image']
+                : null;
+
+            try {
+                $productController->createProduct(
+                    $name,
+                    $description,
+                    $price,
+                    $stock,
+                    $_SESSION['user_id'], // supplier_id
+                    $imageFile
+                );
+            } catch (RuntimeException $e) {
+                echo "<p style='color:red'>" . htmlspecialchars($e->getMessage()) . "</p>";
+                break;
             }
 
-            $productController->createProduct(
-                $name,
-                $description,
-                $price,
-                $stock,
-                $_SESSION['user_id'], // supplier_id
-                $imagePath
-            );
+            $isAdmin = in_array('admin', $_SESSION['roles'] ?? [], true);
 
             $title = 'Produkt byl úspěšně přidán!';
             $message = "Produkt '$name' je nyní dostupný v katalogu.";
@@ -59,7 +61,7 @@ switch ($action) {
                 'Skladem' => $stock . ' ks'
             ];
             $actions = [
-                'Zpět na produkty' => 'index.php?action=products',
+                'Zpět na produkty' => $isAdmin ? 'index.php?action=all_products' : 'index.php?action=my_products',
                 'Dashboard' => 'index.php'
             ];
             require __DIR__ . '/../../app/Views/success_message_view.php';
@@ -119,7 +121,7 @@ switch ($action) {
                 'Skladem' => $stock . ' ks'
             ];
             $actions = [
-                'Moje produkty' => 'index.php?action=my_products',
+                'Zpět na produkty' => $isAdmin ? 'index.php?action=all_products' : 'index.php?action=my_products',
                 'Dashboard' => 'index.php'
             ];
             require __DIR__ . '/../../app/Views/success_message_view.php';
@@ -175,7 +177,7 @@ switch ($action) {
             'Stav' => 'Archivován'
         ];
         $actions = [
-            'Moje produkty' => 'index.php?action=my_products',
+            'Zpět na produkty' => $isAdmin ? 'index.php?action=all_products' : 'index.php?action=my_products',
             'Dashboard' => 'index.php'
         ];
         require __DIR__ . '/../../app/Views/success_message_view.php';
@@ -230,7 +232,7 @@ switch ($action) {
         ];
         $actions = [
             'Upravit produkt' => 'index.php?action=edit_product&id=' . (int)$id,
-            'Moje produkty' => 'index.php?action=my_products'
+            'Zpět na produkty' => $isAdmin ? 'index.php?action=all_products' : 'index.php?action=my_products'
         ];
         require __DIR__ . '/../../app/Views/success_message_view.php';
         exit;
@@ -244,7 +246,7 @@ switch ($action) {
             break;
         }
         
-        $products = $productController->index();
+        $products = $productController->getAllProductsAdmin();
         require __DIR__ . '/../../app/Views/all_products_view.php';
         break;
 
