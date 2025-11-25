@@ -1,34 +1,34 @@
-# Objednavkovy system (KIV/WEB semestralni projekt)
+# Order Management System (KIV/WEB semester project)
 
-## Prehled
-- PHP 8 bez frameworku, MVC + PSR-4 autoloading (viz `app/autoload.php`).
-- Databaze MySQL/MariaDB pres PDO (`config/Database.php`).
-- Frontend: Bootstrap 5 (CDN), Font Awesome ikony, vlastni tema v `public/css/app.css`.
-- Bez AJAXu/Twig: klasicke PHP sablony v `app/Views`, minimum JS (hamburger/sidebar) + Bootstrap bundle.
+## Overview
+- PHP 8 without a framework, MVC + PSR-4 autoloading (`app/autoload.php`).
+- MySQL/MariaDB via PDO (`config/Database.php`).
+- Frontend: Bootstrap 5 (CDN), Font Awesome icons, custom theme in `public/css/app.css`.
+- No AJAX/Twig: classic PHP templates in `app/Views`, minimal JS (hamburger/sidebar) + Bootstrap bundle.
 
-## Funkcionalita
-- Autentizace: registrace, prihlaseni, odhlaseni; hesla hashovana (password_hash).
-- Role:
-  - Admin: sprava uzivatelu, prehled vsech objednavek a produktu, zmena stavu objednavek.
-  - Dodavatel: sprava vlastnich produktu, prehled objednavek obsahujicich jeho zbozi.
-  - Zakaznik: kosik, vytvoreni objednavky, prehled vlastnich objednavek.
-- Produkty: pridani/editace, archivace/reaktivace, upload obrazku, tabulkove prehledy.
-- Kosik a objednavky: kosik v session, vytvoreni objednavky s polozkami a cenami, stavy pending/confirmed/shipped/delivered/canceled; storno vraci zasoby.
-- Bezpecnost: prepared statements, htmlspecialchars na vystupu, CSRF tokeny ve formularech.
+## Features
+- Authentication: registration, login, logout; passwords hashed (`password_hash`).
+- Roles:
+  - Admin: user management, all orders/products overview, order status changes.
+  - Supplier: manage own products, see orders containing their products.
+  - Customer: cart, create orders, see own orders.
+- Products: add/edit, archive/reactivate, image upload, table overviews.
+- Cart and orders: cart stored in session, create order with items and prices, statuses pending/confirmed/shipped/delivered/canceled; cancel returns stock.
+- Security: prepared statements, escaped output (`htmlspecialchars`), CSRF tokens in forms.
 
 ## API (REST-like)
 - Entrypoint: `public/api.php?action=...`
-  - `action=products` (GET) — seznam produktu; filtr `supplier_id`; detail pres `id`.
-  - `action=orders` (GET) — vyzaduje login; vraci objednavky podle role (admin vse, dodavatel svoje polozky, zakaznik svoje objednavky).
-  - `action=orders&id=XYZ` (GET) — detail objednavky; role omezeni stejne jako vyse, vraci JSON `success`, `order` nebo `error` s HTTP 401/403/404/500.
-- Odpovedi JSON, zadne POST/PUT/DELETE (neni full CRUD REST, jen cteni).
+  - `action=products` (GET) — product list; filter `supplier_id`; detail via `id`.
+  - `action=orders` (GET) — requires login; returns orders by role (admin all, supplier own items, customer own orders).
+  - `action=orders&id=XYZ` (GET) — order detail; same role restrictions; JSON `success`/`order` or `error` with HTTP 401/403/404/500.
+- Responses are JSON. No POST/PUT/DELETE (read-only, not full CRUD REST).
 
-## Struktura (hlavni slozky/soubory)
+## Structure (main folders/files)
 ```
 app/
   Controllers/ (ProductController, OrderController, ApiController, UserController, ...)
   Models/ (ProductModel, OrderModel, UserModel, ...)
-  Views/ (partials/header.php, footer.php + view soubory pro dashboard, kosik, objednavky...)
+  Views/ (partials/header.php, footer.php + view files for dashboard, cart, orders...)
   autoload.php
 config/Database.php
 public/
@@ -36,25 +36,22 @@ public/
   api.php
   routers/ (admin_router.php, auth_router.php, cart_router.php, order_router.php, ...)
   css/app.css
-  uploads/ (obrazky produktu)
+  uploads/ (product images)
 sql/objednavkovy_system.sql
 ```
 
-## Instalace a spusteni (lokalne)
-1) Naklonuj repozitar do webrootu (napr. `htdocs/objednavkovy-system`).  
-2) Vytvor DB a naimportuj `sql/objednavkovy_system.sql`.  
-3) Nastav DB pristupy v `config/Database.php` (host, dbname, user, pass).  
-4) Spust `http://localhost/objednavkovy-system/public/index.php`.  
-5) API test: `http://localhost/objednavkovy-system/public/api.php?action=products` (produkty), `...?action=orders` (po prihlaseni).
+## Install & run (local)
+1) Clone the repo into your webroot (e.g. `htdocs/objednavkovy-system`).  
+2) Create DB and import `sql/objednavkovy_system.sql`.  
+3) Set DB creds in `config/Database.php` (host, dbname, user, pass).  
+4) Open `http://localhost/objednavkovy-system/public/index.php`.  
+5) API smoke test: `http://localhost/objednavkovy-system/public/api.php?action=products` (products), `...?action=orders` (after login).
 
-## Testovaci ucty
-- Admin: `admin@local.test` / `Admin123!`
-- Dodavatel: `supplier@local.test` / `Supplier123!`
-- Zakaznik: `customer@local.test` / `Customer123!`
+## Test account
+- Customer: `customer@local.test` / `Customer123!`
 
-## Nasazeni
-- Aplikace je PHP/MySQL, GitHub Pages neumi PHP spoustet (jen staticky obsah). Pro ostry provoz je potreba PHP hosting nebo vlastni server (Apache/Nginx+PHP+MySQL).  
-- GitHub muzes pouzit jako git remote a pro deployment skripty, ale beh samotne aplikace na Pages nejde bez dalsiho backendu.
+## Deployment
+- PHP/MySQL app — GitHub Pages cannot run PHP (static only). For production use PHP hosting or your own server (Apache/Nginx+PHP+MySQL). GitHub can serve as remote repo/deploy scripts, but the app itself must run on a PHP backend.
 
-## Autor
+## Author
 Tomas Klepac, FAV ZCU — KIV/WEB
