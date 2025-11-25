@@ -1,148 +1,60 @@
-# Objednávkový systém (KIV/WEB – semestrální projekt)
+# Objednavkovy system (KIV/WEB semestralni projekt)
 
-## Popis
-Webová aplikace pro správu objednávek a produktů s podporou více rolí uživatelů.  
-Projekt je vyvinut v **PHP** bez použití frameworku, s využitím **MVC architektury** a **OOP přístupu**.  
-Databáze je řešena pomocí **MySQL/MariaDB** a připojení přes **PDO**.  
-Design aplikace využívá **Bootstrap**.
-
----
-
-## 🖼️ Ukázky aplikace
-
-### 🔐 Login
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/7eac6606-cf8b-4515-8e6c-8fdddf48b8c3" width="800">
-</p>
-
-### 📊 Dashboard
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/d740c801-fab1-4b93-9fa0-7124272e33dc" width="800">
-</p>
-
-### 🛒 Košík
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/722ab1fe-fc72-4d18-aa32-6f9d405731b5" width="800">
-</p>
-
-### 📦 Objednávky
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/aa6e53e0-3c83-4c11-9d98-272be435bbfc" width="800">
-</p>
-
-### 👥 Správa uživatelů
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/000ad41d-35f5-49ec-9e26-53310385caac" width="800">
-</p>
-
-
+## Prehled
+- PHP 8 bez frameworku, MVC + PSR-4 autoloading (viz `app/autoload.php`).
+- Databaze MySQL/MariaDB pres PDO (`config/Database.php`).
+- Frontend: Bootstrap 5 (CDN), Font Awesome ikony, vlastni tema v `public/css/app.css`.
+- Bez AJAXu/Twig: klasicke PHP sablony v `app/Views`, minimum JS (hamburger/sidebar) + Bootstrap bundle.
 
 ## Funkcionalita
+- Autentizace: registrace, prihlaseni, odhlaseni; hesla hashovana (password_hash).
+- Role:
+  - Admin: sprava uzivatelu, prehled vsech objednavek a produktu, zmena stavu objednavek.
+  - Dodavatel: sprava vlastnich produktu, prehled objednavek obsahujicich jeho zbozi.
+  - Zakaznik: kosik, vytvoreni objednavky, prehled vlastnich objednavek.
+- Produkty: pridani/editace, archivace/reaktivace, upload obrazku, tabulkove prehledy.
+- Kosik a objednavky: kosik v session, vytvoreni objednavky s polozkami a cenami, stavy pending/confirmed/shipped/delivered/canceled; storno vraci zasoby.
+- Bezpecnost: prepared statements, htmlspecialchars na vystupu, CSRF tokeny ve formularech.
 
-- **Autentizace uživatelů**
-    - Registrace, přihlášení, odhlášení
-    - Hesla ukládána bezpečně (bcrypt hash)
+## API (REST-like)
+- Entrypoint: `public/api.php?action=...`
+  - `action=products` (GET) — seznam produktu; filtr `supplier_id`; detail pres `id`.
+  - `action=orders` (GET) — vyzaduje login; vraci objednavky podle role (admin vse, dodavatel svoje polozky, zakaznik svoje objednavky).
+  - `action=orders&id=XYZ` (GET) — detail objednavky; role omezeni stejne jako vyse, vraci JSON `success`, `order` nebo `error` s HTTP 401/403/404/500.
+- Odpovedi JSON, zadne POST/PUT/DELETE (neni full CRUD REST, jen cteni).
 
-- **Role**
-    - **Admin** – správa uživatelů (nelze blokovat adminy), přehled všech objednávek a produktů
-    - **Dodavatel** – správa vlastních produktů a objednávek
-    - **Zákazník** – vytváření objednávek, správa košíku
-
-- **Správa produktů**
-    - Přidávání, editace a mazání produktů
-    - Náhled produktů včetně detailu
-
-- **Objednávky**
-- Vytváření objednávek z košíku
-    - Přehled objednávek podle role
-
-- **Bezpečnostní opatření**
-    - Prepared statements (PDO) proti SQL Injection
-    - Ošetření výstupů (htmlspecialchars) proti XSS
-    - Session pro správu přihlášení
-
----
-
-## Struktura projektu
+## Struktura (hlavni slozky/soubory)
 ```
-objednavkovy-system/
-├── app
-│   ├── Controllers
-│   │   ├── order_controller.php
-│   │   ├── product_controller.php
-│   │   └── user_controller.php
-│   ├── Models
-│   │   ├── product_model.php
-│   │   └── user_model.php
-│   └── Views
-│       ├── partials
-│       │   ├── footer.php
-│       │   └── header.php
-│       ├── add_product_view.php
-│       ├── cart_view.php
-│       ├── confirm_order_view.php
-│       ├── dashboard_view.php
-│       ├── edit_product_view.php
-│       ├── login_view.php
-│       ├── my_products_view.php
-│       ├── order_detail_view.php
-│       ├── orders_view.php
-│       ├── products_view.php
-│       ├── register_view.php
-│       ├── supplier_order_detail_view.php
-│       ├── supplier_orders_view.php
-│       └── users_view.php
-├── config
-│   └── db.php
-├── public
-│   ├── css
-│   │   └── app.css
-│   ├── routers
-│   │   ├── admin_router.php
-│   │   ├── auth_router.php
-│   │   ├── cart_router.php
-│   │   ├── dashboard_router.php
-│   │   ├── order_router.php
-│   │   └── product_router.php
-│   ├── uploads
-│   │   ├── prod_68e00fcb62d193.29855128.jpg
-│   │   ├── prod_68e011c80f0430.53612348.jpg
-│   │   ├── prod_68e01155a59415.52305916.jpg
-│   │   ├── prod_68e0114125b083.52865953.jpg
-│   │   └── prod_68e0303668b371.91767251.jpg
-│   ├── index.php
-├── sql
-│   └── objednavkovy_system.sql
-├── dokumentace.pdf
-└── Readme.md
+app/
+  Controllers/ (ProductController, OrderController, ApiController, UserController, ...)
+  Models/ (ProductModel, OrderModel, UserModel, ...)
+  Views/ (partials/header.php, footer.php + view soubory pro dashboard, kosik, objednavky...)
+  autoload.php
+config/Database.php
+public/
+  index.php
+  api.php
+  routers/ (admin_router.php, auth_router.php, cart_router.php, order_router.php, ...)
+  css/app.css
+  uploads/ (obrazky produktu)
+sql/objednavkovy_system.sql
 ```
 
----
+## Instalace a spusteni (lokalne)
+1) Naklonuj repozitar do webrootu (napr. `htdocs/objednavkovy-system`).  
+2) Vytvor DB a naimportuj `sql/objednavkovy_system.sql`.  
+3) Nastav DB pristupy v `config/Database.php` (host, dbname, user, pass).  
+4) Spust `http://localhost/objednavkovy-system/public/index.php`.  
+5) API test: `http://localhost/objednavkovy-system/public/api.php?action=products` (produkty), `...?action=orders` (po prihlaseni).
 
-## Instalace a spuštění
+## Testovaci ucty
+- Admin: `admin@local.test` / `Admin123!`
+- Dodavatel: `supplier@local.test` / `Supplier123!`
+- Zakaznik: `customer@local.test` / `Customer123!`
 
-1. Nakopírujte projekt do root složky serveru (např. `htdocs/` pro XAMPP).
-2. Naimportujte databázi z `sql/objednavkov_system.sql`.
-3. Upravte přístupové údaje k databázi v `config/db.php`.
-4. Spusťte projekt přes `http://localhost/objednavkovy-system/public/index.php`.
-
----
-
-## Testovací účty
-
-- **Admin**
-    - Email: `admin@local.test`
-    - Heslo: `Admin123!`
-
-- **Dodavatel**
-    - Email: `supplier@local.test`
-    - Heslo: `Supplier123!`
-
-- **Zákazník**
-    - Email: `customer@local.test`
-    - Heslo: `Customer123!`
-
----
+## Nasazeni
+- Aplikace je PHP/MySQL, GitHub Pages neumi PHP spoustet (jen staticky obsah). Pro ostry provoz je potreba PHP hosting nebo vlastni server (Apache/Nginx+PHP+MySQL).  
+- GitHub muzes pouzit jako git remote a pro deployment skripty, ale beh samotne aplikace na Pages nejde bez dalsiho backendu.
 
 ## Autor
-Tomáš Klepač, FAV ZČU – KIV/WEB
+Tomas Klepac, FAV ZCU — KIV/WEB
