@@ -151,6 +151,31 @@ class OrderModel {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Returns complete order detail including items.
+     * Optionally filters items for a specific supplier.
+     *
+     * @param int $orderId Order ID
+     * @param int|null $supplierId Supplier ID (filters items if provided)
+     * @return array|null Order data with items or null if not found
+     */
+    public static function getOrderDetails(int $orderId, ?int $supplierId = null): ?array {
+        $order = self::getOrderWithCustomer($orderId);
+
+        if (!$order) {
+            return null;
+        }
+
+        $items = $supplierId === null
+            ? self::getOrderItems($orderId)
+            : self::getSupplierOrderItems($orderId, $supplierId);
+
+        $order['items'] = $items;
+        $order['items_count'] = count($items);
+
+        return $order;
+    }
+
     // ================================================================
     // ORDER STATUS MANAGEMENT
     // ================================================================

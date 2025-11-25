@@ -10,7 +10,6 @@
  * - GET /api.php?action=products&id=5            → Product with ID 5
  * - GET /api.php?action=orders                   → All orders (requires login)
  * - GET /api.php?action=orders&id=10             → Order with ID 10
- * - GET /api.php?action=products&price_min=10&price_max=50 → Products filtered by price
  */
 
 // Start session for user authentication

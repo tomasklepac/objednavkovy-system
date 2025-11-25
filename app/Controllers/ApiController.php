@@ -131,8 +131,30 @@ class ApiController {
                 return;
             }
             
-            $orderDetails = OrderModel::getOrderDetails((int)$id);
-            
+            $userId = (int)$_SESSION['user_id'];
+            $roles = $_SESSION['roles'] ?? [];
+            $orderDetails = null;
+
+            // Admin can see full order
+            if (in_array('admin', $roles, true)) {
+                $orderDetails = OrderModel::getOrderDetails((int)$id);
+            }
+            // Supplier can see only their items within the order
+            elseif (in_array('supplier', $roles, true)) {
+                $orderDetails = OrderModel::getOrderDetails((int)$id, $userId);
+                if ($orderDetails && empty($orderDetails['items'])) {
+                    $orderDetails = null; // order exists but no items for this supplier
+                }
+            }
+            // Customer can see only their own order
+            else {
+                $orderDetails = OrderModel::getOrderDetails((int)$id);
+                if (!$orderDetails || (int)$orderDetails['customer_id'] !== $userId) {
+                    self::jsonError('Forbidden: This order does not belong to you', 403);
+                    return;
+                }
+            }
+
             if (!$orderDetails) {
                 self::jsonError('Order not found', 404);
                 return;
